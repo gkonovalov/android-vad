@@ -1,5 +1,7 @@
 *.iml
 .gradle
+keystore
+example/release
 /local.properties
 /.idea/
 .DS_Store
