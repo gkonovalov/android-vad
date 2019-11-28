@@ -122,5 +122,7 @@ dependencies {
 }
 ```
 
+You also can download precompiled AAR library and APK files from GitHub's [releases page][1].
+
 ------------
 Georgiy Konovalov 2019 (c) [MIT License](https://opensource.org/licenses/MIT)

@@ -10,7 +10,7 @@ android {
         versionCode 1
         versionName "1.0.0"
 
-        setProperty("archivesBaseName", "Android-VAD-v." + versionName)
+        setProperty("archivesBaseName", "Android-VAD-v" + versionName)
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

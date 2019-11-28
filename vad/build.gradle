@@ -11,7 +11,7 @@ android {
         versionCode 1
         versionName "1.0.0"
 
-        setProperty("archivesBaseName", "android-vad-v." + versionName)
+        setProperty("archivesBaseName", "android-vad-v" + versionName)
 
         ndk {
             abiFilters "armeabi-v7a", "x86", "x86_64", "arm64-v8a"
