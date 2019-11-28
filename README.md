@@ -15,7 +15,9 @@ Networks(DNN). Please see for reference the following paper with
 [DNN vs GMM](https://www.microsoft.com/en-us/research/uploads/prod/2018/02/KoPhiliposeTashevZarar_ICASSP_2018.pdf)
 comparison.
 
-![Android VAD](https://raw.githubusercontent.com/gkonovalov/Android-VAD/master/demo.gif =400x)
+<p align="center">
+<img src="https://raw.githubusercontent.com/gkonovalov/Android-VAD/master/demo.gif" alt="drawing" height="400"/>
+</p>
 
 ## Parameters
 VAD library only accepts 16-bit mono PCM audio. 
