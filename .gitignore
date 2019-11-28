@@ -4,7 +4,7 @@
 /.idea/
 .DS_Store
 /gradle
-/app/build
+/build
 /vad/.cxx
 /vad/build
 /captures
