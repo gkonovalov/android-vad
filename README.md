@@ -117,7 +117,7 @@ allprojects {
 2. Add the dependency
 ```groovy
 dependencies {
-    implementation 'com.github.gkonovalov:Android-VAD:1.0.0'
+    implementation 'com.github.gkonovalov:android-vad:1.0.0'
 }
 ```
 
