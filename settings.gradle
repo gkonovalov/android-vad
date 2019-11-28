@@ -1,2 +1,2 @@
-include ':app', ':vad'
+include ':example', ':vad'
 rootProject.name='VAD example'
