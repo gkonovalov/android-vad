@@ -1,4 +1,4 @@
-# Android Voice Activity Detection (VAD)
+## Android Voice Activity Detection (VAD) 
 This VAD library can process audio in real-time utilizing 
 [Gaussian Mixture Model](http://en.wikipedia.org/wiki/Mixture_model#Gaussian_mixture_model) (GMM)
 which helps identify presence of human speech in an audio sample that contains a mixture of speech 
@@ -104,6 +104,7 @@ To open the project in Android Studio:
 4. Select `setting.gradle`
 
 ## Download
+[![](https://jitpack.io/v/gkonovalov/Android-VAD.svg)](https://jitpack.io/#gkonovalov/Android-VAD)
 
 Gradle is the only supported build configuration, so just add the dependency to your project `build.gradle` file:
 1. Add it in your root build.gradle at the end of repositories:
@@ -118,7 +119,7 @@ allprojects {
 2. Add the dependency
 ```groovy
 dependencies {
-    implementation 'com.konovalov.vad:Vad:1.0.0'
+    implementation 'com.github.gkonovalov:Android-VAD:1.0.0'
 }
 ```
 
