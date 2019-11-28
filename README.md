@@ -2,7 +2,7 @@
 This VAD library can process audio in real-time utilizing 
 [Gaussian Mixture Model](http://en.wikipedia.org/wiki/Mixture_model#Gaussian_mixture_model) (GMM)
 which helps identify presence of human speech in an audio sample that contains a mixture of speech 
-and noise. VAD work offline and all computations done on device.
+and noise. VAD work offline and all processing done on device.
 
 Library based on 
 [WebRTC VAD](https://chromium.googlesource.com/external/webrtc/+/branch-heads/43/webrtc/common_audio/vad/) 
