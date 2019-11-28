@@ -91,9 +91,11 @@ long utterances.
         
         vad.stop();
 ```
+## Requirements
+Android VAD supports Android 4.1 (Jelly Bean) and later.
 
-Development
------------
+## Development
+
 To open the project in Android Studio:
 
 1. Go to *File* menu or the *Welcome Screen*
