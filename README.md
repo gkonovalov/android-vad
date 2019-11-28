@@ -104,6 +104,9 @@ To open the project in Android Studio:
 4. Select `setting.gradle`
 
 ## Download
+[![](https://jitpack.io/v/gkonovalov/android-vad.svg)](https://jitpack.io/#gkonovalov/android-vad)
+
+
 Gradle is the only supported build configuration, so just add the dependency to your project `build.gradle` file:
 1. Add it in your root build.gradle at the end of repositories:
 ```groovy
