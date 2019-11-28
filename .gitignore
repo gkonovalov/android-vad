@@ -6,7 +6,6 @@ example/release
 /local.properties
 /.idea/
 .DS_Store
-/gradle
 /build
 /vad/.cxx
 /vad/build
