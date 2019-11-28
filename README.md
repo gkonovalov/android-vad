@@ -16,7 +16,7 @@ Networks(DNN). Please see for reference the following paper with
 comparison.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/gkonovalov/Android-VAD/master/demo.gif" alt="drawing" height="400"/>
+<img src="https://raw.githubusercontent.com/gkonovalov/android-vad/master/demo.gif" alt="drawing" height="400"/>
 </p>
 
 ## Parameters
@@ -104,8 +104,6 @@ To open the project in Android Studio:
 4. Select `setting.gradle`
 
 ## Download
-[![](https://jitpack.io/v/gkonovalov/Android-VAD.svg)](https://jitpack.io/#gkonovalov/Android-VAD)
-
 Gradle is the only supported build configuration, so just add the dependency to your project `build.gradle` file:
 1. Add it in your root build.gradle at the end of repositories:
 ```groovy
@@ -123,7 +121,7 @@ dependencies {
 }
 ```
 
-You also can download precompiled AAR library and APK files from GitHub's [releases page](https://github.com/gkonovalov/Android-VAD/releases).
+You also can download precompiled AAR library and APK files from GitHub's [releases page](https://github.com/gkonovalov/android-vad/releases).
 
 ------------
 Georgiy Konovalov 2019 (c) [MIT License](https://opensource.org/licenses/MIT)
