@@ -1,0 +1,2 @@
+include ':app', ':vad'
+rootProject.name='VAD example'
