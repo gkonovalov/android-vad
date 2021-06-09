@@ -1,2 +1,2 @@
 include ':example', ':vad'
-rootProject.name='VAD example'
+rootProject.name='VAD'

@@ -116,12 +116,12 @@ public class VoiceRecorder {
                 short[] buffer = new short[vad.getConfig().getFrameSize().getValue() * getNumberOfChannels() * 2];
                 audioRecord.read(buffer, 0, buffer.length);
 
-                isSpeechDetected(buffer);
+                detectSpeech(buffer);
             }
         }
 
-        private void isSpeechDetected(short[] buffer) {
-            vad.isContinuousSpeech(buffer, new VadListener() {
+        private void detectSpeech(short[] buffer) {
+            vad.addContinuousSpeechListener(buffer, new VadListener() {
                 @Override
                 public void onSpeechDetected() {
                     callback.onSpeechDetected();
