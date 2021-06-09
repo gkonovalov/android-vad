@@ -3,13 +3,13 @@ This VAD library can process audio in real-time utilizing
 [Gaussian Mixture Model](http://en.wikipedia.org/wiki/Mixture_model#Gaussian_mixture_model) (GMM)
 which helps identify presence of human speech in an audio sample that contains a mixture of speech 
 and noise. VAD work offline and all processing done on device.
-
+  
 Library based on 
 [WebRTC VAD](https://chromium.googlesource.com/external/webrtc/+/branch-heads/43/webrtc/common_audio/vad/) 
 from Google which is reportedly one of the best available: it's fast, modern and free.
 This  algorithm has  found  wide adoption and has recently become one of 
 the gold-standards for delay-sensitive scenarios like web-based interaction.
-
+  
 If you are looking for a higher accuracy and faster processing time I recommend to use Deep Neural 
 Networks(DNN). Please see for reference the following paper with 
 [DNN vs GMM](https://www.microsoft.com/en-us/research/uploads/prod/2018/02/KoPhiliposeTashevZarar_ICASSP_2018.pdf)
@@ -20,39 +20,49 @@ comparison.
 </p>
 
 ## Parameters
-VAD library only accepts 16-bit mono PCM audio. 
+VAD library only accepts 16-bit mono PCM audio and support various of Sample Rates and Frame Sizes. 
 
-Valid sample rates are 8000, 16000, 32000 and 48000 Hz.
+| Valid Sample Rate  | Valid Frame Size  |
+|:-------------------|:------------------|
+| 8000Hz             | 80, 160, 240      |
+| 16000Hz            | 160, 320, 480     |
+| 32000Hz            | 320, 640, 960     |
+| 48000Hz            | 480, 960, 1440    |
 
-Frame size can be 80, 160, 240, 320, 480, 640, 960 or 1440 bytes depending on the sample rate.
 
-Classifier supports NORMAL, LOW_BITRATE, AGGRESSIVE and VERY_AGGRESSIVE modes.
+Classifier supports next modes:
 
-Silence duration (ms) - this parameter used in Continuous Speech detector,
+| Valid Classifiers |
+|:------------------|
+| NORMAL            |
+| LOW_BITRATE       |
+| AGGRESSIVE        |
+| VERY_AGGRESSIVE   |
+
+**Silence duration (ms)** - this parameter used in Continuous Speech detector,
 the value of this parameter will define the necessary and sufficient 
 duration of negative results to recognize it as silence.
  
-Voice duration (ms) - this parameter used in Continuous Speech detector,
+**Voice duration (ms)** - this parameter used in Continuous Speech detector,
 the value of this parameter will define the necessary and sufficient 
 duration of positive results to recognize result as speech.
 
-
 Recommended parameters:
-* sample rate - 16KHz,
-* frame size - 480,
-* mode - VERY_AGGRESSIVE,
-* silence duration - 500ms,
-* voice duration - 500ms;
+* Sample Rate - **16KHz**,
+* Frame Size - **160**,
+* Mode - **VERY_AGGRESSIVE**,
+* Silence Duration - **500ms**,
+* Voice Duration - **500ms**;
 
 ## Usage
 VAD supports 2 different ways of detecting speech:
-1. Continuous Speech detector was designed to detect long utterances 
+1. Continuous Speech listener was designed to detect long utterances 
 without returning false positive results when user makes pauses between 
 sentences.
 ```java
  Vad vad = new Vad(VadConfig.newBuilder()
                 .setSampleRate(VadConfig.SampleRate.SAMPLE_RATE_16K)
-                .setFrameSize(VadConfig.FrameSize.FRAME_SIZE_480)
+                .setFrameSize(VadConfig.FrameSize.FRAME_SIZE_160)
                 .setMode(VadConfig.Mode.VERY_AGGRESSIVE)
                 .setSilenceDurationMillis(500)
                 .setVoiceDurationMillis(500)
@@ -60,7 +70,7 @@ sentences.
 
         vad.start();
         
-        vad.isContinuousSpeech(short[] audioFrame, new VadListener() {
+        vad.addContinuousSpeechListener(short[] audioFrame, new VadListener() {
             @Override
             public void onSpeechDetected() {
                 //speech detected!
@@ -81,7 +91,7 @@ long utterances.
 ```java
  Vad vad = new Vad(VadConfig.newBuilder()
                 .setSampleRate(VadConfig.SampleRate.SAMPLE_RATE_16K)
-                .setFrameSize(VadConfig.FrameSize.FRAME_SIZE_480)
+                .setFrameSize(VadConfig.FrameSize.FRAME_SIZE_160)
                 .setMode(VadConfig.Mode.VERY_AGGRESSIVE)
                 .build());
 
@@ -120,11 +130,11 @@ allprojects {
 2. Add the dependency
 ```groovy
 dependencies {
-    implementation 'com.github.gkonovalov:android-vad:1.0.0'
+    implementation 'com.github.gkonovalov:android-vad:1.0.1'
 }
 ```
 
 You also can download precompiled AAR library and APK files from GitHub's [releases page](https://github.com/gkonovalov/android-vad/releases).
 
 ------------
-Georgiy Konovalov 2019 (c) [MIT License](https://opensource.org/licenses/MIT)
+Georgiy Konovalov 2021 (c) [MIT License](https://opensource.org/licenses/MIT)
