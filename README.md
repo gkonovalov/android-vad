@@ -21,34 +21,29 @@ comparison.
 
 ## Parameters
 VAD library only accepts 16-bit mono PCM audio stream and can work with next Sample Rates, Frame Sizes and Classifiers. 
-
 <table>
-<tbody>
 <tr>
-<td colspan="2"><b>Valid Sample Rate and Frame Sizes</b></td>
-<td><b>Valid Classifiers</b></td>
+<td>
+<br/>
+| Valid Sample Rate  | Valid Frame Size  |   
+|:-------------------|:------------------|   
+| 8000Hz             | 80, 160, 240      |  
+| 16000Hz            | 160, 320, 480     |   
+| 32000Hz            | 320, 640, 960     |   
+| 48000Hz            | 480, 960, 1440    |   
+
+</td>
+<td>
+
+| Valid Classifiers |
+|:------------------|
+| NORMAL            |
+| LOW_BITRATE       |
+| AGGRESSIVE        |
+| VERY_AGGRESSIVE   |
+
+</td>
 </tr>
-<tr style="height: 17px;">
-<td>8000Hz</td>
-<td>80, 160, 240</td>
-<td>NORMAL</td>
-</tr>
-<tr style="height: 17px;">
-<td>16000Hz</td>
-<td>160, 320, 480</td>
-<td>LOW_BITRATE</td>
-</tr>
-<tr style="height: 17px;">
-<td>32000Hz</td>
-<td>320, 640, 960</td>
-<td>AGGRESSIVE</td>
-</tr>
-<tr style="height: 17px;">
-<td>48000Hz</td>
-<td>480, 960, 1440</td>
-<td>VERY_AGGRESSIVE</td>
-</tr>
-</tbody>
 </table>
 
 
