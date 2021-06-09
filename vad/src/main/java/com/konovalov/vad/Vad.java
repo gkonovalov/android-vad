@@ -1,5 +1,7 @@
 package com.konovalov.vad;
 
+import android.text.Html;
+
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
@@ -16,6 +18,9 @@ public class Vad {
     private long detectedSilenceSamplesMillis = 0;
     private long previousTimeMillis = System.currentTimeMillis();
 
+    /**
+     * Valid Sample Rates and corresponding Frame Sizes
+     */
     public static final LinkedHashMap<VadConfig.SampleRate, LinkedList<VadConfig.FrameSize>> SAMPLE_RATE_VALID_FRAMES = new LinkedHashMap<VadConfig.SampleRate, LinkedList<VadConfig.FrameSize>>() {{
         put(VadConfig.SampleRate.SAMPLE_RATE_8K, new LinkedList<VadConfig.FrameSize>() {{
             add(VadConfig.FrameSize.FRAME_SIZE_80);
@@ -42,10 +47,18 @@ public class Vad {
     public Vad() {
     }
 
+    /**
+     * VAD constructor
+     *
+     * @param config contains such parameters as Sample Rate {@link VadConfig.SampleRate}, Frame Size {@link VadConfig.FrameSize}, Mode {@link VadConfig.Mode}, etc.
+     */
     public Vad(VadConfig config) {
         this.config = config;
     }
 
+    /**
+     * Start VAD should be called before {@link #isSpeech(short[] audio)} or {@link #addContinuousSpeechListener(short[] audio, VadListener listener)}
+     */
     public void start() {
         if (config == null) {
             throw new NullPointerException("VadConfig is NULL!");
@@ -56,12 +69,19 @@ public class Vad {
         }
 
         try {
-            nativeStart(config.getSampleRate().getValue(), config.getFrameSize().getValue(), config.getMode().getValue());
+            int result = nativeStart(config.getSampleRate().getValue(), config.getFrameSize().getValue(), config.getMode().getValue());
+
+            if (result < 0) {
+                throw new RuntimeException("Error can't set parameters for VAD!");
+            }
         } catch (Exception e) {
             throw new RuntimeException("Error can't start VAD!", e);
         }
     }
 
+    /**
+     * Stop VAD - should be called after {@link #start()}
+     */
     public void stop() {
         try {
             nativeStop();
@@ -70,6 +90,14 @@ public class Vad {
         }
     }
 
+    /**
+     * Speech detector was designed to detect speech/noise in small audio
+     * frames and return result for every frame. This method will not work for
+     * long utterances.
+     *
+     * @param audio input audio frame
+     * @return boolean containing result of speech detection
+     */
     public boolean isSpeech(short[] audio) {
         if (audio == null) {
             throw new NullPointerException("Audio data is NULL!");
@@ -82,17 +110,40 @@ public class Vad {
         }
     }
 
+    /**
+     * Continuous Speech listener was designed to detect long utterances
+     * without returning false positive results when user makes pauses between
+     * sentences.
+     *
+     * @param audio input audio frame
+     * @param listener VAD result listener {@link VadListener}
+     *
+     * @deprecated use {@link #addContinuousSpeechListener(short[] audio, VadListener listener)} instead.
+     */
+    @Deprecated
     public void isContinuousSpeech(short[] audio, VadListener listener) {
+        addContinuousSpeechListener(audio, listener);
+    }
+
+    /**
+     * Continuous Speech listener was designed to detect long utterances
+     * without returning false positive results when user makes pauses between
+     * sentences.
+     *
+     * @param audio input audio frame
+     * @param listener VAD result listener {@link VadListener}
+     */
+    public void addContinuousSpeechListener(short[] audio, VadListener listener) {
+        if (config == null) {
+            throw new NullPointerException("VadConfig is NULL!");
+        }
+
         if (audio == null) {
             throw new NullPointerException("Audio data is NULL!");
         }
 
         if (listener == null) {
             throw new NullPointerException("VadListener is NULL!");
-        }
-
-        if (config == null) {
-            throw new NullPointerException("VadConfig is NULL!");
         }
 
         long currentTimeMillis = System.currentTimeMillis();
@@ -119,14 +170,29 @@ public class Vad {
         previousTimeMillis = currentTimeMillis;
     }
 
+    /**
+     * Get current VAD config
+     *
+     * @return config {@link VadConfig} of VAD
+     */
     public VadConfig getConfig() {
         return config;
     }
 
+    /**
+     * Set {@link VadConfig} for VAD
+     *
+     * @param config VAD config
+     */
     public void setConfig(VadConfig config) {
         this.config = config;
     }
 
+    /**
+     * Check Sample Rate and corresponding Frame Size inside of config
+     *
+     * @return boolean - contains true if Sample Rate and Frame Size inside of config is valid
+     */
     private boolean isSampleRateAndFrameSizeValid() {
         if (config == null) {
             throw new NullPointerException("VadConfig is NULL!");
@@ -141,6 +207,12 @@ public class Vad {
         }
     }
 
+    /**
+     * Method return valid Frame sizes for specific Sample Rate
+     *
+     * @param sampleRate contains sample rate
+     * @return LinkedList with valid Frame sizes
+     */
     public static LinkedList<VadConfig.FrameSize> getValidFrameSize(VadConfig.SampleRate sampleRate) {
         if (sampleRate == null) {
             throw new NullPointerException("SampleRate is NULL!");
