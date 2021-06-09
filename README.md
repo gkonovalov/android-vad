@@ -22,7 +22,7 @@ comparison.
 ## Parameters
 VAD library only accepts 16-bit mono PCM audio stream and can work with next Sample Rates, Frame Sizes and Classifiers. 
 
-<table>
+<table style="border: none!important;">
 <tr>
 <td>
 
