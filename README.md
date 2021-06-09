@@ -35,6 +35,7 @@ VAD library only accepts 16-bit mono PCM audio stream and can work with next Sam
 
 </td>
 <td>
+<br/>
 
 | Valid Classifiers |
 |:------------------|
