@@ -24,7 +24,7 @@ VAD library only accepts 16-bit mono PCM audio stream and can work with next Sam
 <table>
 <tr>
 <td>
-<br/>
+&nbsp
 
 | Valid Sample Rate  | Valid Frame Size  |   
 |:-------------------|:------------------|   
@@ -34,7 +34,7 @@ VAD library only accepts 16-bit mono PCM audio stream and can work with next Sam
 | 48000Hz            | 480, 960, 1440    |   
 </td>
 <td>
-<br/>
+&nbsp
 
 | Valid Classifiers |
 |:------------------|
