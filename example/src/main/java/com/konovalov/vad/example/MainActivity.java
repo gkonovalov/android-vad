@@ -1,5 +1,6 @@
 package com.konovalov.vad.example;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
@@ -23,12 +24,12 @@ import permissions.dispatcher.RuntimePermissions;
 @RuntimePermissions
 public class MainActivity extends AppCompatActivity implements VoiceRecorder.Listener, View.OnClickListener, AdapterView.OnItemSelectedListener {
 
-    private VadConfig.SampleRate DEFAULT_SAMPLE_RATE = VadConfig.SampleRate.SAMPLE_RATE_16K;
-    private VadConfig.FrameSize DEFAULT_FRAME_SIZE = VadConfig.FrameSize.FRAME_SIZE_160;
-    private VadConfig.Mode DEFAULT_MODE = VadConfig.Mode.VERY_AGGRESSIVE;
+    private final VadConfig.SampleRate DEFAULT_SAMPLE_RATE = VadConfig.SampleRate.SAMPLE_RATE_16K;
+    private final VadConfig.FrameSize DEFAULT_FRAME_SIZE = VadConfig.FrameSize.FRAME_SIZE_160;
+    private final VadConfig.Mode DEFAULT_MODE = VadConfig.Mode.VERY_AGGRESSIVE;
 
-    private int DEFAULT_SILENCE_DURATION = 500;
-    private int DEFAULT_VOICE_DURATION = 500;
+    private final int DEFAULT_SILENCE_DURATION = 500;
+    private final int DEFAULT_VOICE_DURATION = 500;
 
     private final String SPINNER_SAMPLE_RATE_TAG = "sample_rate";
     private final String SPINNER_FRAME_SIZE_TAG = "frame_size";
@@ -40,14 +41,13 @@ public class MainActivity extends AppCompatActivity implements VoiceRecorder.Lis
     private Spinner frameSpinner;
     private Spinner modeSpinner;
 
-    private ArrayAdapter sampleRateAdapter;
-    private ArrayAdapter frameAdapter;
-    private ArrayAdapter modeAdapter;
+    private ArrayAdapter<String> sampleRateAdapter;
+    private ArrayAdapter<String> frameAdapter;
+    private ArrayAdapter<String> modeAdapter;
 
     private VoiceRecorder recorder;
     private VadConfig config;
     private boolean isRecording = false;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements VoiceRecorder.Lis
                 .setVoiceDurationMillis(DEFAULT_VOICE_DURATION)
                 .build();
 
-        recorder = new VoiceRecorder(this, config);
+        recorder = new VoiceRecorder(this,this, config);
 
         speechTextView = findViewById(R.id.speechTextView);
         sampleRateSpinner = findViewById(R.id.sampleRateSpinner);
@@ -164,7 +164,6 @@ public class MainActivity extends AppCompatActivity implements VoiceRecorder.Lis
     public void onNothingSelected(AdapterView<?> parent) {
     }
 
-
     @NeedsPermission(Manifest.permission.RECORD_AUDIO)
     public void activateAudioPermission() {
         recordingActionButton.setEnabled(true);
@@ -181,28 +180,17 @@ public class MainActivity extends AppCompatActivity implements VoiceRecorder.Lis
 
     @Override
     public void onSpeechDetected() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                speechTextView.setText(R.string.speech_detected);
-            }
-        });
+        runOnUiThread(() -> speechTextView.setText(R.string.speech_detected));
     }
 
     @Override
     public void onNoiseDetected() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                speechTextView.setText(R.string.noise_detected);
-            }
-        });
+        runOnUiThread(() -> speechTextView.setText(R.string.noise_detected));
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        // NOTE: delegate the permission handling to generated method
         MainActivityPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
     }
 

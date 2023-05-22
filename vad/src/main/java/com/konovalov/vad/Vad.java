@@ -1,14 +1,11 @@
 package com.konovalov.vad;
 
-import android.text.Html;
-
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
 /**
- * Created by George Konovalov on 11/16/2019.
+ * Created by Georgiy Konovalov on 11/16/2019.
  */
-
 public class Vad {
 
     private VadConfig config;
@@ -44,8 +41,7 @@ public class Vad {
         }});
     }};
 
-    public Vad() {
-    }
+    public Vad() {}
 
     /**
      * VAD constructor
