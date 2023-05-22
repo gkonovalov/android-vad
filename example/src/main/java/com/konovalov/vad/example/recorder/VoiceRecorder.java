@@ -1,5 +1,8 @@
 package com.konovalov.vad.example.recorder;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
@@ -8,6 +11,7 @@ import android.util.Log;
 import com.konovalov.vad.Vad;
 import com.konovalov.vad.VadConfig;
 import com.konovalov.vad.VadListener;
+import androidx.core.app.ActivityCompat;
 
 import static android.media.AudioFormat.CHANNEL_IN_MONO;
 import static android.media.AudioFormat.CHANNEL_IN_STEREO;
@@ -15,21 +19,22 @@ import static android.media.AudioFormat.CHANNEL_IN_STEREO;
 /**
  * Created by George Konovalov on 11/16/2019.
  */
-
 public class VoiceRecorder {
     private static final int PCM_CHANNEL = CHANNEL_IN_MONO;
     private static final int PCM_ENCODING_BIT = AudioFormat.ENCODING_PCM_16BIT;
 
-    private Vad vad;
+    private final Vad vad;
+    private final Listener callback;
+    private final Context context;
     private AudioRecord audioRecord;
-    private Listener callback;
     private Thread thread;
 
     private boolean isListening = false;
 
     private static final String TAG = VoiceRecorder.class.getSimpleName();
 
-    public VoiceRecorder(Listener callback, VadConfig config) {
+    public VoiceRecorder(Context context, Listener callback, VadConfig config) {
+        this.context = context;
         this.callback = callback;
         this.vad = new Vad(config);
     }
@@ -53,7 +58,6 @@ public class VoiceRecorder {
         }
     }
 
-
     public void stop() {
         isListening = false;
         if (thread != null) {
@@ -68,17 +72,18 @@ public class VoiceRecorder {
             }
             audioRecord = null;
         }
-        if (vad != null) {
-            vad.stop();
-        }
+        vad.stop();
     }
-
 
     private AudioRecord createAudioRecord() {
         try {
             final int minBufSize = AudioRecord.getMinBufferSize(vad.getConfig().getSampleRate().getValue(), PCM_CHANNEL, PCM_ENCODING_BIT);
 
             if (minBufSize == AudioRecord.ERROR_BAD_VALUE) {
+                return null;
+            }
+
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
                 return null;
             }
 

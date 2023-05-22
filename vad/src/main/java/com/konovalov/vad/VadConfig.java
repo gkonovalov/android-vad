@@ -2,9 +2,8 @@ package com.konovalov.vad;
 
 
 /**
- * Created by George Konovalov on 11/16/2019.
+ *  Created by George Konovalov on 11/16/2019.
  */
-
 public class VadConfig {
     private SampleRate sampleRate;
     private Mode mode;
@@ -113,7 +112,7 @@ public class VadConfig {
         SAMPLE_RATE_32K(32000),
         SAMPLE_RATE_48K(48000);
 
-        private int sampleRate;
+        private final int sampleRate;
 
         public int getValue() {
             return sampleRate;
@@ -130,7 +129,7 @@ public class VadConfig {
         AGGRESSIVE(2),
         VERY_AGGRESSIVE(3);
 
-        private int mode;
+        private final int mode;
 
         public int getValue() {
             return mode;
@@ -151,7 +150,7 @@ public class VadConfig {
         FRAME_SIZE_960(960),
         FRAME_SIZE_1440(1440);
 
-        private int frameSize;
+        private final int frameSize;
 
         public int getValue() {
             return frameSize;
