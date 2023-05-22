@@ -11,9 +11,6 @@ public class VadConfig {
     private int voiceDurationMillis;
     private int silenceDurationMillis;
 
-    public VadConfig() {
-    }
-
     public VadConfig(Builder builder) {
         this.voiceDurationMillis = builder.voiceDurationMillis;
         this.silenceDurationMillis = builder.silenceDurationMillis;
@@ -160,7 +157,4 @@ public class VadConfig {
             this.frameSize = frameSize;
         }
     }
-
-
-
 }
