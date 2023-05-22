@@ -9,15 +9,10 @@ import java.util.LinkedList;
 public class Vad {
 
     private VadConfig config;
-
     private boolean needResetDetectedSamples = true;
     private long detectedVoiceSamplesMillis = 0;
     private long detectedSilenceSamplesMillis = 0;
     private long previousTimeMillis = System.currentTimeMillis();
-
-    /**
-     * Valid Sample Rates and corresponding Frame Sizes
-     */
     public static final LinkedHashMap<VadConfig.SampleRate, LinkedList<VadConfig.FrameSize>> SAMPLE_RATE_VALID_FRAMES = new LinkedHashMap<VadConfig.SampleRate, LinkedList<VadConfig.FrameSize>>() {{
         put(VadConfig.SampleRate.SAMPLE_RATE_8K, new LinkedList<VadConfig.FrameSize>() {{
             add(VadConfig.FrameSize.FRAME_SIZE_80);
@@ -41,19 +36,22 @@ public class Vad {
         }});
     }};
 
-    public Vad() {}
-
     /**
      * VAD constructor
      *
-     * @param config contains such parameters as Sample Rate {@link VadConfig.SampleRate}, Frame Size {@link VadConfig.FrameSize}, Mode {@link VadConfig.Mode}, etc.
+     * @param config contains such parameters as
+     *               Sample Rate {@link VadConfig.SampleRate},
+     *               Frame Size {@link VadConfig.FrameSize},
+     *               Mode {@link VadConfig.Mode}, etc.
      */
     public Vad(VadConfig config) {
         this.config = config;
     }
 
     /**
-     * Start VAD should be called before {@link #isSpeech(short[] audio)} or {@link #addContinuousSpeechListener(short[] audio, VadListener listener)}
+     * Start VAD should be called before
+     *             {@link #isSpeech(short[] audio)} or
+     *             {@link #addContinuousSpeechListener(short[] audio, VadListener listener)}
      */
     public void start() {
         if (config == null) {
@@ -61,11 +59,16 @@ public class Vad {
         }
 
         if (!isSampleRateAndFrameSizeValid()) {
-            throw new UnsupportedOperationException("VAD doesn't support this SampleRate and FrameSize!");
+            throw new UnsupportedOperationException("VAD doesn't support this " +
+                    "SampleRate and FrameSize!");
         }
 
         try {
-            int result = nativeStart(config.getSampleRate().getValue(), config.getFrameSize().getValue(), config.getMode().getValue());
+            int result = nativeStart(
+                    config.getSampleRate().getValue(),
+                    config.getFrameSize().getValue(),
+                    config.getMode().getValue()
+            );
 
             if (result < 0) {
                 throw new RuntimeException("Error can't set parameters for VAD!");
@@ -88,8 +91,8 @@ public class Vad {
 
     /**
      * Speech detector was designed to detect speech/noise in small audio
-     * frames and return result for every frame. This method will not work for
-     * long utterances.
+     * frames and return result for every frame. This method will not work
+     * for long utterances.
      *
      * @param audio input audio frame
      * @return boolean containing result of speech detection
@@ -111,22 +114,7 @@ public class Vad {
      * without returning false positive results when user makes pauses between
      * sentences.
      *
-     * @param audio input audio frame
-     * @param listener VAD result listener {@link VadListener}
-     *
-     * @deprecated use {@link #addContinuousSpeechListener(short[] audio, VadListener listener)} instead.
-     */
-    @Deprecated
-    public void isContinuousSpeech(short[] audio, VadListener listener) {
-        addContinuousSpeechListener(audio, listener);
-    }
-
-    /**
-     * Continuous Speech listener was designed to detect long utterances
-     * without returning false positive results when user makes pauses between
-     * sentences.
-     *
-     * @param audio input audio frame
+     * @param audio    input audio frame
      * @param listener VAD result listener {@link VadListener}
      */
     public void addContinuousSpeechListener(short[] audio, VadListener listener) {
