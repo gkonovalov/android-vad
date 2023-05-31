@@ -6,6 +6,7 @@
     <string name="start">Start</string>
     <string name="stop">Stop</string>
     <string name="sample_rate">Sample Rate:</string>
+    <string name="modelType">Model:</string>
     <string name="frame_size">Frame Size:</string>
     <string name="mode">Mode:</string>
 </resources>
