@@ -16,7 +16,7 @@ import com.konovalov.vad.config.FrameSize;
 import com.konovalov.vad.config.Mode;
 import com.konovalov.vad.config.Model;
 import com.konovalov.vad.config.SampleRate;
-import com.konovalov.vad.models.Vad;
+import com.konovalov.vad.Vad;
 import com.konovalov.vad.models.VadBuilder;
 import com.konovalov.vad.example.recorder.VoiceRecorder;
 import com.konovalov.vad.Validator;
@@ -31,9 +31,9 @@ public class MainActivity extends AppCompatActivity implements
         VoiceRecorder.Listener, View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     private final Model DEFAULT_MODEL = Model.WEB_RTC_GMM;
-    private final SampleRate DEFAULT_SAMPLE_RATE = SampleRate.SAMPLE_RATE_16K;
-    private final FrameSize DEFAULT_FRAME_SIZE = FrameSize.FRAME_SIZE_160;
-    private final Mode DEFAULT_MODE = Mode.VERY_AGGRESSIVE;
+    private final SampleRate DEFAULT_SAMPLE_RATE = SampleRate.SAMPLE_RATE_8K;
+    private final FrameSize DEFAULT_FRAME_SIZE = FrameSize.FRAME_SIZE_80;
+    private final Mode DEFAULT_MODE = Mode.NORMAL;
 
     private final int DEFAULT_SILENCE_DURATION_MS = 300;
     private final int DEFAULT_SPEECH_DURATION_MS = 50;
@@ -187,14 +187,16 @@ public class MainActivity extends AppCompatActivity implements
 
                 FrameSize frameSize = FrameSize.valueOf(String.valueOf(frameAdapter.getItem(0)));
 
-                modeSpinner.setSelection(getModes().indexOf(DEFAULT_MODE.name()), false);
+                modeSpinner.setSelection(0);
+
+                Mode mode = Mode.valueOf(String.valueOf(modeAdapter.getItem(0)));
 
                 vad.close();
                 vad = VadBuilder.newBuilder()
                         .setModel(model)
                         .setSampleRate(sampleRate)
                         .setFrameSize(frameSize)
-                        .setMode(DEFAULT_MODE)
+                        .setMode(mode)
                         .setSilenceDurationMs(DEFAULT_SILENCE_DURATION_MS)
                         .setSpeechDurationMs(DEFAULT_SPEECH_DURATION_MS)
                         .setContext(MainActivity.this)

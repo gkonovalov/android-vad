@@ -8,13 +8,11 @@ import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Process;
 import android.util.Log;
-
-import com.konovalov.vad.models.VadListener;
-import com.konovalov.vad.models.Vad;
-
 import androidx.core.app.ActivityCompat;
-
 import static android.media.AudioFormat.CHANNEL_IN_MONO;
+import com.konovalov.vad.Vad;
+import com.konovalov.vad.VadListener;
+
 
 /**
  * Created by George Konovalov on 11/16/2019.

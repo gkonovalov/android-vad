@@ -8,21 +8,21 @@ import com.konovalov.vad.config.Model;
  */
 final class VadWebRTC extends VadModel {
 
+    private long nativeHandle;
+
     public VadWebRTC(VadBuilder builder) {
         super(builder);
         init();
     }
 
     private void init() {
-        try {
-            if (!nativeInit()) {
-                throw new RuntimeException("Error can't init WebRTC VAD!");
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Error nativeInit failed!", e);
+        this.nativeHandle = nativeInit();
+
+        if (nativeHandle <= 0) {
+            throw new RuntimeException("Error can't init WebRTC VAD!");
         }
 
-        updateDetectionMode();
+        setMode();
     }
 
     /**
@@ -35,38 +35,35 @@ final class VadWebRTC extends VadModel {
      */
     @Override
     public boolean isSpeech(short[] audioData) {
-        if (audioData == null) {
+        if (audioData == null && !isVadInitialized()) {
             return false;
         }
 
-        try {
-            return nativeIsSpeech(getSampleRateInt(), getFrameSizeInt(), audioData);
-        } catch (Exception e) {
-            throw new RuntimeException("Error nativeIsSpeech failed!", e);
-        }
+        return nativeIsSpeech(nativeHandle, getSampleRateInt(), getFrameSizeInt(), audioData);
     }
 
     @Override
     public void close() {
-        try {
-            nativeDestroy();
-        } catch (Exception e) {
-            throw new RuntimeException("Error nativeDestroy failed!", e);
+        if (!isVadInitialized()) {
+            return;
         }
+
+        nativeDestroy(nativeHandle);
+        nativeHandle = -1;
+    }
+
+    private void setMode() {
+        if (!isVadInitialized()) {
+            return;
+        }
+
+        nativeSetMode(nativeHandle, getModeInt());
     }
 
     @Override
     public void setMode(Mode mode) {
         super.setMode(mode);
-        updateDetectionMode();
-    }
-
-    private void updateDetectionMode() {
-        try {
-            nativeSetMode(getModeInt());
-        } catch (Exception e) {
-            throw new RuntimeException("Error nativeSetMode failed!", e);
-        }
+        setMode();
     }
 
     @Override
@@ -74,13 +71,17 @@ final class VadWebRTC extends VadModel {
         return Model.WEB_RTC_GMM;
     }
 
-    private native boolean nativeInit();
+    private boolean isVadInitialized() {
+        return nativeHandle > 0;
+    }
 
-    private native boolean nativeSetMode(int mode);
+    private native long nativeInit();
 
-    private native boolean nativeIsSpeech(int sampleRate, int frameSize, short[] audio);
+    private native boolean nativeSetMode(long nativeHandle, int mode);
 
-    private native void nativeDestroy();
+    private native boolean nativeIsSpeech(long nativeHandleint, int sampleRate, int frameSize, short[] audio);
+
+    private native void nativeDestroy(long nativeHandle);
 
     static {
         System.loadLibrary("vad_jni");

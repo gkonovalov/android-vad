@@ -1,4 +1,4 @@
-package com.konovalov.vad.models;
+package com.konovalov.vad;
 
 import com.konovalov.vad.config.FrameSize;
 import com.konovalov.vad.config.Mode;

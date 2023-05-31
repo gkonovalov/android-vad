@@ -3,46 +3,41 @@
 #include <stdlib.h>
 #include <jni.h>
 
-VadInst *internalHandle;
-
-JNIEXPORT jboolean JNICALL
+JNIEXPORT jlong JNICALL
 Java_com_konovalov_vad_models_VadWebRTC_nativeInit(JNIEnv *env, jobject object) {
-    if (internalHandle) {
-        WebRtcVad_Free(internalHandle);
+    VadInst *vad = WebRtcVad_Create();
+
+    if (vad == NULL) {
+        return -1;
     }
 
-    internalHandle = WebRtcVad_Create();
-    return WebRtcVad_Init(internalHandle) >= 0;
+    int status = WebRtcVad_Init(vad);
+    if (status != 0) {
+        WebRtcVad_Free(vad);
+        return -1;
+    }
+
+    return (jlong) vad;
 }
 
 JNIEXPORT void JNICALL
-Java_com_konovalov_vad_models_VadWebRTC_nativeDestroy(JNIEnv *env, jobject object) {
-    if (internalHandle) {
-        WebRtcVad_Free(internalHandle);
-        internalHandle = NULL;
-    }
+Java_com_konovalov_vad_models_VadWebRTC_nativeDestroy(JNIEnv *env, jobject object, jlong vad) {
+    WebRtcVad_Free((VadInst *) vad);
 }
 
 JNIEXPORT jboolean JNICALL
-Java_com_konovalov_vad_models_VadWebRTC_nativeSetMode(JNIEnv *env, jobject object, jint jMode) {
-    if (internalHandle != NULL) {
-        return WebRtcVad_set_mode(internalHandle, jMode) >= 0;
-    }
-
-    return JNI_FALSE;
+Java_com_konovalov_vad_models_VadWebRTC_nativeSetMode(JNIEnv *env, jobject object, jlong vad, jint jMode) {
+    return WebRtcVad_set_mode((VadInst *) vad, jMode) >= 0;
 }
 
 JNIEXPORT jboolean JNICALL
-Java_com_konovalov_vad_models_VadWebRTC_nativeIsSpeech(JNIEnv *env,
-                                                       jobject object,
-                                                       jint jSampleRate,
-                                                       jint jFrameSize,
-                                                       jshortArray bytes) {
+Java_com_konovalov_vad_models_VadWebRTC_nativeIsSpeech(JNIEnv *env, jobject object, jlong vad, jint jSampleRate, jint jFrameSize, jshortArray bytes) {
     int sampleRate = jSampleRate;
     int frameSize = jFrameSize;
+
     jshort *audioFrame = (*env)->GetShortArrayElements(env, bytes, 0);
 
-    int resultVad = WebRtcVad_Process(internalHandle,
+    int resultVad = WebRtcVad_Process((VadInst *) vad,
                                       sampleRate,
                                       audioFrame,
                                       (size_t) frameSize);
