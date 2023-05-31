@@ -9,7 +9,7 @@ android {
     compileSdkVersion 33
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 33
         versionCode 3
 
@@ -49,6 +49,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.microsoft.onnxruntime:onnxruntime-android:1.14.0'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test:runner:1.5.2'
@@ -64,7 +65,7 @@ afterEvaluate {
 
                 groupId = 'com.github.gkonovalov'
                 artifactId = 'android-vad'
-                version = '1.0.2'
+                version = '2.0.0'
             }
         }
     }
