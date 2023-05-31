@@ -1,4 +1,4 @@
-package com.konovalov.vad.models;
+package com.konovalov.vad;
 
 /**
  * Created by George Konovalov on 11/16/2019.

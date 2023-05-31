@@ -2,6 +2,7 @@ package com.konovalov.vad.models;
 
 import android.content.Context;
 
+import com.konovalov.vad.Vad;
 import com.konovalov.vad.config.FrameSize;
 import com.konovalov.vad.config.Mode;
 import com.konovalov.vad.config.Model;

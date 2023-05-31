@@ -1,5 +1,7 @@
 package com.konovalov.vad.models;
 
+import com.konovalov.vad.Vad;
+import com.konovalov.vad.VadListener;
 import com.konovalov.vad.Validator;
 import com.konovalov.vad.config.FrameSize;
 import com.konovalov.vad.config.Mode;
