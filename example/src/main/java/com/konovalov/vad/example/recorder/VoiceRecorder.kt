@@ -1,142 +1,94 @@
-package com.konovalov.vad.example.recorder;
+package com.konovalov.vad.example.recorder
 
-import android.Manifest;
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.media.AudioFormat;
-import android.media.AudioRecord;
-import android.media.MediaRecorder;
-import android.os.Process;
-import android.util.Log;
-import androidx.core.app.ActivityCompat;
-import static android.media.AudioFormat.CHANNEL_IN_MONO;
-import com.konovalov.vad.Vad;
-import com.konovalov.vad.VadListener;
+import android.annotation.SuppressLint
+import android.media.AudioFormat
+import android.media.AudioRecord
+import android.media.MediaRecorder
+import android.os.Process
+import android.util.Log
+import com.konovalov.vad.config.FrameSize
+import com.konovalov.vad.config.SampleRate
 
+class VoiceRecorder(val callback: AudioCallback) {
 
-/**
- * Created by George Konovalov on 11/16/2019.
- */
-public class VoiceRecorder {
-    private static final int PCM_ENCODING_BIT = AudioFormat.ENCODING_PCM_16BIT;
+    private val TAG = VoiceRecorder::class.java.simpleName
 
-    private Vad vad;
-    private final Listener callback;
-    private final Context context;
-    private AudioRecord audioRecord;
-    private Thread thread;
+    private var audioRecord: AudioRecord? = null
+    private var thread: Thread? = null
+    private var isListening = false
 
-    private boolean isListening = false;
+    private lateinit var sampleRate: SampleRate
+    private lateinit var frameSize: FrameSize
 
-    private static final String TAG = VoiceRecorder.class.getSimpleName();
+    fun start(sampleRate: SampleRate, frameSize: FrameSize) {
+        this.sampleRate = sampleRate
+        this.frameSize = frameSize
 
-    public VoiceRecorder(Context context, Listener callback) {
-        this.context = context;
-        this.callback = callback;
-    }
-
-    public void setVad(Vad vad) {
-        this.vad = vad;
-    }
-
-    public void start() {
-        audioRecord = createAudioRecord();
+        audioRecord = createAudioRecord()
         if (audioRecord != null) {
-            isListening = true;
-            audioRecord.startRecording();
+            isListening = true
+            audioRecord?.startRecording()
 
-            thread = new Thread(new ProcessVoice());
-            thread.start();
-        } else {
-            Log.w(TAG, "Failed start Voice Recorder!");
+            thread = Thread(ProcessVoice())
+            thread?.start()
         }
     }
 
-    public void stop() {
-        isListening = false;
-        if (thread != null) {
-            thread.interrupt();
-            thread = null;
-        }
-        if (audioRecord != null) {
-            try {
-                audioRecord.release();
-            } catch (Exception e) {
-                Log.e(TAG, "Error stop AudioRecord ", e);
-            }
-            audioRecord = null;
-        }
+    fun stop() {
+        isListening = false
+        thread?.interrupt()
+        thread = null
+
+        audioRecord?.stop()
+        audioRecord?.release()
+        audioRecord = null
     }
 
-    private AudioRecord createAudioRecord() {
+    @SuppressLint("MissingPermission")
+    private fun createAudioRecord(): AudioRecord? {
         try {
-            final int minBufSize = AudioRecord.getMinBufferSize(
-                    vad.getSampleRate().getValue(),
-                    CHANNEL_IN_MONO,
-                    PCM_ENCODING_BIT);
+            val minBufferSize = maxOf(
+                AudioRecord.getMinBufferSize(
+                    sampleRate.value,
+                    AudioFormat.CHANNEL_IN_MONO,
+                    AudioFormat.ENCODING_PCM_16BIT
+                ),
+                2 * frameSize.value
+            )
 
-            if (minBufSize == AudioRecord.ERROR_BAD_VALUE) {
-                return null;
-            }
+            val audioRecord = AudioRecord(
+                MediaRecorder.AudioSource.MIC,
+                sampleRate.value,
+                AudioFormat.CHANNEL_IN_MONO,
+                AudioFormat.ENCODING_PCM_16BIT,
+                minBufferSize
+            )
 
-            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) !=
-                    PackageManager.PERMISSION_GRANTED) {
-                return null;
-            }
-
-            final AudioRecord audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC,
-                    vad.getSampleRate().getValue(),
-                    CHANNEL_IN_MONO,
-                    PCM_ENCODING_BIT,
-                    minBufSize);
-
-            if (audioRecord.getState() == AudioRecord.STATE_INITIALIZED) {
-                return audioRecord;
+            if (audioRecord.state == AudioRecord.STATE_INITIALIZED) {
+                return audioRecord
             } else {
-                audioRecord.release();
+                audioRecord.release()
             }
-        } catch (IllegalArgumentException e) {
-            Log.e(TAG, "Error can't create AudioRecord ", e);
+        } catch (e: IllegalArgumentException) {
+            Log.e(TAG, "Error can't create AudioRecord ", e)
         }
-
-        return null;
+        return null
     }
 
-    private class ProcessVoice implements Runnable {
+    private inner class ProcessVoice : Runnable {
+        override fun run() {
+            Process.setThreadPriority(Process.THREAD_PRIORITY_AUDIO)
+            val size = frameSize.value
 
-        @Override
-        public void run() {
-            Process.setThreadPriority(Process.THREAD_PRIORITY_AUDIO);
-            int size = vad.getFrameSize().getValue();
-
-            while (!Thread.interrupted() && isListening && audioRecord != null) {
-                short[] buffer = new short[size];
-
-                audioRecord.read(buffer, 0, buffer.length);
-
-                detectSpeech(buffer);
+            while (!Thread.interrupted() && isListening) {
+                val buffer = ShortArray(size)
+                audioRecord?.read(buffer, 0, buffer.size)
+                callback.onAudio(buffer)
             }
         }
-
-        private void detectSpeech(short[] buffer) {
-            vad.setContinuousSpeechListener(buffer, new VadListener() {
-                @Override
-                public void onSpeechDetected() {
-                    callback.onSpeechDetected();
-                }
-
-                @Override
-                public void onNoiseDetected() {
-                    callback.onNoiseDetected();
-                }
-            });
-        }
     }
 
-    public interface Listener {
-        void onSpeechDetected();
-
-        void onNoiseDetected();
+    interface AudioCallback {
+        fun onAudio(audioData: ShortArray)
     }
-
 }
