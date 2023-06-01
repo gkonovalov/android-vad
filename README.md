@@ -1,6 +1,8 @@
 ## Android Voice Activity Detection (VAD)
-This [VAD](https://en.wikipedia.org/wiki/Voice_activity_detection) library can process audio in real-time and identify presence of human speech in an audio sample
-that contains a mixture of speech and noise. The VAD functionality operates offline, performing all processing tasks directly on the mobile device.
+This [VAD](https://en.wikipedia.org/wiki/Voice_activity_detection) library can process audio in 
+real-time and identify presence of human speech in an audio sample
+that contains a mixture of speech and noise. The VAD functionality operates offline, performing all 
+processing tasks directly on the mobile device.
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/gkonovalov/android-vad/master/demo.gif" alt="drawing" height="400"/>
@@ -8,8 +10,10 @@ that contains a mixture of speech and noise. The VAD functionality operates offl
 
 The library offers two distinct models for voice activity detection:
 
-[Silero VAD](https://github.com/snakers4/silero-vad) [[1]](#1) is based on a Deep Neural Networks [(DNN)](https://en.wikipedia.org/wiki/Deep_learning)
-and utilizes the ONNX Runtime Mobile for execution. It exhibits exceptional accuracy and achieves processing times that are very close to WebRTC VAD.
+[Silero VAD](https://github.com/snakers4/silero-vad) [[1]](#1) is based on a Deep Neural Networks 
+[(DNN)](https://en.wikipedia.org/wiki/Deep_learning) and utilizes the 
+[ONNX Runtime Mobile](https://onnxruntime.ai/docs/install/#install-on-web-and-mobile) for execution. 
+It exhibits exceptional accuracy and achieves processing times that are very close to WebRTC VAD.
 
 [WebRTC VAD](https://chromium.googlesource.com/external/webrtc/+/branch-heads/43/webrtc/common_audio/vad/) [[2]](#2)
 is based on a Gaussian Mixture Model [(GMM)](http://en.wikipedia.org/wiki/Mixture_model#Gaussian_mixture_model)
@@ -20,11 +24,13 @@ However, it may exhibit relatively lower accuracy when it comes to differentiati
   <img src="https://user-images.githubusercontent.com/12515440/228640066-20391c8b-d745-4ef5-a771-a0ad2561cf26.png" />
 </p>
 
-If your priority is higher accuracy, we recommend using Silero VAD DNN. For more detailed insights and a comprehensive
-comparison between DNN and GMM, we encourage you to refer to the following comparison [Silero VAD vs WebRTC VAD](https://github.com/snakers4/silero-vad/wiki/Quality-Metrics#vs-other-available-solutions).
+If your priority is higher accuracy, we recommend using Silero VAD DNN. For more detailed insights 
+and a comprehensive comparison between DNN and GMM, we encourage you to refer to the following 
+comparison [Silero VAD vs WebRTC VAD](https://github.com/snakers4/silero-vad/wiki/Quality-Metrics#vs-other-available-solutions).
 
 ## Parameters
-VAD library only accepts 16-bit mono PCM audio stream and can work with next Sample Rates, Frame Sizes and Classifiers.
+VAD library only accepts 16-bit mono PCM audio stream and can work with next Sample Rates, 
+Frame Sizes and Classifiers.
 
 ### Silero VAD
 <table>
@@ -139,7 +145,8 @@ VAD supports 2 different ways of detecting speech:
 Android VAD supports Android 5.0 (Lollipop) and later.
 
 ## Dependencies
-The library utilizes the ONNX runtime to run Silero VAD DNN, which requires the addition of necessary dependencies.
+The library utilizes the ONNX runtime to run Silero VAD DNN, which requires the addition of 
+necessary dependencies.
 
 ```groovy
 dependencies {
@@ -177,7 +184,8 @@ dependencies {
     implementation 'com.github.gkonovalov:android-vad:2.0.0'
 }
 ```
-You also can download precompiled AAR library and APK files from GitHub's [releases page](https://github.com/gkonovalov/android-vad/releases).
+You also can download precompiled AAR library and APK files from 
+GitHub's [releases page](https://github.com/gkonovalov/android-vad/releases).
 
 ## References
 
@@ -187,6 +195,8 @@ Number Detector and Language Classifier <a href="mailto:hello@silero.ai">hello@s
 
 <a id="2">[2]</a>
 [WebRTC VAD](https://chromium.googlesource.com/external/webrtc/+/branch-heads/43/webrtc/common_audio/vad/) -
-Voice Activity Detector from Google which is reportedly one of the best available: it's fast, modern and free. This algorithm has found wide adoption and has recently become one of the gold-standards for delay-sensitive scenarios like web-based interaction.
+Voice Activity Detector from Google which is reportedly one of the best available: it's fast, 
+modern and free. This algorithm has found wide adoption and has recently become one of the 
+gold-standards for delay-sensitive scenarios like web-based interaction.
 ------------
 Georgiy Konovalov 2023 (c) [MIT License](https://opensource.org/licenses/MIT)
