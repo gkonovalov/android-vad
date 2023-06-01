@@ -1,89 +1,78 @@
-package com.konovalov.vad.models;
+package com.konovalov.vad.models
 
-import android.content.Context;
+import android.content.Context
+import com.konovalov.vad.Vad
+import com.konovalov.vad.config.FrameSize
+import com.konovalov.vad.config.Mode
+import com.konovalov.vad.config.Model
+import com.konovalov.vad.config.SampleRate
 
-import com.konovalov.vad.Vad;
-import com.konovalov.vad.config.FrameSize;
-import com.konovalov.vad.config.Mode;
-import com.konovalov.vad.config.Model;
-import com.konovalov.vad.config.SampleRate;
+class VadBuilder private constructor() {
+    private var context: Context? = null
+    private lateinit var model: Model
+    private lateinit var sampleRate: SampleRate
+    private lateinit var frameSize: FrameSize
+    private lateinit var mode: Mode
+    private var speechDurationMs = 0
+    private var silenceDurationMs = 0
 
-public final class VadBuilder {
-
-    private Context context;
-    private Model model;
-    SampleRate sampleRate;
-    FrameSize frameSize;
-    Mode mode;
-    int speechDurationMs;
-    int silenceDurationMs;
-
-    private VadBuilder() {}
-
-    public static VadBuilder newBuilder() {
-        return new VadBuilder();
+    fun setModel(model: Model): VadBuilder = apply {
+        this.model = model
     }
 
-    public VadBuilder setContext(Context context) {
-        if (context.getApplicationContext() != null) {
-            this.context = context.getApplicationContext();
-        } else {
-            this.context = context;
-        }
-        return this;
+    fun setContext(context: Context): VadBuilder = apply {
+        this.context = context.applicationContext ?: context
     }
 
-    public VadBuilder setModel(Model model) {
-        this.model = model;
-        return this;
+    fun setSampleRate(sampleRate: SampleRate): VadBuilder = apply {
+        this.sampleRate = sampleRate
     }
 
-    public VadBuilder setSampleRate(SampleRate sampleRate) {
-        this.sampleRate = sampleRate;
-        return this;
+    fun setFrameSize(frameSize: FrameSize): VadBuilder = apply {
+        this.frameSize = frameSize
     }
 
-    public VadBuilder setFrameSize(FrameSize frameSize) {
-        this.frameSize = frameSize;
-        return this;
+    fun setMode(mode: Mode): VadBuilder = apply {
+        this.mode = mode
     }
 
-    public VadBuilder setMode(Mode mode) {
-        this.mode = mode;
-        return this;
+    fun setSpeechDurationMs(speechDurationMs: Int): VadBuilder = apply {
+        this.speechDurationMs = speechDurationMs
     }
 
-    public VadBuilder setSpeechDurationMs(int speechDurationMs) {
-        this.speechDurationMs = speechDurationMs;
-        return this;
+    fun setSilenceDurationMs(silenceDurationMs: Int): VadBuilder = apply {
+        this.silenceDurationMs = silenceDurationMs
     }
 
-    public VadBuilder setSilenceDurationMs(int silenceDurationMs) {
-        this.silenceDurationMs = silenceDurationMs;
-        return this;
-    }
-
-    public Vad build() {
-        if (model == null) {
-            throw new NullPointerException("Non-null Model required!");
+    fun build(): Vad {
+        require(!(context == null && model == Model.SILERO_DNN)) {
+            "Context is required for Model.SILERO_DNN!"
         }
 
-        if (this.context == null && model == Model.SILERO_DNN) {
-            throw new IllegalArgumentException("Context is required for Model.SILERO_DNN!");
-        }
+        return when (model) {
+            Model.WEB_RTC_GMM -> VadWebRTC(
+                sampleRate,
+                frameSize,
+                mode,
+                speechDurationMs,
+                silenceDurationMs
+            )
 
-        return createModel();
+            Model.SILERO_DNN -> VadSilero(
+                context!!,
+                sampleRate,
+                frameSize,
+                mode,
+                speechDurationMs,
+                silenceDurationMs
+            )
+        }
     }
 
-
-    private Vad createModel() {
-        switch (model) {
-            case WEB_RTC_GMM:
-                return new VadWebRTC(this);
-            case SILERO_DNN:
-                return new VadSilero(context, this);
-            default:
-                throw new IllegalArgumentException("Model is incorrect!");
+    companion object {
+        @JvmStatic
+        fun modelBuilder(): VadBuilder {
+            return VadBuilder()
         }
     }
 }

@@ -1,6 +1,6 @@
-package com.konovalov.vad.config;
+package com.konovalov.vad.config
 
-public enum FrameSize {
+enum class FrameSize(val value: Int) {
     FRAME_SIZE_80(80),
     FRAME_SIZE_160(160),
     FRAME_SIZE_240(240),
@@ -14,14 +14,4 @@ public enum FrameSize {
     FRAME_SIZE_1024(1024),
     FRAME_SIZE_1440(1440),
     FRAME_SIZE_1536(1536);
-
-    private final int frameSize;
-
-    public int getValue() {
-        return frameSize;
-    }
-
-    FrameSize(int frameSize) {
-        this.frameSize = frameSize;
-    }
 }
