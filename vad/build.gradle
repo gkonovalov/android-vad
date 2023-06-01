@@ -49,7 +49,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.microsoft.onnxruntime:onnxruntime-android:1.14.0'
+    implementation 'com.microsoft.onnxruntime:onnxruntime-android:1.15.0'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test:runner:1.5.2'

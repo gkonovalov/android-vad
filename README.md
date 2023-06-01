@@ -1,116 +1,152 @@
-## Android Voice Activity Detection (VAD) 
-This VAD library can process audio in real-time utilizing 
-[Gaussian Mixture Model](http://en.wikipedia.org/wiki/Mixture_model#Gaussian_mixture_model) (GMM)
-which helps identify presence of human speech in an audio sample that contains a mixture of speech 
-and noise. VAD work offline and all processing done on device.
-  
-Library based on 
-[WebRTC VAD](https://chromium.googlesource.com/external/webrtc/+/branch-heads/43/webrtc/common_audio/vad/) 
-from Google which is reportedly one of the best available: it's fast, modern and free.
-This  algorithm has  found  wide adoption and has recently become one of 
-the gold-standards for delay-sensitive scenarios like web-based interaction.
-  
-If you are looking for a higher accuracy and faster processing time I recommend to use Deep Neural 
-Networks(DNN). Please see for reference the following paper with 
-[DNN vs GMM](https://www.microsoft.com/en-us/research/uploads/prod/2018/02/KoPhiliposeTashevZarar_ICASSP_2018.pdf)
-comparison.
+## Android Voice Activity Detection (VAD)
+This [VAD](https://en.wikipedia.org/wiki/Voice_activity_detection) library can process audio in real-time and identify presence of human speech in an audio sample
+that contains a mixture of speech and noise. The VAD functionality operates offline, performing all processing tasks directly on the mobile device.
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/gkonovalov/android-vad/master/demo.gif" alt="drawing" height="400"/>
 </p>
 
+The library offers two distinct models for voice activity detection:
+
+[Silero VAD](https://github.com/snakers4/silero-vad) [[1]](#1) is based on a Deep Neural Networks [(DNN)](https://en.wikipedia.org/wiki/Deep_learning)
+and utilizes the ONNX Runtime Mobile for execution. It exhibits exceptional accuracy and achieves processing times that are very close to WebRTC VAD.
+
+[WebRTC VAD](https://chromium.googlesource.com/external/webrtc/+/branch-heads/43/webrtc/common_audio/vad/) [[2]](#2)
+is based on a Gaussian Mixture Model [(GMM)](http://en.wikipedia.org/wiki/Mixture_model#Gaussian_mixture_model)
+is known for its exceptional speed and effectiveness in distinguishing between noise and silence.
+However, it may exhibit relatively lower accuracy when it comes to differentiating speech from background noise.
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/12515440/228640066-20391c8b-d745-4ef5-a771-a0ad2561cf26.png" />
+</p>
+
+If your priority is higher accuracy, we recommend using Silero VAD DNN. For more detailed insights and a comprehensive
+comparison between DNN and GMM, we encourage you to refer to the following comparison [Silero VAD vs WebRTC VAD](https://github.com/snakers4/silero-vad/wiki/Quality-Metrics#vs-other-available-solutions).
+
 ## Parameters
-VAD library only accepts 16-bit mono PCM audio stream and can work with next Sample Rates, Frame Sizes and Classifiers. 
+VAD library only accepts 16-bit mono PCM audio stream and can work with next Sample Rates, Frame Sizes and Classifiers.
+
+### Silero VAD
 <table>
 <tr>
 <td>
-&nbsp
 
-| Valid Sample Rate  | Valid Frame Size  |   
-|:-------------------|:------------------|   
-| 8000Hz             | 80, 160, 240      |  
-| 16000Hz            | 160, 320, 480     |   
-| 32000Hz            | 320, 640, 960     |   
-| 48000Hz            | 480, 960, 1440    |   
+| Valid Sample Rate |      Valid Frame Size      |
+|:-----------------:|:--------------------------:|
+|      8000Hz       |       256, 512, 768        |
+|      16000Hz      |      512, 1024, 1536       |
 </td>
 <td>
-&nbsp
 
 | Valid Classifiers |
 |:------------------|
 | NORMAL            |
-| LOW_BITRATE       |
 | AGGRESSIVE        |
 | VERY_AGGRESSIVE   |
 </td>
 </tr>
 </table>
 
+### WebRTC VAD
+<table>
+<tr>
+<td>
+
+| Valid Sample Rate | Valid Frame Size |
+|:-----------------:|:----------------:|
+|      8000Hz       |   80, 160, 240   |
+|      16000Hz      |  160, 320, 480   |
+|      32000Hz      |  320, 640, 960   |
+|      48000Hz      |  480, 960, 1440  |
+
+</td>
+<td>
+
+| Valid Classifiers |
+|:------------------|
+| NORMAL            |
+| AGGRESSIVE        |
+| VERY_AGGRESSIVE   |
+</td>
+</tr>
+</table>
 
 **Silence duration (ms)** - this parameter used in Continuous Speech detector,
-the value of this parameter will define the necessary and sufficient 
+the value of this parameter will define the necessary and sufficient
 duration of negative results to recognize it as silence.
- 
-**Voice duration (ms)** - this parameter used in Continuous Speech detector,
-the value of this parameter will define the necessary and sufficient 
+
+**Speech duration (ms)** - this parameter used in Continuous Speech detector,
+the value of this parameter will define the necessary and sufficient
 duration of positive results to recognize result as speech.
 
 Recommended parameters:
+* Model - **SILERO_DNN**,
 * Sample Rate - **16KHz**,
-* Frame Size - **160**,
+* Frame Size - **512**,
 * Mode - **VERY_AGGRESSIVE**,
-* Silence Duration - **500ms**,
-* Voice Duration - **500ms**;
+* Silence Duration - **300ms**,
+* Speech Duration - **50ms**,
+* Android Context - only required for Silero VAD;
 
 ## Usage
 VAD supports 2 different ways of detecting speech:
-1. Continuous Speech listener was designed to detect long utterances 
-without returning false positive results when user makes pauses between 
-sentences.
-```java
- Vad vad = new Vad(VadConfig.newBuilder()
-                .setSampleRate(VadConfig.SampleRate.SAMPLE_RATE_16K)
-                .setFrameSize(VadConfig.FrameSize.FRAME_SIZE_160)
-                .setMode(VadConfig.Mode.VERY_AGGRESSIVE)
-                .setSilenceDurationMillis(500)
-                .setVoiceDurationMillis(500)
-                .build());
 
-        vad.start();
-        
-        vad.addContinuousSpeechListener(short[] audioFrame, new VadListener() {
+1. Continuous Speech listener was designed to detect long utterances
+   without returning false positive results when user makes pauses between
+   sentences.
+```java
+        Vad vad = VadBuilder.newBuilder()
+                    .setModel(Model.SILERO_DNN)
+                    .setSampleRate(SampleRate.SAMPLE_RATE_16K)
+                    .setFrameSize(FrameSize.FRAME_SIZE_512)
+                    .setMode(Mode.VERY_AGGRESSIVE)
+                    .setSilenceDurationMs(300)
+                    .setSpeechDurationMs(50)
+                    .setContext(MainActivity.this)
+                    .build();
+
+        vad.setContinuousSpeechListener(short[] audioFrame, new VadListener() {
             @Override
             public void onSpeechDetected() {
-                //speech detected!
+
             }
 
             @Override
             public void onNoiseDetected() {
-                //noise detected!
+
             }
         });
-        
-        vad.stop();
+
+        vad.close();
 ```
 
-2. Speech detector was designed to detect speech/noise in small audio 
-frames and return result for every frame. This method will not work for 
-long utterances.
+2. Speech detector was designed to detect speech/noise in small audio
+   frames and return result for every frame. This method will not work for
+   long utterances.
 ```java
- Vad vad = new Vad(VadConfig.newBuilder()
-                .setSampleRate(VadConfig.SampleRate.SAMPLE_RATE_16K)
-                .setFrameSize(VadConfig.FrameSize.FRAME_SIZE_160)
-                .setMode(VadConfig.Mode.VERY_AGGRESSIVE)
-                .build());
+        Vad vad = VadBuilder.newBuilder()
+                    .setModel(Model.WEB_RTC_GMM)
+                    .setSampleRate(SampleRate.SAMPLE_RATE_16K)
+                    .setFrameSize(FrameSize.FRAME_SIZE_160)
+                    .setMode(Mode.VERY_AGGRESSIVE)
+                    .build();
 
-        vad.start();
-        
         boolean isSpeech = vad.isSpeech(short[] audioFrame);
-        
-        vad.stop();
+
+        vad.close();
 ```
 ## Requirements
-Android VAD supports Android 4.1 (Jelly Bean) and later.
+Android VAD supports Android 5.0 (Lollipop) and later.
+
+## Dependencies
+The library utilizes the ONNX runtime to run Silero VAD DNN, which requires the addition of necessary dependencies.
+
+```groovy
+dependencies {
+   implementation 'com.microsoft.onnxruntime:onnxruntime-android:1.15.0'
+}
+```
+
 
 ## Development
 
@@ -138,11 +174,19 @@ allprojects {
 2. Add the dependency
 ```groovy
 dependencies {
-    implementation 'com.github.gkonovalov:android-vad:1.0.1'
+    implementation 'com.github.gkonovalov:android-vad:2.0.0'
 }
 ```
-
 You also can download precompiled AAR library and APK files from GitHub's [releases page](https://github.com/gkonovalov/android-vad/releases).
 
+## References
+
+<a id="1">[1]</a>
+[Silero VAD](https://github.com/snakers4/silero-vad) - pre-trained enterprise-grade Voice Activity Detector,
+Number Detector and Language Classifier <a href="mailto:hello@silero.ai">hello@silero.ai</a>.
+
+<a id="2">[2]</a>
+[WebRTC VAD](https://chromium.googlesource.com/external/webrtc/+/branch-heads/43/webrtc/common_audio/vad/) -
+Voice Activity Detector from Google which is reportedly one of the best available: it's fast, modern and free. This algorithm has found wide adoption and has recently become one of the gold-standards for delay-sensitive scenarios like web-based interaction.
 ------------
-Georgiy Konovalov 2021 (c) [MIT License](https://opensource.org/licenses/MIT)
+Georgiy Konovalov 2023 (c) [MIT License](https://opensource.org/licenses/MIT)
