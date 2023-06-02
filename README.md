@@ -12,20 +12,20 @@ The library offers two distinct models for voice activity detection:
 [Silero VAD](https://github.com/snakers4/silero-vad) [[1]](#1) is based on a Deep Neural Networks 
 [(DNN)](https://en.wikipedia.org/wiki/Deep_learning) and utilizes the 
 [ONNX Runtime Mobile](https://onnxruntime.ai/docs/install/#install-on-web-and-mobile) for execution. 
-It exhibits exceptional accuracy and achieves processing time that are very close to WebRTC VAD.
+It provides exceptional accuracy and achieves processing time that are very close to WebRTC VAD.
 
 [WebRTC VAD](https://chromium.googlesource.com/external/webrtc/+/branch-heads/43/webrtc/common_audio/vad/) [[2]](#2)
 is based on a Gaussian Mixture Model [(GMM)](http://en.wikipedia.org/wiki/Mixture_model#Gaussian_mixture_model)
-is known for its exceptional speed and effectiveness in distinguishing between noise and silence.
-However, it may exhibit relatively lower accuracy when it comes to differentiating speech from background noise.
+which is known for its exceptional speed and effectiveness in distinguishing between noise and silence.
+However, it may show relatively lower accuracy when it comes to differentiating speech from background noise.
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/12515440/228640066-20391c8b-d745-4ef5-a771-a0ad2561cf26.png" />
 </p>
 
-If your priority is higher accuracy, we recommend using Silero VAD DNN. For more detailed insights 
-and a comprehensive comparison between DNN and GMM, we encourage you to refer to the following 
-comparison [Silero VAD vs WebRTC VAD](https://github.com/snakers4/silero-vad/wiki/Quality-Metrics#vs-other-available-solutions).
+If your priority is higher accuracy, I recommend using Silero VAD DNN. For more detailed insights 
+and a comprehensive comparison between DNN and GMM, refer to the following comparison 
+[Silero VAD vs WebRTC VAD](https://github.com/snakers4/silero-vad/wiki/Quality-Metrics#vs-other-available-solutions).
 
 ## Parameters
 VAD library only accepts 16-bit mono PCM audio stream and can work with next Sample Rates, 
