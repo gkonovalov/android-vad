@@ -23,6 +23,7 @@ class VoiceRecorder(val callback: AudioCallback) {
     fun start(sampleRate: SampleRate, frameSize: FrameSize) {
         this.sampleRate = sampleRate
         this.frameSize = frameSize
+        stop()
 
         audioRecord = createAudioRecord()
         if (audioRecord != null) {
