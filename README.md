@@ -3,10 +3,6 @@ Android [VAD](https://en.wikipedia.org/wiki/Voice_activity_detection) library is
 real-time and identify presence of human speech in audio samples that contain a mixture of speech 
 and noise. The VAD functionality operates offline, performing all processing tasks directly on the mobile device.
 
-<p align="center">
-   <img src="https://raw.githubusercontent.com/gkonovalov/android-vad/master/demo.gif" alt="drawing" height="500"/>
-</p>
-
 The library offers two distinct models for voice activity detection:
 
 [Silero VAD](https://github.com/snakers4/silero-vad) [[1]](#1) is based on a Deep Neural Networks 
@@ -139,7 +135,7 @@ VAD supports 2 different ways of detecting speech:
 ```
 
 ## Requirements
-Android VAD supports Android 5.0 (Lollipop) and later.
+Android VAD supports Android 5.0 (Lollipop) and later and require JDK 17 or later.
 
 ## Dependencies
 The library utilizes the ONNX runtime to run Silero VAD DNN, which requires the addition of 
