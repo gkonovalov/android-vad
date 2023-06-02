@@ -20,7 +20,7 @@ which is known for its exceptional speed and effectiveness in distinguishing bet
 However, it may show relatively lower accuracy when it comes to differentiating speech from background noise.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/gkonovalov/android-vad/master/comparison-silero-vs-webrtc.png" />
+  <img src="https://raw.githubusercontent.com/gkonovalov/android-vad/master/comparison.png" />
 </p>
 
 If your priority is higher accuracy, I recommend using Silero VAD DNN. For more detailed insights 
