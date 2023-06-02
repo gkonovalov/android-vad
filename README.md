@@ -84,8 +84,8 @@ Recommended parameters:
 * Frame Size - **512**,
 * Mode - **VERY_AGGRESSIVE**,
 * Silence Duration - **300ms**,
-* Speech Duration - **50ms**.
-* Android Context - only required for Silero VAD;
+* Speech Duration - **50ms**,
+* Android Context - only required for Silero VAD.
 
 ## Usage
 VAD supports 2 different ways of detecting speech:
