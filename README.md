@@ -4,7 +4,7 @@ real-time and identify presence of human speech in audio samples that contain a 
 and noise. The VAD functionality operates offline, performing all processing tasks directly on the mobile device.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/gkonovalov/android-vad/master/demo.gif" alt="drawing" height="400"/>
+<img src="https://raw.githubusercontent.com/gkonovalov/android-vad/master/demo.gif" alt="drawing" height="300"/>
 </p>
 
 The library offers two distinct models for voice activity detection:
@@ -109,7 +109,7 @@ VAD supports 2 different ways of detecting speech:
         .setContext(applicationContext)
         .build()
 
-    vad.setContinuousSpeechListener(audioData: ShortArray, object : VadListener {
+    vad.setContinuousSpeechListener(audioData, object : VadListener {
         override fun onSpeechDetected() {
             //speech detected!
         }
@@ -121,23 +121,23 @@ VAD supports 2 different ways of detecting speech:
 
     vad.close()
 ```
-
 2. Speech detector was designed to detect speech/noise in short audio
    frames and return result for every frame. This method will not work for
    long utterances.
 
 ```kotlin
-    val vad = VadBuilder.newBuilder()
+    val vad = Vad.builder()
         .setModel(Model.WEB_RTC_GMM)
         .setSampleRate(SampleRate.SAMPLE_RATE_16K)
         .setFrameSize(FrameSize.FRAME_SIZE_160)
         .setMode(Mode.VERY_AGGRESSIVE)
         .build()
 
-    val isSpeech = vad.isSpeech(audioData: ShortArray)
+    val isSpeech = vad.isSpeech(audioData)
 
     vad.close()
 ```
+
 ## Requirements
 Android VAD supports Android 5.0 (Lollipop) and later.
 
@@ -151,9 +151,7 @@ dependencies {
 }
 ```
 
-
 ## Development
-
 To open the project in Android Studio:
 
 1. Go to *File* menu or the *Welcome Screen*
@@ -185,7 +183,6 @@ You also can download precompiled AAR library and APK files from
 GitHub's [releases page](https://github.com/gkonovalov/android-vad/releases).
 
 ## References
-
 <a id="1">[1]</a>
 [Silero VAD](https://github.com/snakers4/silero-vad) - pre-trained enterprise-grade Voice Activity Detector,
 Number Detector and Language Classifier <a href="mailto:hello@silero.ai">hello@silero.ai</a>.
