@@ -14,6 +14,34 @@ import java.nio.FloatBuffer
 import java.nio.LongBuffer
 import kotlin.reflect.cast
 
+/**
+ * Created by Georgiy Konovalov on 1/06/2023.
+ * <p>
+ * The Silero VAD algorithm, based on DNN, analyzes the audio signal to determine whether it
+ * contains speech or non-speech segments. It offers higher accuracy in differentiating speech from
+ * background noise compared to the WebRTC VAD algorithm.
+ *
+ * The Silero VAD supports the following parameters:
+ *
+ * Sample Rates: 8000Hz, 16000Hz
+ *
+ * Frame Sizes (per sample rate):
+ *             For 8000Hz: 256, 512, 768
+ *             For 16000Hz: 512, 1024, 1536
+ *
+ * Mode: NORMAL, AGGRESSIVE, VERY_AGGRESSIVE
+ *
+ * Please note that the VAD class supports these specific combinations of sample
+ * rates and frame sizes, and the classifiers determine the aggressiveness of the voice
+ * activity detection algorithm.
+ * </p>
+ * @param context The context is required and helps with reading the model file from the file system.
+ * @param sampleRate The sample rate of the audio input.
+ * @param frameSize The frame size of the audio input.
+ * @param mode The mode of the VAD model.
+ * @param speechDurationMs The minimum duration in milliseconds for speech segments.
+ * @param silenceDurationMs The minimum duration in milliseconds for silence segments.
+ */
 internal class VadSilero(
     context: Context,
     sampleRate: SampleRate,

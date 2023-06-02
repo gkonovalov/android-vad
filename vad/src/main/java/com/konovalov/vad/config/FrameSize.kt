@@ -1,5 +1,12 @@
 package com.konovalov.vad.config
 
+/**
+ * Created by Georgiy Konovalov on 1/06/2023.
+ * <p>
+ * Enum class representing different frame sizes used in the VAD algorithm.
+ * </p>
+ * @property value The numeric value associated with the FrameSize.
+ */
 enum class FrameSize(val value: Int) {
     FRAME_SIZE_80(80),
     FRAME_SIZE_160(160),
