@@ -1,10 +1,10 @@
 ## Android Voice Activity Detection (VAD)
 Android [VAD](https://en.wikipedia.org/wiki/Voice_activity_detection) library is designed to process audio in 
-real-time and identify presence of human speech in an audio samples that contain a mixture of speech 
+real-time and identify presence of human speech in audio samples that contain a mixture of speech 
 and noise. The VAD functionality operates offline, performing all processing tasks directly on the mobile device.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/gkonovalov/android-vad/master/demo.gif" alt="drawing" height="400"/>
+<img src="https://raw.githubusercontent.com/gkonovalov/android-vad/master/demo.gif" alt="drawing" height="50%"/>
 </p>
 
 The library offers two distinct models for voice activity detection:
@@ -12,12 +12,12 @@ The library offers two distinct models for voice activity detection:
 [Silero VAD](https://github.com/snakers4/silero-vad) [[1]](#1) is based on a Deep Neural Networks 
 [(DNN)](https://en.wikipedia.org/wiki/Deep_learning) and utilizes the 
 [ONNX Runtime Mobile](https://onnxruntime.ai/docs/install/#install-on-web-and-mobile) for execution. 
-It provides exceptional accuracy and achieves processing time that are very close to WebRTC VAD.
+It provides exceptional accuracy and achieves processing time that is very close to WebRTC VAD.
 
 [WebRTC VAD](https://chromium.googlesource.com/external/webrtc/+/branch-heads/43/webrtc/common_audio/vad/) [[2]](#2)
 is based on a Gaussian Mixture Model [(GMM)](http://en.wikipedia.org/wiki/Mixture_model#Gaussian_mixture_model)
 which is known for its exceptional speed and effectiveness in distinguishing between noise and silence.
-However, it may show relatively lower accuracy when it comes to differentiating speech from background noise.
+However, it may demonstrate relatively lower accuracy when it comes to differentiating speech from background noise.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/gkonovalov/android-vad/master/comparison.png" />
