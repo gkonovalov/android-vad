@@ -1,8 +1,7 @@
 ## Android Voice Activity Detection (VAD)
 This [VAD](https://en.wikipedia.org/wiki/Voice_activity_detection) library can process audio in 
-real-time and identify presence of human speech in an audio sample
-that contains a mixture of speech and noise. The VAD functionality operates offline, performing all 
-processing tasks directly on the mobile device.
+real-time and identify presence of human speech in an audio samples that contain a mixture of speech 
+and noise. The VAD functionality operates offline, performing all processing tasks directly on the mobile device.
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/gkonovalov/android-vad/master/demo.gif" alt="drawing" height="400"/>
