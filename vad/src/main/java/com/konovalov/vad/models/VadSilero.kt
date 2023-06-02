@@ -49,7 +49,7 @@ internal class VadSilero(
     mode: Mode,
     speechDurationMs: Int,
     silenceDurationMs: Int
-) : VadModel(
+) : VadBase(
     sampleRate,
     frameSize,
     mode,

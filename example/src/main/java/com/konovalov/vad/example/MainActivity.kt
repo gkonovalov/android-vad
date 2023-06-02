@@ -9,7 +9,7 @@ import android.widget.Spinner
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.konovalov.vad.Vad
+import com.konovalov.vad.models.VadModel
 import com.konovalov.vad.VadListener
 import com.konovalov.vad.Validator.getValidFrameSizes
 import com.konovalov.vad.Validator.getValidSampleRates
@@ -19,7 +19,7 @@ import com.konovalov.vad.config.Model
 import com.konovalov.vad.config.SampleRate
 import com.konovalov.vad.example.recorder.VoiceRecorder
 import com.konovalov.vad.example.recorder.VoiceRecorder.AudioCallback
-import com.konovalov.vad.models.VadBuilder
+import com.konovalov.vad.Vad
 import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.RuntimePermissions
 
@@ -53,14 +53,14 @@ class MainActivity : AppCompatActivity(), AudioCallback, View.OnClickListener,
     private lateinit var modelAdapter: ArrayAdapter<String>
 
     private lateinit var recorder: VoiceRecorder
-    private lateinit var vad: Vad
+    private lateinit var vad: VadModel
     private var isRecording = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        vad = VadBuilder.modelBuilder()
+        vad = Vad.builder()
             .setModel(DEFAULT_MODEL)
             .setSampleRate(DEFAULT_SAMPLE_RATE)
             .setFrameSize(DEFAULT_FRAME_SIZE)
@@ -180,7 +180,7 @@ class MainActivity : AppCompatActivity(), AudioCallback, View.OnClickListener,
                 modeSpinner.setSelection(modes().indexOf(DEFAULT_MODE.name))
 
                 vad.close()
-                vad = VadBuilder.modelBuilder()
+                vad = Vad.builder()
                     .setModel(model)
                     .setSampleRate(sampleRate)
                     .setFrameSize(frameSize)
