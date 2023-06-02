@@ -1,5 +1,5 @@
 ## Android Voice Activity Detection (VAD)
-This [VAD](https://en.wikipedia.org/wiki/Voice_activity_detection) library can process audio in 
+Android [VAD](https://en.wikipedia.org/wiki/Voice_activity_detection) library is designed to process audio in 
 real-time and identify presence of human speech in an audio samples that contain a mixture of speech 
 and noise. The VAD functionality operates offline, performing all processing tasks directly on the mobile device.
 
@@ -20,7 +20,7 @@ which is known for its exceptional speed and effectiveness in distinguishing bet
 However, it may show relatively lower accuracy when it comes to differentiating speech from background noise.
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/12515440/228640066-20391c8b-d745-4ef5-a771-a0ad2561cf26.png" />
+  <img src="https://raw.githubusercontent.com/gkonovalov/android-vad/master/comparison-silero-vs-webrtc.png" />
 </p>
 
 If your priority is higher accuracy, I recommend using Silero VAD DNN. For more detailed insights 
@@ -76,13 +76,11 @@ Frame Sizes and Classifiers.
 </tr>
 </table>
 
-**Silence duration (ms)** - this parameter used in Continuous Speech detector,
-the value of this parameter will define the necessary and sufficient
-duration of negative results to recognize it as silence.
+**Silence duration (ms)** - This parameter is utilized in the Continuous Speech detector. 
+It determines the required duration of consecutive negative results to recognize it as silence.
 
-**Speech duration (ms)** - this parameter used in Continuous Speech detector,
-the value of this parameter will define the necessary and sufficient
-duration of positive results to recognize result as speech.
+**Speech duration (ms)** - This parameter is used in the Continuous Speech detector. 
+It specifies the necessary duration of consecutive positive results to recognize it as speech.
 
 Recommended parameters:
 * Model - **SILERO_DNN**,
@@ -124,7 +122,7 @@ VAD supports 2 different ways of detecting speech:
     vad.close()
 ```
 
-2. Speech detector was designed to detect speech/noise in small audio
+2. Speech detector was designed to detect speech/noise in short audio
    frames and return result for every frame. This method will not work for
    long utterances.
 
