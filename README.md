@@ -4,7 +4,7 @@ real-time and identify presence of human speech in audio samples that contain a 
 and noise. The VAD functionality operates offline, performing all processing tasks directly on the mobile device.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/gkonovalov/android-vad/master/demo.gif" alt="drawing" height="300"/>
+<img src="https://raw.githubusercontent.com/gkonovalov/android-vad/master/demo.gif" alt="drawing" height="500"/>
 </p>
 
 The library offers two distinct models for voice activity detection:
