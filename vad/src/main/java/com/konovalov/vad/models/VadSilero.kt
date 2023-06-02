@@ -64,6 +64,13 @@ internal class VadSilero(
     private var h = FloatArray(128)
     private var c = FloatArray(128)
 
+    /**
+     * <p>
+     * Initializes the ONNIX Runtime by creating a session with the provided model file and session options.
+     * The session will be used for making predictions.
+     * </p>
+     * @param context The context required for accessing the model file.
+     */
     init {
         val env = OrtEnvironment.getEnvironment()
         val sessionOptions = SessionOptions()
@@ -73,10 +80,29 @@ internal class VadSilero(
         session = env.createSession(getModel(context), sessionOptions)
     }
 
+    /**
+     * <p>
+     * Determines if the provided audio data contains speech based on the inference result.
+     * The audio data is passed to the model for prediction. The result is obtained and compared
+     * with the threshold value to determine if it represents speech.
+     * </p>
+     * @param audioData The audio data to analyze.
+     * @return True if speech is detected, false otherwise.
+     */
     override fun isSpeech(audioData: ShortArray): Boolean {
         return getResult(session?.run(getInputTensors(audioData))) > threshold()
     }
 
+    /**
+     * <p>
+     * Retrieves and processes the output tensors to obtain the confidence value.
+     * The output tensor contains the confidence value, as well as the updated hidden state (H)
+     * and cell state (C) values. The H and C values are flattened and converted to float arrays
+     * for further processing.
+     * </p>
+     * @param output The result of the inference session.
+     * @return The confidence value.
+     */
     private fun getResult(output: OrtSession.Result?): Float {
         val confidence = Array<FloatArray>::class.cast(output?.get(OutputTensors.OUTPUT)?.value)
         val hn = Array<Array<FloatArray>>::class.cast(output?.get(OutputTensors.HN)?.value)
@@ -88,6 +114,18 @@ internal class VadSilero(
         return confidence[0][0]
     }
 
+    /**
+     * <p>
+     * Creates and returns a map of input tensors for the given audio data, Sample Rate and Frame Size.
+     * The audio data is converted to a float array and wrapped in an OnnxTensor with the
+     * corresponding tensor shape. The sample rate, hidden state (H), and cell state (C) tensors
+     * are also created and added to the map.
+     * </p>
+     * @param audioData The audio data as a ShortArray.
+     * @return A map of input tensors as a Map<String, OnnxTensor>.
+     * @throws OrtException If there was an error in creating the
+     * tensors or obtaining the OrtEnvironment.
+     */
     private fun getInputTensors(audioData: ShortArray): Map<String, OnnxTensor> {
         val env = OrtEnvironment.getEnvironment()
 
@@ -115,24 +153,56 @@ internal class VadSilero(
         )
     }
 
+    /**
+     * <p>
+     * Retrieves the model data as a byte array from R.raw.silero_vad.
+     * </p>
+     * @param context The android application context.
+     * @return The model data as a ByteArray.
+     */
     private fun getModel(context: Context): ByteArray {
         return context.resources.openRawResource(R.raw.silero_vad).readBytes()
     }
 
+    /**
+     * <p>
+     * Calculates and returns the threshold value based on the value of detection mode.
+     * The threshold value represents the confidence level required for VAD to make proper decision.
+     * ex. Mode.VERY_AGGRESSIVE requiring a very high prediction accuracy from the model.
+     * </p>
+     * @return The threshold Float value.
+     */
     private fun threshold(): Float = when (mode) {
         Mode.AGGRESSIVE -> 0.8f
         Mode.VERY_AGGRESSIVE -> 0.95f
         else -> 0.5f
     }
 
+    /**
+     * <p>
+     * Return current model type.
+     * </p>
+     * @return {@code Model.SILERO_DNN}
+     */
     override val model: Model
         get() = Model.SILERO_DNN
 
+    /**
+     * <p>
+     * Closes the ONNX Session and releases all associated resources.
+     * This method should be called when the VAD is no longer needed to free up system resources.
+     * </p>
+     */
     override fun close() {
         session?.close()
         session = null
     }
 
+    /**
+     * <p>
+     * Constants representing the input tensor names used during model prediction.
+     * </p>
+     */
     object InputTensors {
         const val INPUT = "input"
         const val SR = "sr"
@@ -140,6 +210,11 @@ internal class VadSilero(
         const val C = "c"
     }
 
+    /**
+     * <p>
+     * Constants representing the output tensor names used when the model returns a result.
+     * </p>
+     */
     object OutputTensors {
         const val OUTPUT = 0
         const val HN = 1

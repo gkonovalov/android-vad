@@ -54,7 +54,8 @@ internal class VadWebRTC(
 
     /**
      * <p>
-     * This constructor initializes the WebRTC VAD and sets the voice filtration mode.
+     * This constructor Initializes the native component of the WebRTC VAD by calling the native
+     * initialization function and sets the voice filtration mode.
      * </p>
      * @throws IllegalArgumentException If there was an error initializing the VAD.
      */
@@ -66,7 +67,7 @@ internal class VadWebRTC(
 
     /**
      * <p>
-     * Determines whether the given audio data is speech or not.
+     * Determines whether the given audio frame is speech or not.
      * This method checks if the WEBRTC VAD is initialized and calls the native
      * function to perform the speech detection on the provided audio data.
      * </p>
@@ -81,8 +82,10 @@ internal class VadWebRTC(
     }
 
     /**
+     * <p>
      * Sets the mode of the WebRTC VAD.
-     * <p>The mode determines the aggressiveness of the voice activity detection algorithm.</p>
+     * The mode determines the aggressiveness of the voice activity detection algorithm.
+     * </p>
      * @param mode The mode to set.
      */
     override var mode: Mode
@@ -94,7 +97,7 @@ internal class VadWebRTC(
 
     /**
      * <p>
-     * Return current model type
+     * Return current model type.
      * </p>
      * @return {@code Model.WEB_RTC_GMM}
      */
@@ -114,6 +117,12 @@ internal class VadWebRTC(
         }
     }
 
+    /**
+     * <p>
+     * Sets the mode of the WebRTC VAD from global settings.
+     * The mode determines the aggressiveness of the voice activity detection algorithm.
+     * </p>
+     */
     private fun setMode() {
         if (isVadInitialized()) {
             nativeSetMode(nativeHandle, mode.value)
@@ -128,14 +137,21 @@ internal class VadWebRTC(
      */
     private fun isVadInitialized(): Boolean = nativeHandle > 0
 
+    /**
+     * <p>
+     * The JNI methods bind to the native WebRTC VAD library.
+     * </p>
+     */
     private external fun nativeInit(): Long
     private external fun nativeSetMode(nativeHandle: Long, mode: Int): Boolean
     private external fun nativeIsSpeech(nativeHandle: Long, sampleRate: Int, frameSize: Int, audio: ShortArray?): Boolean
     private external fun nativeDestroy(nativeHandle: Long)
 
     /**
-     * <p>Loading the native library required for JNI operations. It uses the System.loadLibrary()
+     * <p>
+     * Loading the native library required for JNI operations. It uses the System.loadLibrary()
      * method to load the "vad_jni" library during class initialization.
+     * </p>
      */
     companion object {
         init {

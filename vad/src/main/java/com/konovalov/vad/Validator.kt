@@ -4,8 +4,19 @@ import com.konovalov.vad.config.FrameSize
 import com.konovalov.vad.config.Model
 import com.konovalov.vad.config.SampleRate
 
+/**
+ * Created by Georgiy Konovalov on 1/06/2023.
+ * <p>
+ * Validator responsible for validating sample rates and frame sizes for different VAD models.
+ * </p>
+ */
 object Validator {
 
+    /**
+     * <p>
+     * Valid sample rates and frame sizes for WebRTC VAD GMM model.
+     * </p>
+     */
     private val WEB_RTC_VALID_FRAMES: Map<SampleRate, List<FrameSize>> = mapOf(
         SampleRate.SAMPLE_RATE_8K to listOf(
             FrameSize.FRAME_SIZE_80,
@@ -29,6 +40,11 @@ object Validator {
         )
     )
 
+    /**
+     * <p>
+     * Valid Sample Rates and Frame Sizes for Silero VAD DNN model.
+     * </p>
+     */
     private val SILERO_VALID_FRAMES: Map<SampleRate, List<FrameSize>> = mapOf(
         SampleRate.SAMPLE_RATE_8K to listOf(
             FrameSize.FRAME_SIZE_256,
@@ -42,6 +58,14 @@ object Validator {
         )
     )
 
+    /**
+     * <p>
+     * Validates the sample rate for a given VAD model.
+     * </p>
+     * @param model The VAD model to validate.
+     * @param sampleRate The sample rate to validate.
+     * @throws IllegalArgumentException if the sample rate is not supported by the model.
+     */
     @JvmStatic
     fun validateSampleRate(model: Model, sampleRate: SampleRate) {
         require(getValidSampleRates(model).contains(sampleRate)) {
@@ -49,6 +73,16 @@ object Validator {
         }
     }
 
+    /**
+     * <p>
+     * Validates the frame size for a given VAD model and sample rate.
+     * </p>
+     * @param model The VAD model to validate.
+     * @param sampleRate The sample rate to validate.
+     * @param frameSize The frame size to validate.
+     * @throws IllegalArgumentException if the frame size is not supported by the
+     * model and sample rate combination.
+     */
     @JvmStatic
     fun validateFrameSize(model: Model, sampleRate: SampleRate, frameSize: FrameSize) {
         require(getValidFrameSizes(model, sampleRate).contains(frameSize)) {
@@ -56,6 +90,14 @@ object Validator {
         }
     }
 
+    /**
+     * <p>
+     * Returns the valid frame sizes for a given VAD model and sample rate.
+     * </p>
+     * @param model The VAD model to retrieve valid frame sizes for.
+     * @param sampleRate The sample rate to retrieve valid frame sizes for.
+     * @return The list of valid frame sizes.
+     */
     @JvmStatic
     fun getValidFrameSizes(model: Model, sampleRate: SampleRate): List<FrameSize> {
         return when (model) {
@@ -64,6 +106,13 @@ object Validator {
         }
     }
 
+    /**
+     * <p>
+     * Returns the valid sample rates for a given VAD model.
+     * </p>
+     * @param model The VAD model to retrieve valid sample rates for.
+     * @return The list of valid sample rates.
+     */
     @JvmStatic
     fun getValidSampleRates(model: Model): List<SampleRate> {
         return when (model) {
