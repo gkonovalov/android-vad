@@ -31,7 +31,7 @@ and a comprehensive comparison between DNN and GMM, refer to the following compa
 VAD library only accepts 16-bit mono PCM audio stream and can work with next Sample Rates, 
 Frame Sizes and Classifiers.
 
-### Silero VAD
+#### Silero VAD
 <table>
 <tr>
 <td>
@@ -52,7 +52,7 @@ Frame Sizes and Classifiers.
 </tr>
 </table>
 
-### WebRTC VAD
+#### WebRTC VAD
 <table>
 <tr>
 <td>
