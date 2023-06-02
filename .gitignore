@@ -1,7 +1,7 @@
 *.iml
 .gradle
-keystore
-keystore-pass
+/keystore
+/keystore-pass
 example/release
 /local.properties
 /.idea/
