@@ -13,7 +13,7 @@ The library offers two distinct models for voice activity detection:
 [Silero VAD](https://github.com/snakers4/silero-vad) [[1]](#1) is based on a Deep Neural Networks 
 [(DNN)](https://en.wikipedia.org/wiki/Deep_learning) and utilizes the 
 [ONNX Runtime Mobile](https://onnxruntime.ai/docs/install/#install-on-web-and-mobile) for execution. 
-It exhibits exceptional accuracy and achieves processing times that are very close to WebRTC VAD.
+It exhibits exceptional accuracy and achieves processing time that are very close to WebRTC VAD.
 
 [WebRTC VAD](https://chromium.googlesource.com/external/webrtc/+/branch-heads/43/webrtc/common_audio/vad/) [[2]](#2)
 is based on a Gaussian Mixture Model [(GMM)](http://en.wikipedia.org/wiki/Mixture_model#Gaussian_mixture_model)
@@ -100,46 +100,46 @@ VAD supports 2 different ways of detecting speech:
 1. Continuous Speech listener was designed to detect long utterances
    without returning false positive results when user makes pauses between
    sentences.
-```java
-        Vad vad = VadBuilder.newBuilder()
-                    .setModel(Model.SILERO_DNN)
-                    .setSampleRate(SampleRate.SAMPLE_RATE_16K)
-                    .setFrameSize(FrameSize.FRAME_SIZE_512)
-                    .setMode(Mode.VERY_AGGRESSIVE)
-                    .setSilenceDurationMs(300)
-                    .setSpeechDurationMs(50)
-                    .setContext(MainActivity.this)
-                    .build();
 
-        vad.setContinuousSpeechListener(short[] audioFrame, new VadListener() {
-            @Override
-            public void onSpeechDetected() {
+```kotlin
+    val vad = Vad.builder()
+        .setModel(Model.SILERO_DNN)
+        .setSampleRate(SampleRate.SAMPLE_RATE_16K)
+        .setFrameSize(FrameSize.FRAME_SIZE_512)
+        .setMode(Mode.VERY_AGGRESSIVE)
+        .setSilenceDurationMs(300)
+        .setSpeechDurationMs(50)
+        .setContext(applicationContext)
+        .build()
 
-            }
+    vad.setContinuousSpeechListener(audioData: ShortArray, object : VadListener {
+        override fun onSpeechDetected() {
+            //speech detected!
+        }
 
-            @Override
-            public void onNoiseDetected() {
+        override fun onNoiseDetected() {
+            //noise detected!
+        }
+    })
 
-            }
-        });
-
-        vad.close();
+    vad.close()
 ```
 
 2. Speech detector was designed to detect speech/noise in small audio
    frames and return result for every frame. This method will not work for
    long utterances.
-```java
-        Vad vad = VadBuilder.newBuilder()
-                    .setModel(Model.WEB_RTC_GMM)
-                    .setSampleRate(SampleRate.SAMPLE_RATE_16K)
-                    .setFrameSize(FrameSize.FRAME_SIZE_160)
-                    .setMode(Mode.VERY_AGGRESSIVE)
-                    .build();
 
-        boolean isSpeech = vad.isSpeech(short[] audioFrame);
+```kotlin
+    val vad = VadBuilder.newBuilder()
+        .setModel(Model.WEB_RTC_GMM)
+        .setSampleRate(SampleRate.SAMPLE_RATE_16K)
+        .setFrameSize(FrameSize.FRAME_SIZE_160)
+        .setMode(Mode.VERY_AGGRESSIVE)
+        .build()
 
-        vad.close();
+    val isSpeech = vad.isSpeech(audioData: ShortArray)
+
+    vad.close()
 ```
 ## Requirements
 Android VAD supports Android 5.0 (Lollipop) and later.
