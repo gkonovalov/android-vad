@@ -198,5 +198,6 @@ Number Detector and Language Classifier <a href="mailto:hello@silero.ai">hello@s
 Voice Activity Detector from Google which is reportedly one of the best available: it's fast, 
 modern and free. This algorithm has found wide adoption and has recently become one of the 
 gold-standards for delay-sensitive scenarios like web-based interaction.
+
 ------------
 Georgiy Konovalov 2023 (c) [MIT License](https://opensource.org/licenses/MIT)
