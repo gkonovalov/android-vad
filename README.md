@@ -172,7 +172,7 @@ allprojects {
 2. Add the dependency
 ```groovy
 dependencies {
-    implementation 'com.github.gkonovalov:android-vad:2.0.0'
+    implementation 'com.github.gkonovalov:android-vad:2.0.1'
 }
 ```
 You also can download precompiled AAR library and APK files from 
