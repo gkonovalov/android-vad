@@ -13,7 +13,7 @@ android {
         applicationId "com.konovalov.vad.example"
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode 5
+        versionCode 6
         versionName "2.0.0"
 
         setProperty("archivesBaseName", "Android-VAD-v" + versionName)
