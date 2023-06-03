@@ -135,7 +135,7 @@ VAD supports 2 different ways of detecting speech:
 ```
 
 ## Requirements
-Android VAD supports Android 5.0 (Lollipop) and later and require JDK 17 or later.
+Android VAD supports Android 5.0 (API level 21) and later and require JDK 8 or later.
 
 ## Dependencies
 The library utilizes the ONNX runtime to run Silero VAD DNN, which requires the addition of 
