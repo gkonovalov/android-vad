@@ -13,7 +13,7 @@ android {
         applicationId "com.konovalov.vad.example"
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode 4
+        versionCode 5
         versionName "2.0.0"
 
         setProperty("archivesBaseName", "Android-VAD-v" + versionName)
@@ -29,12 +29,12 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     kotlin {
-        jvmToolchain(11)
+        jvmToolchain(8)
     }
 }
 
