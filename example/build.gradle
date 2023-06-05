@@ -13,8 +13,8 @@ android {
         applicationId "com.konovalov.vad.example"
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode 7
-        versionName "2.0.1"
+        versionCode 8
+        versionName "2.0.2"
 
         setProperty("archivesBaseName", "Android-VAD-v" + versionName)
 
@@ -45,8 +45,8 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     
-    implementation "com.github.permissions-dispatcher:permissionsdispatcher:4.9.2"
-    kapt "com.github.permissions-dispatcher:permissionsdispatcher-processor:4.9.2"
+    implementation 'com.github.permissions-dispatcher:permissionsdispatcher:4.9.2'
+    kapt 'com.github.permissions-dispatcher:permissionsdispatcher-processor:4.9.2'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test:runner:1.5.2'
