@@ -1,7 +1,6 @@
 plugins {
     id 'kotlin-android'
     id 'com.android.library'
-    id 'maven-publish'
 }
 
 android {
@@ -61,19 +60,4 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.5.2'
     androidTestImplementation 'androidx.test.ext:junit-ktx:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-}
-
-
-afterEvaluate {
-    publishing {
-        publications {
-            release(MavenPublication) {
-                from components.release
-
-                groupId = 'com.github.gkonovalov'
-                artifactId = 'android-vad'
-                version = '2.0.0'
-            }
-        }
-    }
 }
