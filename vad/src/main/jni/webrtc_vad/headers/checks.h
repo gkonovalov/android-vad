@@ -339,7 +339,7 @@ inline T CheckedDivExact(T a, T b) {
 #define RTC_CHECK(condition)                                             \
   do {                                                                   \
     if (!(condition)) {                                                  \
-      LOGI("CHECK failed: " #condition);                                 \
+      LOGI("CHECK failed: %s", #condition);                              \
     }                                                                    \
   } while (0)
 #define RTC_CHECK_EQ(a, b) RTC_CHECK((a) == (b))
@@ -351,7 +351,7 @@ inline T CheckedDivExact(T a, T b) {
 #define RTC_DCHECK(condition)                                             \
   do {                                                                    \
     if (RTC_DCHECK_IS_ON && !(condition)) {                               \
-      LOGI("DCHECK failed: " #condition);                                 \
+      LOGI("DCHECK failed: %s", #condition);                              \
     }                                                                     \
   } while (0)
 #define RTC_DCHECK_EQ(a, b) RTC_DCHECK((a) == (b))
