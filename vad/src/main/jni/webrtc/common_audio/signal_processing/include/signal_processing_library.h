@@ -18,7 +18,6 @@
 #define COMMON_AUDIO_SIGNAL_PROCESSING_INCLUDE_SIGNAL_PROCESSING_LIBRARY_H_
 
 #include <string.h>
-#include "webrtc/common_audio/signal_processing/dot_product_with_scale.h"
 
 // Macros specific for the fixed point implementation
 #define WEBRTC_SPL_WORD16_MAX 32767
@@ -97,6 +96,7 @@ extern "C" {
 #include "spl_inl.h"
 
 // third party math functions
+#include "webrtc/common_audio/signal_processing/spl_sqrt_floor.h"
 
 int16_t WebRtcSpl_GetScalingSquare(int16_t* in_vector,
                                    size_t in_vector_length,
@@ -226,6 +226,25 @@ int32_t WebRtcSpl_MinValueW32Neon(const int32_t* vector, size_t length);
 int32_t WebRtcSpl_MinValueW32_mips(const int32_t* vector, size_t length);
 #endif
 
+// Returns both the minimum and maximum values of a 16-bit vector.
+//
+// Input:
+//      - vector : 16-bit input vector.
+//      - length : Number of samples in vector.
+// Ouput:
+//      - max_val : Maximum sample value in |vector|.
+//      - min_val : Minimum sample value in |vector|.
+void WebRtcSpl_MinMaxW16(const int16_t* vector,
+                         size_t length,
+                         int16_t* min_val,
+                         int16_t* max_val);
+#if defined(WEBRTC_HAS_NEON)
+void WebRtcSpl_MinMaxW16Neon(const int16_t* vector,
+                             size_t length,
+                             int16_t* min_val,
+                             int16_t* max_val);
+#endif
+
 // Returns the vector index to the largest absolute value of a 16-bit vector.
 //
 // Input:
@@ -237,6 +256,17 @@ int32_t WebRtcSpl_MinValueW32_mips(const int32_t* vector, size_t length);
 //                 first. -32768 will always have precedence over 32767 (despite
 //                 -32768 presenting an int16 absolute value of 32767).
 size_t WebRtcSpl_MaxAbsIndexW16(const int16_t* vector, size_t length);
+
+// Returns the element with the largest absolute value of a 16-bit vector. Note
+// that this function can return a negative value.
+//
+// Input:
+//      - vector : 16-bit input vector.
+//      - length : Number of samples in vector.
+//
+// Return value  : The element with the largest absolute value. Note that this
+//                 may be a negative value.
+int16_t WebRtcSpl_MaxAbsElementW16(const int16_t* vector, size_t length);
 
 // Returns the vector index to the maximum sample value of a 16-bit vector.
 //

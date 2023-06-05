@@ -78,7 +78,7 @@ static const int16_t kOverHangMax1LBR[3] = { 8, 4, 3 };
 static const int16_t kOverHangMax2LBR[3] = { 14, 7, 5 };
 static const int16_t kLocalThresholdLBR[3] = { 37, 32, 37 };
 static const int16_t kGlobalThresholdLBR[3] = { 100, 80, 100 };
-// Mode 2, AGGRESSIVE.
+// Mode 2, Aggressive.
 static const int16_t kOverHangMax1AGG[3] = { 6, 3, 2 };
 static const int16_t kOverHangMax2AGG[3] = { 9, 5, 3 };
 static const int16_t kLocalThresholdAGG[3] = { 82, 78, 82 };
@@ -571,7 +571,7 @@ int WebRtcVad_set_mode_core(VadInstT* self, int mode) {
              sizeof(self->total));
       break;
     case 2:
-      // AGGRESSIVE mode.
+      // Aggressive mode.
       memcpy(self->over_hang_max_1, kOverHangMax1AGG,
              sizeof(self->over_hang_max_1));
       memcpy(self->over_hang_max_2, kOverHangMax2AGG,

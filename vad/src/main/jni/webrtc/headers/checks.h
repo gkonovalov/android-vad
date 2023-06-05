@@ -30,11 +30,7 @@
 #ifdef __cplusplus
 // C++ version.
 #include <string>
-#include "absl/meta/type_traits.h"
-#include "absl/strings/string_view.h"
-#include "rtc_base/numerics/safe_compare.h"
-#include "rtc_base/system/inline.h"
-#include "rtc_base/system/rtc_export.h"
+
 // The macros here print a message to stderr and abort under various
 // conditions. All will accept additional stream messages. For example:
 // RTC_DCHECK_EQ(foo, bar) << "I'm printed when foo != bar.";
