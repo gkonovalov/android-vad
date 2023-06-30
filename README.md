@@ -171,7 +171,7 @@ VAD supports 2 different ways of detecting speech:
     //Silero and WEBRTC speech detector.
     val isSpeech = vad.isSpeech(audioData)
 
-    //Yamnet audio classificator.
+    //Yamnet audio classifier.
     val soundCategory = vad.classifyAudio(audioData)
 
     vad.close()
