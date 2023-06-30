@@ -10,11 +10,10 @@ android {
     compileSdkVersion 33
 
     defaultConfig {
-        applicationId "com.konovalov.vad.example"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 33
-        versionCode 8
-        versionName "2.0.2"
+        versionCode 9
+        versionName "2.0.3"
 
         setProperty("archivesBaseName", "Android-VAD-v" + versionName)
 
@@ -40,9 +39,13 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation project(path: ':vad')
+    implementation project(path: ':webrtc')
+    implementation project(path: ':silero')
+    implementation project(path: ':yamnet')
 
     implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.6.0'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.6.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     
     implementation 'com.github.permissions-dispatcher:permissionsdispatcher:4.9.2'

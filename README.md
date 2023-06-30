@@ -3,7 +3,7 @@ Android [VAD](https://en.wikipedia.org/wiki/Voice_activity_detection) library is
 real-time and identify presence of human speech in audio samples that contain a mixture of speech 
 and noise. The VAD functionality operates offline, performing all processing tasks directly on the mobile device.
 
-The library offers two distinct models for voice activity detection:
+The repository offers three distinct models for voice activity detection:
 
 [Silero VAD](https://github.com/snakers4/silero-vad) [[1]](#1) is based on a Deep Neural Networks 
 [(DNN)](https://en.wikipedia.org/wiki/Deep_learning) and utilizes the 
@@ -15,38 +15,23 @@ is based on a Gaussian Mixture Model [(GMM)](http://en.wikipedia.org/wiki/Mixtur
 which is known for its exceptional speed and effectiveness in distinguishing between noise and silence.
 However, it may demonstrate relatively lower accuracy when it comes to differentiating speech from background noise.
 
+[Yamnet VAD](https://github.com/snakers4/silero-vad) [[3]](#3) employs the Mobilenet_v1 depthwise-separable 
+convolution architecture and utilizes the [Tensorflow Lite](https://www.tensorflow.org/lite/android) runtime for execution.
+Yamnet VAD predicts [521](https://github.com/tensorflow/models/blob/master/research/audioset/yamnet/yamnet_class_map.csv)
+audio event classes (such as Speech, Music, voice of animals and etc) from the [AudioSet-YouTube](https://research.google.com/audioset/)
+corpus it was trained on.
+
+If your priority is higher accuracy, I recommend using Silero VAD DNN or Yamnet VAD DNN. 
+For more detailed insights and a comprehensive comparison between DNN and GMM, refer to the following comparison 
+[Silero VAD vs WebRTC VAD](https://github.com/snakers4/silero-vad/wiki/Quality-Metrics#vs-other-available-solutions).
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/gkonovalov/android-vad/master/vad-comparison.png" />
 </p>
 
-If your priority is higher accuracy, I recommend using Silero VAD DNN. For more detailed insights 
-and a comprehensive comparison between DNN and GMM, refer to the following comparison 
-[Silero VAD vs WebRTC VAD](https://github.com/snakers4/silero-vad/wiki/Quality-Metrics#vs-other-available-solutions).
-
 ## Parameters
-VAD library only accepts 16-bit mono PCM audio stream and can work with next Sample Rates, 
+VAD library only accepts 16-bit Mono PCM audio stream and can work with next Sample Rates, 
 Frame Sizes and Classifiers.
-
-#### Silero VAD
-<table>
-<tr>
-<td>
-
-| Valid Sample Rate |      Valid Frame Size      |
-|:-----------------:|:--------------------------:|
-|      8000Hz       |       256, 512, 768        |
-|      16000Hz      |      512, 1024, 1536       |
-</td>
-<td>
-
-| Valid Classifiers |
-|:------------------|
-| NORMAL            |
-| AGGRESSIVE        |
-| VERY_AGGRESSIVE   |
-</td>
-</tr>
-</table>
 
 #### WebRTC VAD
 <table>
@@ -66,6 +51,51 @@ Frame Sizes and Classifiers.
 | Valid Classifiers |
 |:------------------|
 | NORMAL            |
+| LOW_BITRATE       |
+| AGGRESSIVE        |
+| VERY_AGGRESSIVE   |
+</td>
+</tr>
+</table>
+
+#### Silero VAD
+<table>
+<tr>
+<td>
+
+| Valid Sample Rate |      Valid Frame Size      |
+|:-----------------:|:--------------------------:|
+|      8000Hz       |       256, 512, 768        |
+|      16000Hz      |      512, 1024, 1536       |
+</td>
+<td>
+
+| Valid Classifiers |
+|:------------------|
+| OFF               |
+| NORMAL            |
+| AGGRESSIVE        |
+| VERY_AGGRESSIVE   |
+</td>
+</tr>
+</table>
+
+#### Yamnet VAD
+<table>
+<tr>
+<td>
+
+| Valid Sample Rate |  Valid Frame Size   |
+|:-----------------:|:-------------------:|
+|      16000Hz      | 243, 487, 731, 975  |
+
+</td>
+<td>
+
+| Valid Classifiers |
+|:------------------|
+| OFF               |
+| NORMAL            |
 | AGGRESSIVE        |
 | VERY_AGGRESSIVE   |
 </td>
@@ -78,14 +108,12 @@ It determines the required duration of consecutive negative results to recognize
 **Speech duration (ms)** - This parameter is used in the Continuous Speech detector. 
 It specifies the necessary duration of consecutive positive results to recognize it as speech.
 
-Recommended parameters:
-* Model - **SILERO_DNN**,
+Recommended parameters for WEBRTC VAD:
 * Sample Rate - **16KHz**,
 * Frame Size - **512**,
 * Mode - **VERY_AGGRESSIVE**,
 * Silence Duration - **300ms**,
-* Speech Duration - **50ms**,
-* Android Context - only required for Silero VAD.
+* Speech Duration - **50ms**.
 
 ## Usage
 VAD supports 2 different ways of detecting speech:
@@ -96,15 +124,15 @@ VAD supports 2 different ways of detecting speech:
 
 ```kotlin
     val vad = Vad.builder()
-        .setModel(Model.SILERO_DNN)
+        .setContext(applicationContext)
         .setSampleRate(SampleRate.SAMPLE_RATE_16K)
         .setFrameSize(FrameSize.FRAME_SIZE_512)
         .setMode(Mode.VERY_AGGRESSIVE)
         .setSilenceDurationMs(300)
         .setSpeechDurationMs(50)
-        .setContext(applicationContext)
         .build()
 
+    //Silero and WEBRTC continuous speech detector.
     vad.setContinuousSpeechListener(audioData, object : VadListener {
         override fun onSpeechDetected() {
             //speech detected!
@@ -115,35 +143,59 @@ VAD supports 2 different ways of detecting speech:
         }
     })
 
+    //Yamnet continuous speech detector which can detect different types of Sound.
+    vad.setContinuousClassifierListener("Cat", audioData, object : VadListener {
+        override fun onResult(event: SoundCategory) {
+            when (event.label) {
+                speech -> "Cat!" + event.score
+                else -> "Noise!" + event.score
+            }
+        }
+    })
+
     vad.close()
 ```
+
 2. Speech detector was designed to detect speech/noise in short audio
    frames and return result for every frame. This method will not work for
    long utterances.
 
 ```kotlin
-    val vad = Vad.builder()
-        .setModel(Model.WEB_RTC_GMM)
+    val vad = VadSilero.builder()
+        .setContext(applicationContext)
         .setSampleRate(SampleRate.SAMPLE_RATE_16K)
-        .setFrameSize(FrameSize.FRAME_SIZE_160)
+        .setFrameSize(FrameSize.FRAME_SIZE_512)
         .setMode(Mode.VERY_AGGRESSIVE)
         .build()
 
-    val isSpeech = vad.isSpeech(audioData)
+    //Silero and WEBRTC speech detector.
+    vad.isSpeech(audioData)
+
+    //Yamnet speech detector.
+    vad.classifyAudio(audioData)
 
     vad.close()
 ```
 
 ## Requirements
-Android VAD supports Android 5.0 (API level 21) and later and require JDK 8 or later.
+Android VAD supports Android 6.0 (API level 23) and later and require JDK 8 or later.
 
 ## Dependencies
+### Silero VAD DNN
 The library utilizes the ONNX runtime to run Silero VAD DNN, which requires the addition of 
 necessary dependencies.
 
 ```groovy
 dependencies {
-   implementation 'com.microsoft.onnxruntime:onnxruntime-android:1.15.0'
+   implementation 'com.microsoft.onnxruntime:onnxruntime-android:1.15.1'
+}
+```
+### Yamnet VAD DNN
+The library utilizes the Tensorflow Lite runtime to run Yamnet VAD DNN, which requires next dependencies.
+
+```groovy
+dependencies {
+   implementation 'org.tensorflow:tensorflow-lite-task-audio:0.4.0'
 }
 ```
 
@@ -169,10 +221,26 @@ allprojects {
 }
 ```
 
-2. Add the dependency
+2. Add one dependency from list below
+
+#### WEBRTC VAD
 ```groovy
 dependencies {
-    implementation 'com.github.gkonovalov:android-vad:2.0.2'
+    implementation 'com.github.gkonovalov.android-vad:webrtc:2.0.3'
+}
+```
+
+#### Silero VAD
+```groovy
+dependencies {
+    implementation 'com.github.gkonovalov.android-vad:silero:2.0.3'
+}
+```
+
+#### Yamnet VAD
+```groovy
+dependencies {
+    implementation 'com.github.gkonovalov.android-vad:yamnet:1.0.0'
 }
 ```
 You also can download precompiled AAR library and APK files from 
@@ -189,5 +257,9 @@ Voice Activity Detector from Google which is reportedly one of the best availabl
 modern and free. This algorithm has found wide adoption and has recently become one of the 
 gold-standards for delay-sensitive scenarios like web-based interaction.
 
+<a id="3">[3]</a>
+[Yamnet VAD](https://github.com/tensorflow/models/tree/master/research/audioset/yamnet) -
+YAMNet is a pretrained deep net that predicts 521 audio event classes based on the AudioSet-YouTube 
+corpus, and employing the Mobilenet_v1 depthwise-separable convolution architecture.
 ------------
 Georgiy Konovalov 2023 (c) [MIT License](https://opensource.org/licenses/MIT)

@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Android VAD</string>
+    <string name="vad_silero">VAD Silero</string>
+    <string name="vad_webrtc">VAD WebRTC</string>
+    <string name="vad_yamnet">VAD Yamnet</string>
     <string name="speech_detected">Speech detected!</string>
     <string name="noise_detected">Noise detected!</string>
     <string name="press_button_to_start">Press button to start VAD!</string>

@@ -6,8 +6,6 @@ import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.os.Process
 import android.util.Log
-import com.konovalov.vad.config.FrameSize
-import com.konovalov.vad.config.SampleRate
 
 class VoiceRecorder(val callback: AudioCallback) {
 
@@ -17,10 +15,10 @@ class VoiceRecorder(val callback: AudioCallback) {
     private var thread: Thread? = null
     private var isListening = false
 
-    private lateinit var sampleRate: SampleRate
-    private lateinit var frameSize: FrameSize
+    private var sampleRate: Int = 0
+    private var frameSize: Int = 0
 
-    fun start(sampleRate: SampleRate, frameSize: FrameSize) {
+    fun start(sampleRate: Int, frameSize: Int) {
         this.sampleRate = sampleRate
         this.frameSize = frameSize
         stop()
@@ -50,16 +48,16 @@ class VoiceRecorder(val callback: AudioCallback) {
         try {
             val minBufferSize = maxOf(
                 AudioRecord.getMinBufferSize(
-                    sampleRate.value,
+                    sampleRate,
                     AudioFormat.CHANNEL_IN_MONO,
                     AudioFormat.ENCODING_PCM_16BIT
                 ),
-                2 * frameSize.value
+                2 * frameSize
             )
 
             val audioRecord = AudioRecord(
                 MediaRecorder.AudioSource.MIC,
-                sampleRate.value,
+                sampleRate,
                 AudioFormat.CHANNEL_IN_MONO,
                 AudioFormat.ENCODING_PCM_16BIT,
                 minBufferSize
@@ -79,7 +77,7 @@ class VoiceRecorder(val callback: AudioCallback) {
     private inner class ProcessVoice : Runnable {
         override fun run() {
             Process.setThreadPriority(Process.THREAD_PRIORITY_AUDIO)
-            val size = frameSize.value
+            val size = frameSize
 
             while (!Thread.interrupted() && isListening) {
                 val buffer = ShortArray(size)
