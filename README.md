@@ -15,7 +15,7 @@ However, it may demonstrate relatively lower accuracy when it comes to different
 [ONNX Runtime Mobile](https://onnxruntime.ai/docs/install/#install-on-web-and-mobile) for execution. 
 It provides exceptional accuracy and achieves processing time that is very close to WebRTC VAD.
 
-[Yamnet VAD](https://github.com/snakers4/silero-vad) [[3]](#3) is based on a Deep Neural Networks
+[Yamnet VAD](https://github.com/tensorflow/models/tree/master/research/audioset/yamnet) [[3]](#3) is based on a Deep Neural Networks
 [(DNN)](https://en.wikipedia.org/wiki/Deep_learning) and employs the Mobilenet_v1 depthwise-separable 
 convolution architecture. For execution utilizes the [Tensorflow Lite](https://www.tensorflow.org/lite/android) runtime.
 Yamnet VAD can predict [521](https://github.com/tensorflow/models/blob/master/research/audioset/yamnet/yamnet_class_map.csv)
