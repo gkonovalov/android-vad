@@ -15,13 +15,14 @@ is based on a Gaussian Mixture Model [(GMM)](http://en.wikipedia.org/wiki/Mixtur
 which is known for its exceptional speed and effectiveness in distinguishing between noise and silence.
 However, it may demonstrate relatively lower accuracy when it comes to differentiating speech from background noise.
 
-[Yamnet VAD](https://github.com/snakers4/silero-vad) [[3]](#3) employs the Mobilenet_v1 depthwise-separable 
-convolution architecture and utilizes the [Tensorflow Lite](https://www.tensorflow.org/lite/android) runtime for execution.
-Yamnet VAD predicts [521](https://github.com/tensorflow/models/blob/master/research/audioset/yamnet/yamnet_class_map.csv)
-audio event classes (such as Speech, Music, voice of animals and etc) from the [AudioSet-YouTube](https://research.google.com/audioset/)
-corpus it was trained on.
+[Yamnet VAD](https://github.com/snakers4/silero-vad) [[3]](#3) is based on a Deep Neural Networks
+[(DNN)](https://en.wikipedia.org/wiki/Deep_learning) and employs the Mobilenet_v1 depthwise-separable 
+convolution architecture. For execution utilizes the [Tensorflow Lite](https://www.tensorflow.org/lite/android) runtime.
+Yamnet VAD can predict [521](https://github.com/tensorflow/models/blob/master/research/audioset/yamnet/yamnet_class_map.csv)
+audio event classes (such as speech, music, animal sounds and etc).
+It was trained on [AudioSet-YouTube](https://research.google.com/audioset/) corpus.
 
-If your priority is higher accuracy, I recommend using Silero VAD DNN or Yamnet VAD DNN. 
+For higher accuracy, I recommend to use Silero VAD DNN or Yamnet VAD DNN. 
 For more detailed insights and a comprehensive comparison between DNN and GMM, refer to the following comparison 
 [Silero VAD vs WebRTC VAD](https://github.com/snakers4/silero-vad/wiki/Quality-Metrics#vs-other-available-solutions).
 
@@ -132,7 +133,7 @@ VAD supports 2 different ways of detecting speech:
         .setSpeechDurationMs(50)
         .build()
 
-    //Silero and WEBRTC continuous speech detector.
+    //Silero and WebRTC continuous speech detector.
     vad.setContinuousSpeechListener(audioData, object : VadListener {
         override fun onSpeechDetected() {
             //speech detected!
@@ -143,7 +144,7 @@ VAD supports 2 different ways of detecting speech:
         }
     })
 
-    //Yamnet continuous speech detector which can detect different types of Sound.
+    //Yamnet continuous sound classifier.
     vad.setContinuousClassifierListener("Cat", audioData, object : VadListener {
         override fun onResult(event: SoundCategory) {
             when (event.label) {
@@ -168,7 +169,7 @@ VAD supports 2 different ways of detecting speech:
         .setMode(Mode.VERY_AGGRESSIVE)
         .build()
 
-    //Silero and WEBRTC speech detector.
+    //Silero and WebRTC speech detector.
     val isSpeech = vad.isSpeech(audioData)
 
     //Yamnet audio classifier.
@@ -223,7 +224,7 @@ allprojects {
 
 2. Add one dependency from list below
 
-#### WEBRTC VAD
+#### WebRTC VAD
 ```groovy
 dependencies {
     implementation 'com.github.gkonovalov.android-vad:webrtc:2.0.3'
