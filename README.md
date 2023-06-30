@@ -240,7 +240,7 @@ dependencies {
 #### Yamnet VAD
 ```groovy
 dependencies {
-    implementation 'com.github.gkonovalov.android-vad:yamnet:1.0.0'
+    implementation 'com.github.gkonovalov.android-vad:yamnet:2.0.3'
 }
 ```
 You also can download precompiled AAR library and APK files from 
