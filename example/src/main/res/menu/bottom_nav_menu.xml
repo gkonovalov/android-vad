@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_webrtc"
+        android:icon="@drawable/dnn"
+        android:title="@string/vad_webrtc" />
+
+    <item
+        android:id="@+id/navigation_silero"
+        android:icon="@drawable/dnn"
+        android:title="@string/vad_silero" />
+
+    <item
+        android:id="@+id/navigation_yamnet"
+        android:icon="@drawable/dnn"
+        android:title="@string/vad_yamnet" />
+</menu>

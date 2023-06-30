@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_webrtc">
+
+    <fragment
+        android:id="@+id/navigation_webrtc"
+        android:name="com.konovalov.vad.example.VadWebRTCFragment"
+        android:label="@string/vad_webrtc"
+        tools:layout="@layout/fragment_vad_main" />
+
+    <fragment
+        android:id="@+id/navigation_silero"
+        android:name="com.konovalov.vad.example.VadSileroFragment"
+        android:label="@string/vad_silero"
+        tools:layout="@layout/fragment_vad_main" />
+
+    <fragment
+        android:id="@+id/navigation_yamnet"
+        android:name="com.konovalov.vad.example.VadYamnetFragment"
+        android:label="@string/vad_yamnet"
+        tools:layout="@layout/fragment_vad_main" />
+</navigation>
