@@ -5,12 +5,12 @@ and noise. The VAD functionality operates offline, performing all processing tas
 
 The repository offers three distinct models for voice activity detection:
 
-[WebRTC VAD](https://chromium.googlesource.com/external/webrtc/+/branch-heads/43/webrtc/common_audio/vad/) [[2]](#2)
+[WebRTC VAD](https://chromium.googlesource.com/external/webrtc/+/branch-heads/43/webrtc/common_audio/vad/) [[1]](#1)
 is based on a Gaussian Mixture Model [(GMM)](http://en.wikipedia.org/wiki/Mixture_model#Gaussian_mixture_model)
 which is known for its exceptional speed and effectiveness in distinguishing between noise and silence.
 However, it may demonstrate relatively lower accuracy when it comes to differentiating speech from background noise.
 
-[Silero VAD](https://github.com/snakers4/silero-vad) [[1]](#1) is based on a Deep Neural Networks 
+[Silero VAD](https://github.com/snakers4/silero-vad) [[2]](#2) is based on a Deep Neural Networks 
 [(DNN)](https://en.wikipedia.org/wiki/Deep_learning) and utilizes the 
 [ONNX Runtime Mobile](https://onnxruntime.ai/docs/install/#install-on-web-and-mobile) for execution. 
 It provides exceptional accuracy and achieves processing time that is very close to WebRTC VAD.
@@ -249,14 +249,14 @@ GitHub's [releases page](https://github.com/gkonovalov/android-vad/releases).
 
 ## References
 <a id="1">[1]</a>
-[Silero VAD](https://github.com/snakers4/silero-vad) - pre-trained enterprise-grade Voice Activity Detector,
-Number Detector and Language Classifier <a href="mailto:hello@silero.ai">hello@silero.ai</a>.
+[WebRTC VAD](https://chromium.googlesource.com/external/webrtc/+/branch-heads/43/webrtc/common_audio/vad/) -
+Voice Activity Detector from Google which is reportedly one of the best available: it's fast,
+modern and free. This algorithm has found wide adoption and has recently become one of the
+gold-standards for delay-sensitive scenarios like web-based interaction.
 
 <a id="2">[2]</a>
-[WebRTC VAD](https://chromium.googlesource.com/external/webrtc/+/branch-heads/43/webrtc/common_audio/vad/) -
-Voice Activity Detector from Google which is reportedly one of the best available: it's fast, 
-modern and free. This algorithm has found wide adoption and has recently become one of the 
-gold-standards for delay-sensitive scenarios like web-based interaction.
+[Silero VAD](https://github.com/snakers4/silero-vad) - pre-trained enterprise-grade Voice Activity Detector,
+Number Detector and Language Classifier <a href="mailto:hello@silero.ai">hello@silero.ai</a>.
 
 <a id="3">[3]</a>
 [Yamnet VAD](https://github.com/tensorflow/models/tree/master/research/audioset/yamnet) -
