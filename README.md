@@ -148,7 +148,7 @@ VAD supports 2 different ways of detecting speech:
     vad.setContinuousClassifierListener("Cat", audioData, object : VadListener {
         override fun onResult(event: SoundCategory) {
             when (event.label) {
-                speech -> "Cat!" + event.score
+                "Cat" -> "Cat!" + event.score
                 else -> "Noise!" + event.score
             }
         }
