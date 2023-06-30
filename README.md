@@ -162,7 +162,7 @@ VAD supports 2 different ways of detecting speech:
    long utterances.
 
 ```kotlin
-    val vad = VadSilero.builder()
+    val vad = Vad.builder()
         .setContext(applicationContext)
         .setSampleRate(SampleRate.SAMPLE_RATE_16K)
         .setFrameSize(FrameSize.FRAME_SIZE_512)
