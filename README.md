@@ -182,7 +182,7 @@ VAD supports 2 different ways of detecting speech:
 Android VAD supports Android 6.0 (API level 23) and later and require JDK 8 or later.
 
 ## Dependencies
-### Silero VAD DNN
+#### Silero VAD DNN
 The library utilizes the ONNX runtime to run Silero VAD DNN, which requires the addition of 
 necessary dependencies.
 
@@ -191,7 +191,7 @@ dependencies {
    implementation 'com.microsoft.onnxruntime:onnxruntime-android:1.15.1'
 }
 ```
-### Yamnet VAD DNN
+#### Yamnet VAD DNN
 The library utilizes the Tensorflow Lite runtime to run Yamnet VAD DNN, which requires next dependencies.
 
 ```groovy
