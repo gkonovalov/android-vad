@@ -169,10 +169,10 @@ VAD supports 2 different ways of detecting speech:
         .build()
 
     //Silero and WEBRTC speech detector.
-    vad.isSpeech(audioData)
+    val isSpeech = vad.isSpeech(audioData)
 
-    //Yamnet speech detector.
-    vad.classifyAudio(audioData)
+    //Yamnet audio classificator.
+    val soundCategory = vad.classifyAudio(audioData)
 
     vad.close()
 ```
@@ -261,5 +261,6 @@ gold-standards for delay-sensitive scenarios like web-based interaction.
 [Yamnet VAD](https://github.com/tensorflow/models/tree/master/research/audioset/yamnet) -
 YAMNet is a pretrained deep net that predicts 521 audio event classes based on the AudioSet-YouTube 
 corpus, and employing the Mobilenet_v1 depthwise-separable convolution architecture.
+
 ------------
 Georgiy Konovalov 2023 (c) [MIT License](https://opensource.org/licenses/MIT)
