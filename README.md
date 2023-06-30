@@ -109,7 +109,7 @@ It determines the required duration of consecutive negative results to recognize
 **Speech duration (ms)** - This parameter is used in the Continuous Speech detector. 
 It specifies the necessary duration of consecutive positive results to recognize it as speech.
 
-Recommended parameters for WEBRTC VAD:
+Recommended parameters for WebRTC VAD:
 * Sample Rate - **16KHz**,
 * Frame Size - **512**,
 * Mode - **VERY_AGGRESSIVE**,
