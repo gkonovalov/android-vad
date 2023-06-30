@@ -261,7 +261,7 @@ gold-standards for delay-sensitive scenarios like web-based interaction.
 <a id="3">[3]</a>
 [Yamnet VAD](https://github.com/tensorflow/models/tree/master/research/audioset/yamnet) -
 YAMNet is a pretrained deep neural network that can predicts 521 audio event classes based on the AudioSet-YouTube 
-corpus, and employing the Mobilenet_v1 depthwise-separable convolution architecture.
+corpus, employing the Mobilenet_v1 depthwise-separable convolution architecture.
 
 ------------
 Georgiy Konovalov 2023 (c) [MIT License](https://opensource.org/licenses/MIT)
