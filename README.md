@@ -225,8 +225,8 @@ returning false positive results when user makes pauses between sentences.
     vad.setContinuousClassifierListener("Cat", audioData, object : VadListener {
         override fun onResult(event: SoundCategory) {
             when (event.label) {
-                "Cat" -> "Cat!" + event.score
-                else -> "Noise!" + event.score
+                "Cat" -> "This is Cat!" + event.score
+                else -> "This is Noise!" + event.score
             }
         }
     })
