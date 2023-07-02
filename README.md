@@ -30,11 +30,11 @@ For more detailed insights and a comprehensive comparison between DNN and GMM, r
   <img src="https://raw.githubusercontent.com/gkonovalov/android-vad/master/vad-comparison.png" />
 </p>
 
-## Parameters
-VAD library only accepts 16-bit Mono PCM audio stream and can work with next Sample Rates, 
+## WebRTC VAD
+#### Parameters
+WebRTC VAD library only accepts **16-bit Mono PCM audio stream** and can work with next Sample Rates, 
 Frame Sizes and Classifiers.
 
-#### WebRTC VAD
 <table>
 <tr>
 <td>
@@ -59,7 +59,47 @@ Frame Sizes and Classifiers.
 </tr>
 </table>
 
-#### Silero VAD
+Recommended parameters for WebRTC VAD:
+* Sample Rate (required) - **16KHz** - The sample rate of the audio input.
+* Frame Size (required) - **512** - The frame size of the audio input.
+* Mode (required) - **VERY_AGGRESSIVE** - The mode of the VAD model.
+* Silence Duration (optional) - **300ms** - The minimum duration in milliseconds for continuous speech segments.
+* Speech Duration (optional) - **50ms** - The minimum duration in milliseconds for continuous silence segments.
+
+#### Usage
+WebRTC VAD supports 2 different ways of detecting speech:
+Detector which detect speech/noise in short audio frames and then return result
+for every frame and Continuous Speech listener which detect long utterances without 
+returning false positive results when user makes pauses between sentences.
+
+```kotlin
+    val vad = Vad.builder()
+        .setSampleRate(SampleRate.SAMPLE_RATE_16K)
+        .setFrameSize(FrameSize.FRAME_SIZE_512)
+        .setMode(Mode.VERY_AGGRESSIVE)
+        .setSilenceDurationMs(300)
+        .setSpeechDurationMs(50)
+        .build()
+
+    val isSpeech = vad.isSpeech(audioData)
+
+    vad.setContinuousSpeechListener(audioData, object : VadListener {
+        override fun onSpeechDetected() {
+            //Speech detected!
+        }
+
+        override fun onNoiseDetected() {
+            //Noise detected!
+        }
+    })
+
+    vad.close()
+```
+## Silero VAD
+#### Parameters
+Silero VAD library only accepts **16-bit Mono PCM audio stream** and can work with next Sample Rates,
+Frame Sizes and Classifiers.
+
 <table>
 <tr>
 <td>
@@ -81,7 +121,60 @@ Frame Sizes and Classifiers.
 </tr>
 </table>
 
-#### Yamnet VAD
+Recommended parameters for Silero VAD:
+* Context (required) - The Context is required to facilitate reading the model file from the Android file system.
+* Sample Rate (required) - **8KHz** - The sample rate of the audio input.
+* Frame Size (required) - **256** - The frame size of the audio input.
+* Mode (required) - **NORMAL** - The mode of the VAD model.
+* Silence Duration (optional) - **300ms** - The minimum duration in milliseconds for continuous speech segments.
+* Speech Duration (optional) - **50ms** - The minimum duration in milliseconds for continuous silence segments.
+
+#### Usage
+Silero VAD supports 2 different ways of detecting speech:
+Detector which detect speech/noise in short audio frames and then return result
+for every frame and Continuous Speech listener which detect long utterances without
+returning false positive results when user makes pauses between sentences.
+
+```kotlin
+    val vad = Vad.builder()
+        .setContext(applicationContext)
+        .setSampleRate(SampleRate.SAMPLE_RATE_8K)
+        .setFrameSize(FrameSize.FRAME_SIZE_256)
+        .setMode(Mode.NORMAL)
+        .setSilenceDurationMs(300)
+        .setSpeechDurationMs(50)
+        .build()
+
+    val isSpeech = vad.isSpeech(audioData)
+
+    vad.setContinuousSpeechListener(audioData, object : VadListener {
+        override fun onSpeechDetected() {
+            //Speech detected!
+        }
+
+        override fun onNoiseDetected() {
+            //Noise detected!
+        }
+    })
+
+    vad.close()
+```
+
+#### Silero VAD Dependencies
+The library utilizes the ONNX runtime to run Silero VAD DNN, which requires the addition of
+necessary dependencies.
+
+```groovy
+dependencies {
+   implementation 'com.microsoft.onnxruntime:onnxruntime-android:1.15.1'
+}
+```
+
+## Yamnet VAD
+#### Parameters
+Yamnet VAD library only accepts **16-bit Mono PCM audio stream** and can work with next Sample Rates,
+Frame Sizes and Classifiers.
+
 <table>
 <tr>
 <td>
@@ -103,48 +196,32 @@ Frame Sizes and Classifiers.
 </tr>
 </table>
 
-**Silence duration (ms)** - This parameter is utilized in the Continuous Speech detector. 
-It determines the required duration of consecutive negative results to recognize it as silence.
+Recommended parameters for Yamnet VAD:
+* Context (required) - The Context is required to facilitate reading the model file from the Android file system.
+* Sample Rate (required) - **16KHz** - The sample rate of the audio input.
+* Frame Size (required) - **243** - The frame size of the audio input.
+* Mode (required) - **NORMAL** - The mode of the VAD model.
+* Silence Duration (optional) - **30ms** - The minimum duration in milliseconds for continuous speech segments.
+* Speech Duration (optional) - **30ms** - The minimum duration in milliseconds for continuous silence segments.
 
-**Speech duration (ms)** - This parameter is used in the Continuous Speech detector. 
-It specifies the necessary duration of consecutive positive results to recognize it as speech.
-
-Recommended parameters for WebRTC VAD:
-* Sample Rate - **16KHz**,
-* Frame Size - **512**,
-* Mode - **VERY_AGGRESSIVE**,
-* Silence Duration - **300ms**,
-* Speech Duration - **50ms**.
-
-## Usage
-VAD supports 2 different ways of detecting speech:
-
-1. Continuous Speech listener was designed to detect long utterances
-   without returning false positive results when user makes pauses between
-   sentences.
+#### Usage
+Yamnet VAD supports 2 different ways of detecting speech:
+Simple Classifier which predict 521 audio event classes (such as speech, music, animal sounds and etc) in short audio frames 
+and then return result for every frame and Continuous Classifier listener which detect long utterances without
+returning false positive results when user makes pauses between sentences.
 
 ```kotlin
     val vad = Vad.builder()
         .setContext(applicationContext)
-        .setSampleRate(SampleRate.SAMPLE_RATE_16K)
-        .setFrameSize(FrameSize.FRAME_SIZE_512)
-        .setMode(Mode.VERY_AGGRESSIVE)
-        .setSilenceDurationMs(300)
-        .setSpeechDurationMs(50)
+        .setSampleRate(SampleRate.SAMPLE_RATE_8K)
+        .setFrameSize(FrameSize.FRAME_SIZE_243)
+        .setMode(Mode.NORMAL)
+        .setSilenceDurationMs(30)
+        .setSpeechDurationMs(30)
         .build()
 
-    //Silero and WebRTC continuous speech detector.
-    vad.setContinuousSpeechListener(audioData, object : VadListener {
-        override fun onSpeechDetected() {
-            //speech detected!
-        }
+    val soundCategory = vad.classifyAudio(audioData)
 
-        override fun onNoiseDetected() {
-            //noise detected!
-        }
-    })
-
-    //Yamnet continuous sound classifier.
     vad.setContinuousClassifierListener("Cat", audioData, object : VadListener {
         override fun onResult(event: SoundCategory) {
             when (event.label) {
@@ -156,42 +233,7 @@ VAD supports 2 different ways of detecting speech:
 
     vad.close()
 ```
-
-2. Speech detector was designed to detect speech/noise in short audio
-   frames and return result for every frame. This method will not work for
-   long utterances.
-
-```kotlin
-    val vad = Vad.builder()
-        .setContext(applicationContext)
-        .setSampleRate(SampleRate.SAMPLE_RATE_16K)
-        .setFrameSize(FrameSize.FRAME_SIZE_512)
-        .setMode(Mode.VERY_AGGRESSIVE)
-        .build()
-
-    //Silero and WebRTC speech detector.
-    val isSpeech = vad.isSpeech(audioData)
-
-    //Yamnet audio classifier.
-    val soundCategory = vad.classifyAudio(audioData)
-
-    vad.close()
-```
-
-## Requirements
-Android VAD supports Android 6.0 (API level 23) and later and require JDK 8 or later.
-
-## Dependencies
-#### Silero VAD DNN
-The library utilizes the ONNX runtime to run Silero VAD DNN, which requires the addition of 
-necessary dependencies.
-
-```groovy
-dependencies {
-   implementation 'com.microsoft.onnxruntime:onnxruntime-android:1.15.1'
-}
-```
-#### Yamnet VAD DNN
+#### Yamnet VAD Dependencies
 The library utilizes the Tensorflow Lite runtime to run Yamnet VAD DNN, which requires next dependencies.
 
 ```groovy
@@ -199,6 +241,9 @@ dependencies {
    implementation 'org.tensorflow:tensorflow-lite-task-audio:0.4.0'
 }
 ```
+
+## Requirements
+Android VAD supports Android 6.0 (API level 23) and later and require JDK 8 or later.
 
 ## Development
 To open the project in Android Studio:
