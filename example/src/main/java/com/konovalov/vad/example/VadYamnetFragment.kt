@@ -83,33 +83,21 @@ class VadYamnetFragment : Fragment(),
 
         speechTextView = view.findViewById(R.id.speechTextView)
         sampleRateSpinner = view.findViewById(R.id.sampleRateSpinner)
-        sampleRateAdapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_spinner_dropdown_item,
-            getSampleRates()
-        )
+        sampleRateAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, getSampleRates())
         sampleRateSpinner.adapter = sampleRateAdapter
         sampleRateSpinner.tag = SPINNER_SAMPLE_RATE_TAG
         sampleRateSpinner.setSelection(getSampleRates().indexOf(DEFAULT_SAMPLE_RATE.name), false)
         sampleRateSpinner.onItemSelectedListener = this
 
         frameSpinner = view.findViewById(R.id.frameSampleRateSpinner)
-        frameAdapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_spinner_dropdown_item,
-            getFrameSizes(DEFAULT_SAMPLE_RATE)
-        )
+        frameAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, getFrameSizes(DEFAULT_SAMPLE_RATE))
         frameSpinner.adapter = frameAdapter
         frameSpinner.tag = SPINNER_FRAME_SIZE_TAG
-        frameSpinner.setSelection(
-            getFrameSizes(DEFAULT_SAMPLE_RATE).indexOf(DEFAULT_FRAME_SIZE.name),
-            false
-        )
+        frameSpinner.setSelection(getFrameSizes(DEFAULT_SAMPLE_RATE).indexOf(DEFAULT_FRAME_SIZE.name), false)
         frameSpinner.onItemSelectedListener = this
 
         modeSpinner = view.findViewById(R.id.modeSpinner)
-        modeAdapter =
-            ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, modes())
+        modeAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, modes())
         modeSpinner.adapter = modeAdapter
         modeSpinner.tag = SPINNER_MODE_TAG
         modeSpinner.setSelection(modes().indexOf(DEFAULT_MODE.name), false)
