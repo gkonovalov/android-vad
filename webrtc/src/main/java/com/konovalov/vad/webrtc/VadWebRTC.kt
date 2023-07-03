@@ -253,7 +253,7 @@ class VadWebRTC(
      * </p>
      * @throws IllegalArgumentException if session already closed.
      */
-    private fun setWebRTCMode(mode: Mode){
+    private fun setWebRTCMode(mode: Mode) {
         checkState()
         nativeSetMode(nativeHandle, mode.value)
     }

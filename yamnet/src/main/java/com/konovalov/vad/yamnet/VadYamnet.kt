@@ -112,9 +112,7 @@ class VadYamnet(
      */
     fun classifyAudio(audioData: ShortArray): SoundCategory {
         checkState()
-
-        tensor.load(audioData.map { it / 32767.0f }.toFloatArray())
-
+        tensor.load(audioData)
         return getResult(classifier.classify(tensor))
     }
 
