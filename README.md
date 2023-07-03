@@ -62,7 +62,7 @@ Frame Sizes and Classifiers.
 Recommended parameters for WebRTC VAD:
 * Sample Rate (required) - **16KHz** - The sample rate of the audio input.
 * Frame Size (required) - **512** - The frame size of the audio input.
-* Mode (required) - **VERY_AGGRESSIVE** - The mode of the VAD model.
+* Mode (required) - **VERY_AGGRESSIVE** - The confidence mode of the VAD model.
 * Silence Duration (optional) - **300ms** - The minimum duration in milliseconds for speech segments.
 * Speech Duration (optional) - **50ms** - The minimum duration in milliseconds for silence segments.
 
@@ -125,7 +125,7 @@ Recommended parameters for Silero VAD:
 * Context (required) - The Context is required to facilitate reading the model file from the Android file system.
 * Sample Rate (required) - **8KHz** - The sample rate of the audio input.
 * Frame Size (required) - **256** - The frame size of the audio input.
-* Mode (required) - **NORMAL** - The mode of the VAD model.
+* Mode (required) - **NORMAL** - The confidence mode of the VAD model.
 * Silence Duration (optional) - **300ms** - The minimum duration in milliseconds for speech segments.
 * Speech Duration (optional) - **50ms** - The minimum duration in milliseconds for silence segments.
 
@@ -200,7 +200,7 @@ Recommended parameters for Yamnet VAD:
 * Context (required) - The Context is required to facilitate reading the model file from the Android file system.
 * Sample Rate (required) - **16KHz** - The sample rate of the audio input.
 * Frame Size (required) - **243** - The frame size of the audio input.
-* Mode (required) - **NORMAL** - The mode of the VAD model.
+* Mode (required) - **NORMAL** - The confidence mode of the VAD model.
 * Silence Duration (optional) - **30ms** - The minimum duration in milliseconds for speech segments.
 * Speech Duration (optional) - **30ms** - The minimum duration in milliseconds for silence segments.
 
