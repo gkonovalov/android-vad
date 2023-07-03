@@ -133,6 +133,11 @@ class VadYamnet(
     fun setContinuousClassifierListener(label: String, audio: ShortArray, listener: VadListener) {
         val audioEvent = classifyAudio(audio)
 
+        if (label.isEmpty()) {
+            listener.onResult(audioEvent)
+            return
+        }
+
         if (audioEvent.label.equals(label, true)) {
             silenceFramesCount = 0
             if (++speechFramesCount > maxSpeechFramesCount) {
@@ -143,12 +148,7 @@ class VadYamnet(
             speechFramesCount = 0
             if (++silenceFramesCount > maxSilenceFramesCount) {
                 silenceFramesCount = 0
-
-                if (label.isEmpty()) {
-                    listener.onResult(audioEvent)
-                } else {
-                    listener.onResult(SoundCategory())
-                }
+                listener.onResult(SoundCategory())
             }
         }
     }
