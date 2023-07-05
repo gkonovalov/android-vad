@@ -206,7 +206,7 @@ Recommended parameters for Yamnet VAD:
 
 #### Usage
 Yamnet VAD supports 2 different ways of detecting speech:
-Simple Classifier which predict 521 audio event classes (such as speech, music, animal sounds and etc) in short audio frames 
+Simple Classifier which predict [521](https://github.com/tensorflow/models/blob/master/research/audioset/yamnet/yamnet_class_map.csv) audio event classes (such as speech, music, animal sounds and etc) in short audio frames 
 and then return result for every frame and Continuous Classifier listener which detect long utterances without
 returning false positive results when user makes pauses between sentences.
 
