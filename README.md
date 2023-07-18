@@ -22,8 +22,10 @@ Yamnet VAD can predict [521](https://github.com/tensorflow/models/blob/master/re
 audio event classes (such as speech, music, animal sounds and etc).
 It was trained on [AudioSet-YouTube](https://research.google.com/audioset/) corpus.
 
-For higher accuracy, I recommend to use Silero VAD DNN or Yamnet VAD DNN. 
-For more detailed insights and a comprehensive comparison between DNN and GMM, refer to the following comparison 
+WebRTC VAD is lightweight (only 158 KB) and provides exceptional speed in audio processing, but it may exhibit lower accuracy
+compared to DNN models. WebRTC VAD can be invaluable in scenarios where a small and fast library is necessary and where sacrificing accuracy is acceptable.
+In situations where high accuracy is critical, models like Silero VAD and Yamnet VAD are more preferable.
+For more detailed insights and a comprehensive comparison between DNN and GMM, refer to the following comparison
 [Silero VAD vs WebRTC VAD](https://github.com/snakers4/silero-vad/wiki/Quality-Metrics#vs-other-available-solutions).
 
 <p align="center">
