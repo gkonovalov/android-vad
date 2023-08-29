@@ -84,6 +84,86 @@ class VadSilero(
 
     /**
      * <p>
+     * Set, retrieve and validate speechDurationMs for Vad Model.
+     * The value of this parameter will define the necessary and sufficient duration of positive
+     * results to recognize result as speech. Negative numbers are not allowed.
+     * </p>
+     * @param speechDurationMs The speech duration ms as a Int.
+     * @throws IllegalArgumentException if there was negative numbers.
+     */
+    var speechDurationMs: Int = speechDurationMs
+        set(speechDurationMs) {
+            require(speechDurationMs >= 0) {
+                "Parameter speechDurationMs can't be below zero!"
+            }
+
+            field = speechDurationMs
+            maxSpeechFramesCount = getFramesCount(speechDurationMs)
+        }
+
+    /**
+     * <p>
+     * Set, retrieve and validate silenceDurationMs for Vad Model.
+     * The value of this parameter will define the necessary and sufficient duration of
+     * negative results to recognize it as silence. Negative numbers are not allowed.
+     * </p>
+     * @param silenceDurationMs The silence duration ms as a Int.
+     * @throws IllegalArgumentException if there was negative numbers.
+     */
+    var silenceDurationMs: Int = silenceDurationMs
+        set(silenceDurationMs) {
+            require(silenceDurationMs >= 0) {
+                "Parameter silenceDurationMs can't be below zero!"
+            }
+
+            field = silenceDurationMs
+            maxSilenceFramesCount = getFramesCount(silenceDurationMs)
+        }
+
+    /**
+     * <p>
+     * Set, retrieve and validate sample rate for Vad Model.
+     * </p>
+     * @param sampleRate The sample rate as a SampleRate.
+     * @throws IllegalArgumentException if there was invalid sample rate.
+     */
+    var sampleRate: SampleRate = sampleRate
+        set(sampleRate) {
+            require(supportedParameters.containsKey(sampleRate)) {
+                "VAD doesn't support Sample Rate:${sampleRate}!"
+            }
+            field = sampleRate
+        }
+
+    /**
+     * <p>
+     * Set, retrieve and validate frame size for Vad Model.
+     * </p>
+     * @param frameSize The sample rate as a FrameSize.
+     * @throws IllegalArgumentException if there was invalid frame size.
+     */
+    var frameSize: FrameSize = frameSize
+        set(frameSize) {
+            require(supportedParameters.containsKey(sampleRate) &&
+                    supportedParameters.get(sampleRate)?.contains(frameSize)!!) {
+                "VAD doesn't support Sample rate:${sampleRate} and Frame Size:${frameSize}!"
+            }
+            field = frameSize
+        }
+
+    /**
+     * <p>
+     * Set and retrieve mode for Vad Model.
+     * </p>
+     * @param mode The sample rate as a Mode.
+     */
+    var mode: Mode = mode
+        set(mode) {
+            field = mode
+        }
+
+    /**
+     * <p>
      * Initializes the ONNIX Runtime by creating a session with the provided
      * model file and session options.
      * </p>
@@ -96,6 +176,11 @@ class VadSilero(
         sessionOptions.setInterOpNumThreads(1)
         sessionOptions.setOptimizationLevel(SessionOptions.OptLevel.ALL_OPT)
         session = env.createSession(getModel(context), sessionOptions)
+        this.sampleRate = sampleRate
+        this.frameSize = frameSize
+        this.mode = mode
+        this.silenceDurationMs = silenceDurationMs
+        this.speechDurationMs = speechDurationMs
         isInitiated = true
     }
 
@@ -222,86 +307,6 @@ class VadSilero(
         Mode.VERY_AGGRESSIVE -> 0.95f
         else -> 0f
     }
-
-    /**
-     * <p>
-     * Set, retrieve and validate sample rate for Vad Model.
-     * </p>
-     * @param sampleRate The sample rate as a SampleRate.
-     * @throws IllegalArgumentException if there was invalid sample rate.
-     */
-    var sampleRate: SampleRate = sampleRate
-        set(sampleRate) {
-            require(supportedParameters.containsKey(sampleRate)) {
-                "VAD doesn't support Sample Rate:${sampleRate}!"
-            }
-            field = sampleRate
-        }
-
-    /**
-     * <p>
-     * Set, retrieve and validate frame size for Vad Model.
-     * </p>
-     * @param frameSize The sample rate as a FrameSize.
-     * @throws IllegalArgumentException if there was invalid frame size.
-     */
-    var frameSize: FrameSize = frameSize
-        set(frameSize) {
-            require(supportedParameters.containsKey(sampleRate) &&
-                        supportedParameters.get(sampleRate)?.contains(frameSize)!!) {
-                "VAD doesn't support Sample rate:${sampleRate} and Frame Size:${frameSize}!"
-            }
-            field = frameSize
-        }
-
-    /**
-     * <p>
-     * Set and retrieve mode for Vad Model.
-     * </p>
-     * @param mode The sample rate as a Mode.
-     */
-    var mode: Mode = mode
-        set(mode) {
-            field = mode
-        }
-
-    /**
-     * <p>
-     * Set, retrieve and validate speechDurationMs for Vad Model.
-     * The value of this parameter will define the necessary and sufficient duration of positive
-     * results to recognize result as speech. Negative numbers are not allowed.
-     * </p>
-     * @param speechDurationMs The speech duration ms as a Int.
-     * @throws IllegalArgumentException if there was negative numbers.
-     */
-    var speechDurationMs: Int = speechDurationMs
-        set(speechDurationMs) {
-            require(speechDurationMs >= 0) {
-                "Parameter speechDurationMs can't be below zero!"
-            }
-
-            field = speechDurationMs
-            maxSpeechFramesCount = getFramesCount(speechDurationMs)
-        }
-
-    /**
-     * <p>
-     * Set, retrieve and validate silenceDurationMs for Vad Model.
-     * The value of this parameter will define the necessary and sufficient duration of
-     * negative results to recognize it as silence. Negative numbers are not allowed.
-     * </p>
-     * @param silenceDurationMs The silence duration ms as a Int.
-     * @throws IllegalArgumentException if there was negative numbers.
-     */
-    var silenceDurationMs: Int = silenceDurationMs
-        set(silenceDurationMs) {
-            require(silenceDurationMs >= 0) {
-                "Parameter silenceDurationMs can't be below zero!"
-            }
-
-            field = silenceDurationMs
-            maxSilenceFramesCount = getFramesCount(silenceDurationMs)
-        }
 
     /**
      * <p>
