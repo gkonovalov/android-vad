@@ -5,6 +5,8 @@ import ai.onnxruntime.OrtEnvironment
 import ai.onnxruntime.OrtSession
 import ai.onnxruntime.OrtSession.SessionOptions
 import android.content.Context
+import com.konovalov.vad.utils.AudioUtils.getFramesCount
+import com.konovalov.vad.utils.AudioUtils.toFloatArray
 import com.konovalov.vad.silero.config.FrameSize
 import com.konovalov.vad.silero.config.Mode
 import com.konovalov.vad.silero.config.SampleRate
@@ -84,19 +86,15 @@ class VadSilero(
 
     /**
      * <p>
-     * Initializes the ONNIX Runtime by creating a session with the provided
-     * model file and session options.
+     * Determines if the provided audio data contains speech based on the inference result.
+     * The audio data is passed to the model for prediction. The result is obtained and compared
+     * with the threshold value to determine if it represents speech.
      * </p>
-     * @param context The context required for accessing the model file.
+     * @param audioData: ShortArray - The audio data to analyze.
+     * @return True if speech is detected, False otherwise.
      */
-    init {
-        val env = OrtEnvironment.getEnvironment()
-        val sessionOptions = SessionOptions()
-        sessionOptions.setIntraOpNumThreads(1)
-        sessionOptions.setInterOpNumThreads(1)
-        sessionOptions.setOptimizationLevel(SessionOptions.OptLevel.ALL_OPT)
-        session = env.createSession(getModel(context), sessionOptions)
-        isInitiated = true
+    fun isSpeech(audioData: ShortArray): Boolean {
+        return isSpeech(toFloatArray(audioData))
     }
 
     /**
@@ -105,10 +103,23 @@ class VadSilero(
      * The audio data is passed to the model for prediction. The result is obtained and compared
      * with the threshold value to determine if it represents speech.
      * </p>
-     * @param audioData The audio data to analyze.
+     * @param audioData: ByteArray - The audio data to analyze.
      * @return True if speech is detected, False otherwise.
      */
-    fun isSpeech(audioData: ShortArray): Boolean {
+    fun isSpeech(audioData: ByteArray): Boolean {
+        return isSpeech(toFloatArray(audioData))
+    }
+
+    /**
+     * <p>
+     * Determines if the provided audio data contains speech based on the inference result.
+     * The audio data is passed to the model for prediction. The result is obtained and compared
+     * with the threshold value to determine if it represents speech.
+     * </p>
+     * @param audioData: FloatArray - The audio data to analyze.
+     * @return True if speech is detected, False otherwise.
+     */
+    fun isSpeech(audioData: FloatArray): Boolean {
         checkState()
         return getResult(session.run(getInputTensors(audioData))) > threshold()
     }
@@ -118,11 +129,40 @@ class VadSilero(
      * Continuous Speech listener was designed to detect long utterances without returning false
      * positive results when user makes pauses between sentences.
      * </p>
-     * @param audio The audio data as a ShortArray.
-     * @param listener The listener to be notified when speech or noise is detected.
+     * @param audio: ShortArray - The audio data to analyze.
+     * @param listener: VadListener - listener to be notified when speech or noise is detected.
      */
     fun setContinuousSpeechListener(audio: ShortArray, listener: VadListener) {
-        if (isSpeech(audio)) {
+        continuousSpeechListener(isSpeech(audio), listener)
+    }
+
+    /**
+     * <p>
+     * Continuous Speech listener was designed to detect long utterances without returning false
+     * positive results when user makes pauses between sentences.
+     * Size of audio ByteArray should be 2x of Frame size.
+     * </p>
+     * @param audio: ByteArray - The audio data to analyze.
+     * @param listener: VadListener - listener to be notified when speech or noise is detected.
+     */
+    fun setContinuousSpeechListener(audio: ByteArray, listener: VadListener) {
+        continuousSpeechListener(isSpeech(audio), listener)
+    }
+
+    /**
+     * <p>
+     * Continuous Speech listener was designed to detect long utterances without returning false
+     * positive results when user makes pauses between sentences.
+     * </p>
+     * @param audio: FloatArray - The audio data to analyze.
+     * @param listener: VadListener - listener to be notified when speech or noise is detected.
+     */
+    fun setContinuousSpeechListener(audio: FloatArray, listener: VadListener) {
+        continuousSpeechListener(isSpeech(audio), listener)
+    }
+
+    private fun continuousSpeechListener(isSpeech: Boolean, listener: VadListener) {
+        if (isSpeech) {
             silenceFramesCount = 0
             if (++speechFramesCount > maxSpeechFramesCount) {
                 speechFramesCount = 0
@@ -170,13 +210,13 @@ class VadSilero(
      * @throws OrtException If there was an error in creating the
      * tensors or obtaining the OrtEnvironment.
      */
-    private fun getInputTensors(audioData: ShortArray): Map<String, OnnxTensor> {
+    private fun getInputTensors(audioData: FloatArray): Map<String, OnnxTensor> {
         val env = OrtEnvironment.getEnvironment()
 
         return mapOf(
             InputTensors.INPUT to OnnxTensor.createTensor(
                 env,
-                FloatBuffer.wrap(audioData.map { it / 32767.0f }.toFloatArray()),
+                FloatBuffer.wrap(audioData),
                 longArrayOf(1, frameSize.value.toLong())
             ),
             InputTensors.SR to OnnxTensor.createTensor(
@@ -247,8 +287,7 @@ class VadSilero(
      */
     var frameSize: FrameSize = frameSize
         set(frameSize) {
-            require(supportedParameters.containsKey(sampleRate) &&
-                        supportedParameters.get(sampleRate)?.contains(frameSize)!!) {
+            require(supportedParameters[sampleRate]?.contains(frameSize) ?: false) {
                 "VAD doesn't support Sample rate:${sampleRate} and Frame Size:${frameSize}!"
             }
             field = frameSize
@@ -277,11 +316,11 @@ class VadSilero(
     var speechDurationMs: Int = speechDurationMs
         set(speechDurationMs) {
             require(speechDurationMs >= 0) {
-                "Parameter speechDurationMs can't be below zero!"
+                "The parameter 'speechDurationMs' cannot be smaller than zero!"
             }
 
             field = speechDurationMs
-            maxSpeechFramesCount = getFramesCount(speechDurationMs)
+            maxSpeechFramesCount = getFramesCount(sampleRate.value, frameSize.value, speechDurationMs)
         }
 
     /**
@@ -296,11 +335,11 @@ class VadSilero(
     var silenceDurationMs: Int = silenceDurationMs
         set(silenceDurationMs) {
             require(silenceDurationMs >= 0) {
-                "Parameter silenceDurationMs can't be below zero!"
+                "The parameter 'silenceDurationMs' cannot be smaller than zero!"
             }
 
             field = silenceDurationMs
-            maxSilenceFramesCount = getFramesCount(silenceDurationMs)
+            maxSilenceFramesCount = getFramesCount(sampleRate.value, frameSize.value, silenceDurationMs)
         }
 
     /**
@@ -313,17 +352,6 @@ class VadSilero(
         checkState()
         isInitiated = false
         session.close()
-    }
-
-    /**
-     * <p>
-     * Calculates the frame count based on the duration in milliseconds, frequency and frame size.
-     * </p>
-     * @param durationMs The duration in milliseconds.
-     * @return The frame count.
-     */
-    private fun getFramesCount(durationMs: Int): Int {
-        return durationMs / (frameSize.value / (sampleRate.value / 1000))
     }
 
     /**
@@ -357,5 +385,29 @@ class VadSilero(
         const val OUTPUT = 0
         const val HN = 1
         const val CN = 2
+    }
+
+    /**
+     * <p>
+     * Initializes the ONNIX Runtime by creating a session with the provided
+     * model file and session options.
+     * </p>
+     * @param context The context required for accessing the model file.
+     */
+    init {
+        this.sampleRate = sampleRate
+        this.frameSize = frameSize
+        this.mode = mode
+        this.silenceDurationMs = silenceDurationMs
+        this.speechDurationMs = speechDurationMs
+
+        val env = OrtEnvironment.getEnvironment()
+        val sessionOptions = SessionOptions()
+        sessionOptions.setIntraOpNumThreads(1)
+        sessionOptions.setInterOpNumThreads(1)
+        sessionOptions.setOptimizationLevel(SessionOptions.OptLevel.ALL_OPT)
+
+        this.session = env.createSession(getModel(context), sessionOptions)
+        this.isInitiated = true
     }
 }

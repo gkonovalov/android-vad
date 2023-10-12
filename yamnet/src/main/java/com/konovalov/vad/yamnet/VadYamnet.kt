@@ -1,6 +1,8 @@
 package com.konovalov.vad.yamnet
 
 import android.content.Context
+import com.konovalov.vad.utils.AudioUtils.getFramesCount
+import com.konovalov.vad.utils.AudioUtils.toShortArray
 import com.konovalov.vad.yamnet.config.FrameSize
 import com.konovalov.vad.yamnet.config.Mode
 import com.konovalov.vad.yamnet.config.SampleRate
@@ -80,29 +82,6 @@ class VadYamnet(
 
     /**
      * <p>
-     * Initializes the Tensorflow Lite by creating a classifier with the provided model file.
-     * The classifier will be used for making predictions.
-     * </p>
-     * @param context The context required for accessing the model file.
-     */
-    init {
-        classifier = AudioClassifier.createFromFileAndOptions(
-            context, "yamnet.tflite",
-            AudioClassifier.AudioClassifierOptions.builder()
-                .setMaxResults(1)
-                .build()
-        )
-        tensor = TensorAudio.create(
-            TensorAudioFormat.builder()
-                .setSampleRate(sampleRate.value)
-                .build(),
-            15600
-        )
-        isInitiated = true
-    }
-
-    /**
-     * <p>
      * Determines if the provided audio data contains speech or other sound.
      * The audio data is passed to the model for prediction. The result is obtained and compared
      * with the threshold value to determine if it represents speech.
@@ -118,22 +97,86 @@ class VadYamnet(
 
     /**
      * <p>
+     * Determines whether the given audio frame is speech or not.
+     * This method checks if the WEBRTC VAD is initialized and calls the native
+     * function to perform the speech detection on the provided audio data.
+     * </p>
+     * @param audioData: ByteArray - The audio data to analyze.
+     * @return {@code true} if the audio data is detected as speech, {@code false} otherwise.
+     */
+    fun classifyAudio(audioData: ByteArray): SoundCategory {
+        return classifyAudio(toShortArray(audioData))
+    }
+
+    /**
+     * <p>
+     * Determines whether the given audio frame is speech or not.
+     * This method checks if the WEBRTC VAD is initialized and calls the native
+     * function to perform the speech detection on the provided audio data.
+     * </p>
+     * @param audioData: FloatArray - The audio data to analyze.
+     * @return {@code true} if the audio data is detected as speech, {@code false} otherwise.
+     */
+    fun classifyAudio(audioData: FloatArray): SoundCategory {
+        return classifyAudio(toShortArray(audioData))
+    }
+
+    /**
+     * <p>
      * Continuous Speech listener was designed to detect long utterances without returning false
      * positive results when user makes pauses between sentences.
      * </p>
-     * @param audio The audio data as a ShortArray.
-     * @param listener The listener to be notified when speech or noise is detected.
+     * @param label: String - expected voice name to be detected.
+     * @param audio: ShortArray - The audio data to analyze.
+     * @param listener: VadListener - listener to be notified when speech or noise is detected.
      */
-    fun setContinuousClassifierListener(audio: ShortArray, listener: VadListener) {
-        setContinuousClassifierListener("", audio, listener)
+    fun setContinuousClassifierListener(label: String, audio: ShortArray, listener: VadListener) {
+        continuousClassifierListener(label, classifyAudio(audio), listener)
     }
 
-    fun setContinuousClassifierListener(label: String, audio: ShortArray, listener: VadListener) {
-        val audioEvent = classifyAudio(audio)
+    /**
+     * <p>
+     * Continuous Speech listener was designed to detect long utterances without returning false
+     * positive results when user makes pauses between sentences.
+     * Size of audio ByteArray should be 2x of Frame size.
+     * </p>
+     * @param label: String - expected voice name to be detected.
+     * @param audio: ByteArray - The audio data to analyze.
+     * @param listener: VadListener - listener to be notified when speech or noise is detected.
+     */
+    fun setContinuousClassifierListener(label: String, audio: ByteArray, listener: VadListener) {
+        continuousClassifierListener(label, classifyAudio(audio), listener)
+    }
 
-        if (label.isEmpty()) {
-            listener.onResult(audioEvent)
-            return
+    /**
+     * <p>
+     * Continuous Speech listener was designed to detect long utterances without returning false
+     * positive results when user makes pauses between sentences.
+     * </p>
+     * @param label: String - expected voice name to be detected.
+     * @param audio: FloatArray - The audio data to analyze.
+     * @param listener: VadListener - listener to be notified when speech or noise is detected.
+     */
+    fun setContinuousClassifierListener(label: String, audio: FloatArray, listener: VadListener) {
+        continuousClassifierListener(label, classifyAudio(audio), listener)
+    }
+
+    /**
+     * <p>
+     * Continuous Speech listener was designed to detect long utterances without returning false
+     * positive results when user makes pauses between sentences.
+     * </p>
+     * @param label: String - expected sound label to be detected.
+     * @param audioEvent: SoundCategory - classified audio category.
+     * @param listener: VadListener - listener to be notified when speech or noise is detected.
+     */
+    private fun continuousClassifierListener(
+        label: String,
+        audioEvent: SoundCategory,
+        listener: VadListener
+    ) {
+        require(label.isNotEmpty()) {
+            "Sound Label required for Continuous Classifier!"
         }
 
         if (audioEvent.label.equals(label, true)) {
@@ -210,10 +253,7 @@ class VadYamnet(
      */
     var frameSize: FrameSize = frameSize
         set(frameSize) {
-            require(
-                supportedParameters.containsKey(sampleRate) &&
-                        supportedParameters.get(sampleRate)?.contains(frameSize)!!
-            ) {
+            require(supportedParameters[sampleRate]?.contains(frameSize) ?: false) {
                 "VAD doesn't support Sample rate:${sampleRate} and Frame Size:${frameSize}!"
             }
             field = frameSize
@@ -242,11 +282,11 @@ class VadYamnet(
     var speechDurationMs: Int = speechDurationMs
         set(speechDurationMs) {
             require(speechDurationMs >= 0) {
-                "Parameter speechDurationMs can't be below zero!"
+                "The parameter 'speechDurationMs' cannot be smaller than zero!"
             }
 
             field = speechDurationMs
-            maxSpeechFramesCount = getFramesCount(speechDurationMs)
+            maxSpeechFramesCount = getFramesCount(sampleRate.value, frameSize.value, speechDurationMs)
         }
 
     /**
@@ -261,11 +301,11 @@ class VadYamnet(
     var silenceDurationMs: Int = silenceDurationMs
         set(silenceDurationMs) {
             require(silenceDurationMs >= 0) {
-                "Parameter silenceDurationMs can't be below zero!"
+                "The parameter 'silenceDurationMs' cannot be smaller than zero!"
             }
 
             field = silenceDurationMs
-            maxSilenceFramesCount = getFramesCount(silenceDurationMs)
+            maxSilenceFramesCount = getFramesCount(sampleRate.value, frameSize.value, silenceDurationMs)
         }
 
     /**
@@ -282,22 +322,38 @@ class VadYamnet(
 
     /**
      * <p>
-     * Calculates the frame count based on the duration in milliseconds, frequency and frame size.
-     * </p>
-     * @param durationMs The duration in milliseconds.
-     * @return The frame count.
-     */
-    private fun getFramesCount(durationMs: Int): Int {
-        return durationMs / (frameSize.value / (sampleRate.value / 1000))
-    }
-
-    /**
-     * <p>
      * Check if VAD session already closed.
      * </p>
      * @throws IllegalArgumentException if session already closed.
      */
     private fun checkState() {
         require(isInitiated) { "You can't use Vad after closing session!" }
+    }
+
+    /**
+     * <p>
+     * Initializes the Tensorflow Lite by creating a classifier with the provided model file.
+     * The classifier will be used for making predictions.
+     * </p>
+     * @param context The context required for accessing the model file.
+     */
+    init {
+        this.sampleRate = sampleRate
+        this.frameSize = frameSize
+        this.mode = mode
+        this.silenceDurationMs = silenceDurationMs
+        this.speechDurationMs = speechDurationMs
+
+        this.classifier = AudioClassifier.createFromFileAndOptions(context, "yamnet.tflite",
+            AudioClassifier.AudioClassifierOptions.builder()
+                .setMaxResults(1)
+                .build()
+        )
+        this.tensor = TensorAudio.create(TensorAudioFormat.builder()
+                .setSampleRate(sampleRate.value)
+                .build(),
+            15600
+        )
+        this.isInitiated = true
     }
 }

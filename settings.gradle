@@ -1,2 +1,2 @@
-include ':example', ':webrtc', ':silero', ':yamnet'
+include ':example', ':utils', ':webrtc', ':silero', ':yamnet'
 rootProject.name='VAD'

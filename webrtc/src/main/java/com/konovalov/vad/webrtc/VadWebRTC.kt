@@ -1,5 +1,7 @@
 package com.konovalov.vad.webrtc
 
+import com.konovalov.vad.utils.AudioUtils.getFramesCount
+import com.konovalov.vad.utils.AudioUtils.toShortArray
 import com.konovalov.vad.webrtc.config.FrameSize
 import com.konovalov.vad.webrtc.config.Mode
 import com.konovalov.vad.webrtc.config.SampleRate
@@ -91,24 +93,11 @@ class VadWebRTC(
 
     /**
      * <p>
-     * This constructor Initializes the native component of the WebRTC VAD
-     * by calling the native initialization function.
-     * </p>
-     * @throws IllegalArgumentException If there was an error initializing the VAD.
-     */
-    init {
-        nativeHandle = nativeInit()
-        isInitiated = nativeHandle != -1L && nativeHandle != 0L
-        setWebRTCMode(mode)
-    }
-
-    /**
-     * <p>
      * Determines whether the given audio frame is speech or not.
      * This method checks if the WEBRTC VAD is initialized and calls the native
      * function to perform the speech detection on the provided audio data.
      * </p>
-     * @param audioData The audio data to analyze.
+     * @param audioData: ShortArray - The audio data to analyze.
      * @return {@code true} if the audio data is detected as speech, {@code false} otherwise.
      */
     fun isSpeech(audioData: ShortArray): Boolean {
@@ -118,14 +107,77 @@ class VadWebRTC(
 
     /**
      * <p>
+     * Determines whether the given audio frame is speech or not.
+     * This method checks if the WEBRTC VAD is initialized and calls the native
+     * function to perform the speech detection on the provided audio data.
+     * </p>
+     * @param audioData: ByteArray - The audio data to analyze.
+     * @return {@code true} if the audio data is detected as speech, {@code false} otherwise.
+     */
+    fun isSpeech(audioData: ByteArray): Boolean {
+        return isSpeech(toShortArray(audioData))
+    }
+
+    /**
+     * <p>
+     * Determines whether the given audio frame is speech or not.
+     * This method checks if the WEBRTC VAD is initialized and calls the native
+     * function to perform the speech detection on the provided audio data.
+     * </p>
+     * @param audioData: FloatArray - The audio data to analyze.
+     * @return {@code true} if the audio data is detected as speech, {@code false} otherwise.
+     */
+    fun isSpeech(audioData: FloatArray): Boolean {
+        return isSpeech(toShortArray(audioData))
+    }
+
+    /**
+     * <p>
      * Continuous Speech listener was designed to detect long utterances without returning false
      * positive results when user makes pauses between sentences.
      * </p>
-     * @param audio The audio data as a ShortArray.
+     * @param audio: ShortArray - The audio data to analyze.
      * @param listener The listener to be notified when speech or noise is detected.
      */
     fun setContinuousSpeechListener(audio: ShortArray, listener: VadListener) {
-        if (isSpeech(audio)) {
+        continuousSpeechListener(isSpeech(audio), listener)
+    }
+
+    /**
+     * <p>
+     * Continuous Speech listener was designed to detect long utterances without returning false
+     * positive results when user makes pauses between sentences.
+     * Size of audio ByteArray should be 2x of Frame size.
+     * </p>
+     * @param audio: ByteArray - The audio data to analyze.
+     * @param listener: VadListener - listener to be notified when speech or noise is detected.
+     */
+    fun setContinuousSpeechListener(audio: ByteArray, listener: VadListener) {
+        continuousSpeechListener(isSpeech(audio), listener)
+    }
+
+    /**
+     * <p>
+     * Continuous Speech listener was designed to detect long utterances without returning false
+     * positive results when user makes pauses between sentences.
+     * </p>
+     * @param audio: FloatArray - The audio data to analyze.
+     * @param listener: VadListener - listener to be notified when speech or noise is detected.
+     */
+    fun setContinuousSpeechListener(audio: FloatArray, listener: VadListener) {
+        continuousSpeechListener(isSpeech(audio), listener)
+    }
+
+    /**
+     * <p>
+     * Continuous Speech listener was designed to detect long utterances without returning false
+     * positive results when user makes pauses between sentences.
+     * </p>
+     * @param isSpeech: Boolean - flag that is set to true when speech is detected and false otherwise.
+     * @param listener: VadListener - listener to be notified when speech or noise is detected.
+     */
+    private fun continuousSpeechListener(isSpeech: Boolean, listener: VadListener) {
+        if (isSpeech) {
             silenceFramesCount = 0
             if (++speechFramesCount > maxSpeechFramesCount) {
                 speechFramesCount = 0
@@ -164,9 +216,7 @@ class VadWebRTC(
      */
     var frameSize: FrameSize = frameSize
         set(frameSize) {
-            require(supportedParameters.containsKey(sampleRate) &&
-                        supportedParameters.get(sampleRate)?.contains(frameSize)!!
-            ) {
+            require(supportedParameters[sampleRate]?.contains(frameSize) ?: false) {
                 "VAD doesn't support Sample rate:${sampleRate} and Frame Size:${frameSize}!"
             }
             field = frameSize
@@ -181,7 +231,9 @@ class VadWebRTC(
     var mode: Mode = mode
         set(mode) {
             field = mode
-            setWebRTCMode(mode)
+
+            checkState()
+            nativeSetMode(nativeHandle, mode.value)
         }
 
     /**
@@ -196,11 +248,11 @@ class VadWebRTC(
     var speechDurationMs: Int = speechDurationMs
         set(speechDurationMs) {
             require(speechDurationMs >= 0) {
-                "Parameter speechDurationMs can't be below zero!"
+                "The parameter 'speechDurationMs' cannot be smaller than zero!"
             }
 
             field = speechDurationMs
-            maxSpeechFramesCount = getFramesCount(speechDurationMs)
+            maxSpeechFramesCount = getFramesCount(sampleRate.value, frameSize.value, speechDurationMs)
         }
 
     /**
@@ -215,13 +267,12 @@ class VadWebRTC(
     var silenceDurationMs: Int = silenceDurationMs
         set(silenceDurationMs) {
             require(silenceDurationMs >= 0) {
-                "Parameter silenceDurationMs can't be below zero!"
+                "The parameter 'silenceDurationMs' cannot be smaller than zero!"
             }
 
             field = silenceDurationMs
-            maxSilenceFramesCount = getFramesCount(silenceDurationMs)
+            maxSilenceFramesCount = getFramesCount(sampleRate.value, frameSize.value, silenceDurationMs)
         }
-
 
     /**
      * <p>
@@ -246,30 +297,6 @@ class VadWebRTC(
         require(isInitiated) { "You can't use Vad after closing session!" }
     }
 
-
-    /**
-     * <p>
-     * Set WEBRTC mode and check if VAD session is not closed.
-     * </p>
-     * @throws IllegalArgumentException if session already closed.
-     */
-    private fun setWebRTCMode(mode: Mode) {
-        checkState()
-        nativeSetMode(nativeHandle, mode.value)
-    }
-
-    /**
-     * <p>
-     * Calculates the frame count based on the duration in milliseconds,
-     * frequency and frame size.
-     * </p>
-     * @param durationMs The duration in milliseconds.
-     * @return The frame count.
-     */
-    private fun getFramesCount(durationMs: Int): Int {
-        return durationMs / (frameSize.value / (sampleRate.value / 1000))
-    }
-
     /**
      * <p>
      * The JNI methods bind to the native WebRTC VAD library.
@@ -290,5 +317,23 @@ class VadWebRTC(
         init {
             System.loadLibrary("vad_jni")
         }
+    }
+
+    /**
+     * <p>
+     * This constructor Initializes the native component of the WebRTC VAD
+     * by calling the native initialization function.
+     * </p>
+     * @throws IllegalArgumentException If there was an error initializing the VAD.
+     */
+    init {
+        this.nativeHandle = nativeInit()
+        this.isInitiated = nativeHandle != -1L && nativeHandle != 0L
+
+        this.sampleRate = sampleRate
+        this.frameSize = frameSize
+        this.mode = mode
+        this.silenceDurationMs = silenceDurationMs
+        this.speechDurationMs = speechDurationMs
     }
 }
