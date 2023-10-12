@@ -252,21 +252,13 @@ dependencies {
 ```
 
 ## Requirements
-Android:  
+#### Android:  
 WebRTC VAD - Android API level 16 and later.  
 Silero VAD - Android API level 21 and later.  
 Yamnet VAD - Android API level 23 and later.  
 
-JDK:  
+#### JDK:  
 JDK 8 or later.
-
-## Development
-To open the project in Android Studio:
-
-1. Go to *File* menu or the *Welcome Screen*
-2. Click on *Open...*
-3. Navigate to VAD's root directory.
-4. Select `setting.gradle`
 
 ## Download
 [![](https://jitpack.io/v/gkonovalov/android-vad.svg)](https://jitpack.io/#gkonovalov/android-vad)
