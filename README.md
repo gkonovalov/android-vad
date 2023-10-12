@@ -215,7 +215,7 @@ returning false positive results when user makes pauses between sentences.
 ```kotlin
     val vad = Vad.builder()
         .setContext(applicationContext)
-        .setSampleRate(SampleRate.SAMPLE_RATE_8K)
+        .setSampleRate(SampleRate.SAMPLE_RATE_16K)
         .setFrameSize(FrameSize.FRAME_SIZE_243)
         .setMode(Mode.NORMAL)
         .setSilenceDurationMs(30)
@@ -252,7 +252,9 @@ dependencies {
 ```
 
 ## Requirements
-Android VAD supports Android 6.0 (API level 23) and later and require JDK 8 or later.
+WebRTC VAD - Android API level 16 and later and require JDK 8 or later.
+Silero VAD - Android API level 21 and later and require JDK 8 or later.
+Yamnet VAD - Android API level 23 and later and require JDK 8 or later.
 
 ## Development
 To open the project in Android Studio:
@@ -281,21 +283,21 @@ allprojects {
 #### WebRTC VAD
 ```groovy
 dependencies {
-    implementation 'com.github.gkonovalov.android-vad:webrtc:2.0.3'
+    implementation 'com.github.gkonovalov.android-vad:webrtc:2.0.4'
 }
 ```
 
 #### Silero VAD
 ```groovy
 dependencies {
-    implementation 'com.github.gkonovalov.android-vad:silero:2.0.3'
+    implementation 'com.github.gkonovalov.android-vad:silero:2.0.4'
 }
 ```
 
 #### Yamnet VAD
 ```groovy
 dependencies {
-    implementation 'com.github.gkonovalov.android-vad:yamnet:2.0.3'
+    implementation 'com.github.gkonovalov.android-vad:yamnet:2.0.4'
 }
 ```
 You also can download precompiled AAR library and APK files from 
