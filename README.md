@@ -252,12 +252,12 @@ dependencies {
 ```
 
 ## Requirements
-#### Android API  
+#### Android API
 WebRTC VAD - Android API level 16 and later.  
 Silero VAD - Android API level 21 and later.  
 Yamnet VAD - Android API level 23 and later.  
 
-#### JDK 
+#### JDK
 JDK 8 or later.
 
 ## Download
