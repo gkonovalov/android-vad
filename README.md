@@ -65,8 +65,8 @@ Recommended parameters for WebRTC VAD:
 * Sample Rate (required) - **16KHz** - The sample rate of the audio input.
 * Frame Size (required) - **512** - The frame size of the audio input.
 * Mode (required) - **VERY_AGGRESSIVE** - The confidence mode of the VAD model.
-* Silence Duration (optional) - **300ms** - The minimum duration in milliseconds for speech segments.
-* Speech Duration (optional) - **50ms** - The minimum duration in milliseconds for silence segments.
+* Silence Duration (optional) - **300ms** - The minimum duration in milliseconds for silence segments.
+* Speech Duration (optional) - **50ms** - The minimum duration in milliseconds for speech segments.
 
 #### Usage
 WebRTC VAD supports 2 different ways of detecting speech:
@@ -128,8 +128,8 @@ Recommended parameters for Silero VAD:
 * Sample Rate (required) - **8KHz** - The sample rate of the audio input.
 * Frame Size (required) - **256** - The frame size of the audio input.
 * Mode (required) - **NORMAL** - The confidence mode of the VAD model.
-* Silence Duration (optional) - **300ms** - The minimum duration in milliseconds for speech segments.
-* Speech Duration (optional) - **50ms** - The minimum duration in milliseconds for silence segments.
+* Silence Duration (optional) - **300ms** - The minimum duration in milliseconds for silence segments.
+* Speech Duration (optional) - **50ms** - The minimum duration in milliseconds for speech segments.
 
 #### Usage
 Silero VAD supports 2 different ways of detecting speech:
@@ -168,7 +168,7 @@ necessary dependencies.
 
 ```groovy
 dependencies {
-   implementation 'com.microsoft.onnxruntime:onnxruntime-android:1.15.1'
+   implementation 'com.microsoft.onnxruntime:onnxruntime-android:1.16.3'
 }
 ```
 
@@ -203,8 +203,8 @@ Recommended parameters for Yamnet VAD:
 * Sample Rate (required) - **16KHz** - The sample rate of the audio input.
 * Frame Size (required) - **243** - The frame size of the audio input.
 * Mode (required) - **NORMAL** - The confidence mode of the VAD model.
-* Silence Duration (optional) - **30ms** - The minimum duration in milliseconds for speech segments.
-* Speech Duration (optional) - **30ms** - The minimum duration in milliseconds for silence segments.
+* Silence Duration (optional) - **30ms** - The minimum duration in milliseconds for silence segments.
+* Speech Duration (optional) - **30ms** - The minimum duration in milliseconds for speech segments.
 
 #### Usage
 Yamnet VAD supports 2 different ways of detecting speech:
@@ -247,7 +247,7 @@ The library utilizes the Tensorflow Lite runtime to run Yamnet VAD DNN, which re
 
 ```groovy
 dependencies {
-   implementation 'org.tensorflow:tensorflow-lite-task-audio:0.4.0'
+   implementation 'org.tensorflow:tensorflow-lite-task-audio:0.4.4'
 }
 ```
 
@@ -279,21 +279,21 @@ allprojects {
 #### WebRTC VAD
 ```groovy
 dependencies {
-    implementation 'com.github.gkonovalov.android-vad:webrtc:2.0.4'
+    implementation 'com.github.gkonovalov.android-vad:webrtc:2.0.5'
 }
 ```
 
 #### Silero VAD
 ```groovy
 dependencies {
-    implementation 'com.github.gkonovalov.android-vad:silero:2.0.4'
+    implementation 'com.github.gkonovalov.android-vad:silero:2.0.5'
 }
 ```
 
 #### Yamnet VAD
 ```groovy
 dependencies {
-    implementation 'com.github.gkonovalov.android-vad:yamnet:2.0.4'
+    implementation 'com.github.gkonovalov.android-vad:yamnet:2.0.5'
 }
 ```
 You also can download precompiled AAR library and APK files from 

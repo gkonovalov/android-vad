@@ -130,7 +130,7 @@ class VadSilero(
      * positive results when user makes pauses between sentences.
      * </p>
      * @param audio: ShortArray - The audio data to analyze.
-     * @param listener: VadListener - listener to be notified when speech or noise is detected.
+     * @param listener: VadListener - Listener to be notified when speech or noise is detected.
      */
     fun setContinuousSpeechListener(audio: ShortArray, listener: VadListener) {
         continuousSpeechListener(isSpeech(audio), listener)
@@ -143,7 +143,7 @@ class VadSilero(
      * Size of audio ByteArray should be 2x of Frame size.
      * </p>
      * @param audio: ByteArray - The audio data to analyze.
-     * @param listener: VadListener - listener to be notified when speech or noise is detected.
+     * @param listener: VadListener - Listener to be notified when speech or noise is detected.
      */
     fun setContinuousSpeechListener(audio: ByteArray, listener: VadListener) {
         continuousSpeechListener(isSpeech(audio), listener)
@@ -155,7 +155,7 @@ class VadSilero(
      * positive results when user makes pauses between sentences.
      * </p>
      * @param audio: FloatArray - The audio data to analyze.
-     * @param listener: VadListener - listener to be notified when speech or noise is detected.
+     * @param listener: VadListener - Listener to be notified when speech or noise is detected.
      */
     fun setContinuousSpeechListener(audio: FloatArray, listener: VadListener) {
         continuousSpeechListener(isSpeech(audio), listener)
@@ -184,7 +184,7 @@ class VadSilero(
      * and cell state (C) values. The H and C values are flattened and converted to float arrays
      * for further processing.
      * </p>
-     * @param output The result of the inference session.
+     * @param output - The result of the inference session.
      * @return The confidence value.
      */
     private fun getResult(output: OrtSession.Result?): Float {
@@ -205,10 +205,9 @@ class VadSilero(
      * corresponding tensor shape. The sample rate, hidden state (H), and cell state (C) tensors
      * are also created and added to the map.
      * </p>
-     * @param audioData The audio data as a ShortArray.
+     * @param audioData - The audio data as a ShortArray.
+     * @throws OrtException if there was an error in creating the tensors or getting the OrtEnvironment.
      * @return A map of input tensors as a Map<String, OnnxTensor>.
-     * @throws OrtException If there was an error in creating the
-     * tensors or obtaining the OrtEnvironment.
      */
     private fun getInputTensors(audioData: FloatArray): Map<String, OnnxTensor> {
         val env = OrtEnvironment.getEnvironment()
@@ -241,7 +240,7 @@ class VadSilero(
      * <p>
      * Retrieves the model data as a byte array from silero_vad.onnx.
      * </p>
-     * @param context The android application context.
+     * @param context - The android context.
      * @return The model data as a ByteArray.
      */
     private fun getModel(context: Context): ByteArray {
@@ -267,7 +266,7 @@ class VadSilero(
      * <p>
      * Set, retrieve and validate sample rate for Vad Model.
      * </p>
-     * @param sampleRate The sample rate as a SampleRate.
+     * @param sampleRate - The sample rate as a SampleRate.
      * @throws IllegalArgumentException if there was invalid sample rate.
      */
     var sampleRate: SampleRate = sampleRate
@@ -282,7 +281,7 @@ class VadSilero(
      * <p>
      * Set, retrieve and validate frame size for Vad Model.
      * </p>
-     * @param frameSize The sample rate as a FrameSize.
+     * @param frameSize - The frame size as a FrameSize.
      * @throws IllegalArgumentException if there was invalid frame size.
      */
     var frameSize: FrameSize = frameSize
@@ -297,7 +296,7 @@ class VadSilero(
      * <p>
      * Set and retrieve mode for Vad Model.
      * </p>
-     * @param mode The sample rate as a Mode.
+     * @param mode - The mode as a Mode.
      */
     var mode: Mode = mode
         set(mode) {
@@ -310,7 +309,7 @@ class VadSilero(
      * The value of this parameter will define the necessary and sufficient duration of positive
      * results to recognize result as speech. Negative numbers are not allowed.
      * </p>
-     * @param speechDurationMs The speech duration ms as a Int.
+     * @param speechDurationMs - The speech duration ms as a Int.
      * @throws IllegalArgumentException if there was negative numbers.
      */
     var speechDurationMs: Int = speechDurationMs
@@ -329,7 +328,7 @@ class VadSilero(
      * The value of this parameter will define the necessary and sufficient duration of
      * negative results to recognize it as silence. Negative numbers are not allowed.
      * </p>
-     * @param silenceDurationMs The silence duration ms as a Int.
+     * @param silenceDurationMs - The silence duration ms as a Int.
      * @throws IllegalArgumentException if there was negative numbers.
      */
     var silenceDurationMs: Int = silenceDurationMs
@@ -392,7 +391,7 @@ class VadSilero(
      * Initializes the ONNIX Runtime by creating a session with the provided
      * model file and session options.
      * </p>
-     * @param context The context required for accessing the model file.
+     * @param context - The context required for accessing the model file.
      */
     init {
         this.sampleRate = sampleRate

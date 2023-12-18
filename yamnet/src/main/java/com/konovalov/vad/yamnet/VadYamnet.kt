@@ -31,16 +31,12 @@ import org.tensorflow.lite.task.audio.classifier.Classifications
  * rates and frame sizes, and the classifiers determine the aggressiveness of the voice
  * activity detection algorithm.
  * </p>
- * @param context (required) - The context is required for VadYamnet
- * @param sampleRate (required) - The sample rate of the audio input.
- * @param frameSize (required) - The frame size of the audio input.
- * @param mode (required) - The mode of the VAD model.
- * @param speechDurationMs (optional) - used in Continuous Speech detector, the value of this
- * parameter will define the necessary and sufficient duration of negative results
- * to recognize it as silence. Negative numbers are not allowed.
- * @param silenceDurationMs (optional) - used in Continuous Speech detector, the value of
- * this parameter will define the necessary and sufficient duration of positive results to
- * recognize result as speech. Negative numbers are not allowed.
+ * @param context The context is required and helps with reading the model file from the file system.
+ * @param sampleRate The sample rate of the audio input.
+ * @param frameSize The frame size of the audio input.
+ * @param mode The mode of the VAD model.
+ * @param speechDurationMs The minimum duration in milliseconds for speech segments.
+ * @param silenceDurationMs The minimum duration in milliseconds for silence segments.
  * </p>
  */
 class VadYamnet(
@@ -86,8 +82,8 @@ class VadYamnet(
      * The audio data is passed to the model for prediction. The result is obtained and compared
      * with the threshold value to determine if it represents speech.
      * </p>
-     * @param audioData The audio data to analyze.
-     * @return List<AudioEvent> list of audio event names.
+     * @param audioData: ShortArray - The audio data to analyze.
+     * @return List<AudioEvent> - List of audio event names.
      */
     fun classifyAudio(audioData: ShortArray): SoundCategory {
         checkState()
@@ -102,7 +98,7 @@ class VadYamnet(
      * function to perform the speech detection on the provided audio data.
      * </p>
      * @param audioData: ByteArray - The audio data to analyze.
-     * @return {@code true} if the audio data is detected as speech, {@code false} otherwise.
+     * @return true if the audio data is detected as speech, false otherwise.
      */
     fun classifyAudio(audioData: ByteArray): SoundCategory {
         return classifyAudio(toShortArray(audioData))
@@ -115,7 +111,7 @@ class VadYamnet(
      * function to perform the speech detection on the provided audio data.
      * </p>
      * @param audioData: FloatArray - The audio data to analyze.
-     * @return {@code true} if the audio data is detected as speech, {@code false} otherwise.
+     * @return true if the audio data is detected as speech, false otherwise.
      */
     fun classifyAudio(audioData: FloatArray): SoundCategory {
         return classifyAudio(toShortArray(audioData))
@@ -126,9 +122,9 @@ class VadYamnet(
      * Continuous Speech listener was designed to detect long utterances without returning false
      * positive results when user makes pauses between sentences.
      * </p>
-     * @param label: String - expected voice name to be detected.
+     * @param label: String - Expected voice name to be detected.
      * @param audio: ShortArray - The audio data to analyze.
-     * @param listener: VadListener - listener to be notified when speech or noise is detected.
+     * @param listener: VadListener - Listener to be notified when speech or noise is detected.
      */
     fun setContinuousClassifierListener(label: String, audio: ShortArray, listener: VadListener) {
         continuousClassifierListener(label, classifyAudio(audio), listener)
@@ -140,7 +136,7 @@ class VadYamnet(
      * positive results when user makes pauses between sentences.
      * Size of audio ByteArray should be 2x of Frame size.
      * </p>
-     * @param label: String - expected voice name to be detected.
+     * @param label: String - Expected voice name to be detected.
      * @param audio: ByteArray - The audio data to analyze.
      * @param listener: VadListener - listener to be notified when speech or noise is detected.
      */
@@ -153,7 +149,7 @@ class VadYamnet(
      * Continuous Speech listener was designed to detect long utterances without returning false
      * positive results when user makes pauses between sentences.
      * </p>
-     * @param label: String - expected voice name to be detected.
+     * @param label: String - Expected voice name to be detected.
      * @param audio: FloatArray - The audio data to analyze.
      * @param listener: VadListener - listener to be notified when speech or noise is detected.
      */
@@ -166,9 +162,9 @@ class VadYamnet(
      * Continuous Speech listener was designed to detect long utterances without returning false
      * positive results when user makes pauses between sentences.
      * </p>
-     * @param label: String - expected sound label to be detected.
-     * @param audioEvent: SoundCategory - classified audio category.
-     * @param listener: VadListener - listener to be notified when speech or noise is detected.
+     * @param label: String - Expected sound label to be detected.
+     * @param audioEvent: SoundCategory - Classified audio category.
+     * @param listener: VadListener - Listener to be notified when speech or noise is detected.
      */
     private fun continuousClassifierListener(
         label: String,
@@ -199,8 +195,8 @@ class VadYamnet(
      * The result is obtained and compared with the threshold value to determine if it
      * represents required sound.
      * </p>
-     * @param output The result of the inference.
-     * @return sound category with label and confidence score.
+     * @param output: List<Classifications> - The result of the inference.
+     * @return SoundCategory with label and confidence score.
      */
     private fun getResult(output: List<Classifications>): SoundCategory {
         val label = output.first().categories.filter {
@@ -233,7 +229,7 @@ class VadYamnet(
      * <p>
      * Set, retrieve and validate sample rate for Vad Model.
      * </p>
-     * @param sampleRate The sample rate as a SampleRate.
+     * @param sampleRate - The sample rate as a SampleRate.
      * @throws IllegalArgumentException if there was invalid sample rate.
      */
     var sampleRate: SampleRate = sampleRate
@@ -248,7 +244,7 @@ class VadYamnet(
      * <p>
      * Set, retrieve and validate frame size for Vad Model.
      * </p>
-     * @param frameSize The sample rate as a FrameSize.
+     * @param frameSize - The sample rate as a FrameSize.
      * @throws IllegalArgumentException if there was invalid frame size.
      */
     var frameSize: FrameSize = frameSize
@@ -263,7 +259,7 @@ class VadYamnet(
      * <p>
      * Set and retrieve mode for Vad Model.
      * </p>
-     * @param mode The sample rate as a Mode.
+     * @param mode - The sample rate as a Mode.
      */
     var mode: Mode = mode
         set(mode) {
@@ -276,7 +272,7 @@ class VadYamnet(
      * The value of this parameter will define the necessary and sufficient duration of positive
      * results to recognize result as speech. Negative numbers are not allowed.
      * </p>
-     * @param speechDurationMs The speech duration ms as a Int.
+     * @param speechDurationMs - The speech duration ms as a Int.
      * @throws IllegalArgumentException if there was negative numbers.
      */
     var speechDurationMs: Int = speechDurationMs
@@ -295,7 +291,7 @@ class VadYamnet(
      * The value of this parameter will define the necessary and sufficient duration of
      * negative results to recognize it as silence. Negative numbers are not allowed.
      * </p>
-     * @param silenceDurationMs The silence duration ms as a Int.
+     * @param silenceDurationMs - The silence duration ms as a Int.
      * @throws IllegalArgumentException if there was negative numbers.
      */
     var silenceDurationMs: Int = silenceDurationMs
@@ -313,6 +309,7 @@ class VadYamnet(
      * Closes the Tensorflow Classifier and releases all associated resources.
      * This method should be called when the VAD is no longer needed to free up system resources.
      * </p>
+     * @throws IllegalArgumentException if session already closed.
      */
     fun close() {
         checkState()
@@ -335,7 +332,7 @@ class VadYamnet(
      * Initializes the Tensorflow Lite by creating a classifier with the provided model file.
      * The classifier will be used for making predictions.
      * </p>
-     * @param context The context required for accessing the model file.
+     * @param context - The context required for accessing the model file.
      */
     init {
         this.sampleRate = sampleRate

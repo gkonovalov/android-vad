@@ -28,15 +28,11 @@ import java.io.Closeable
  * rates and frame sizes, and the classifiers determine the aggressiveness of the voice
  * activity detection algorithm.
  * </p>
- * @param sampleRate (required) - The sample rate of the audio input.
- * @param frameSize (required) - The frame size of the audio input.
- * @param mode (required) - The mode of the VAD model.
- * @param speechDurationMs (optional) - used in Continuous Speech detector, the value of this
- * parameter will define the necessary and sufficient duration of negative results
- * to recognize it as silence. Negative numbers are not allowed.
- * @param silenceDurationMs (optional) - used in Continuous Speech detector, the value of
- * this parameter will define the necessary and sufficient duration of positive results to
- * recognize result as speech. Negative numbers are not allowed.
+ * @param sampleRate The sample rate of the audio input.
+ * @param frameSize The frame size of the audio input.
+ * @param mode The mode of the VAD model.
+ * @param speechDurationMs The minimum duration in milliseconds for speech segments.
+ * @param silenceDurationMs The minimum duration in milliseconds for silence segments.
  * </p>
  */
 class VadWebRTC(
@@ -137,7 +133,7 @@ class VadWebRTC(
      * positive results when user makes pauses between sentences.
      * </p>
      * @param audio: ShortArray - The audio data to analyze.
-     * @param listener The listener to be notified when speech or noise is detected.
+     * @param listener - The listener to be notified when speech or noise is detected.
      */
     fun setContinuousSpeechListener(audio: ShortArray, listener: VadListener) {
         continuousSpeechListener(isSpeech(audio), listener)
@@ -150,7 +146,7 @@ class VadWebRTC(
      * Size of audio ByteArray should be 2x of Frame size.
      * </p>
      * @param audio: ByteArray - The audio data to analyze.
-     * @param listener: VadListener - listener to be notified when speech or noise is detected.
+     * @param listener: VadListener - Listener to be notified when speech or noise is detected.
      */
     fun setContinuousSpeechListener(audio: ByteArray, listener: VadListener) {
         continuousSpeechListener(isSpeech(audio), listener)
@@ -162,7 +158,7 @@ class VadWebRTC(
      * positive results when user makes pauses between sentences.
      * </p>
      * @param audio: FloatArray - The audio data to analyze.
-     * @param listener: VadListener - listener to be notified when speech or noise is detected.
+     * @param listener: VadListener - Listener to be notified when speech or noise is detected.
      */
     fun setContinuousSpeechListener(audio: FloatArray, listener: VadListener) {
         continuousSpeechListener(isSpeech(audio), listener)
@@ -173,8 +169,8 @@ class VadWebRTC(
      * Continuous Speech listener was designed to detect long utterances without returning false
      * positive results when user makes pauses between sentences.
      * </p>
-     * @param isSpeech: Boolean - flag that is set to true when speech is detected and false otherwise.
-     * @param listener: VadListener - listener to be notified when speech or noise is detected.
+     * @param isSpeech: Boolean - Flag that is set to true when speech is detected and false otherwise.
+     * @param listener: VadListener - Listener to be notified when speech or noise is detected.
      */
     private fun continuousSpeechListener(isSpeech: Boolean, listener: VadListener) {
         if (isSpeech) {
@@ -196,7 +192,7 @@ class VadWebRTC(
      * <p>
      * Set, retrieve and validate sample rate for Vad Model.
      * </p>
-     * @param sampleRate The sample rate as a SampleRate.
+     * @param sampleRate - The sample rate as a SampleRate.
      * @throws IllegalArgumentException if there was invalid sample rate.
      */
     var sampleRate: SampleRate = sampleRate
@@ -211,7 +207,7 @@ class VadWebRTC(
      * <p>
      * Set, retrieve and validate frame size for Vad Model.
      * </p>
-     * @param frameSize The sample rate as a FrameSize.
+     * @param frameSize - The frame size as a FrameSize.
      * @throws IllegalArgumentException if there was invalid frame size.
      */
     var frameSize: FrameSize = frameSize
@@ -226,7 +222,7 @@ class VadWebRTC(
      * <p>
      * Set and retrieve mode for Vad Model.
      * </p>
-     * @param mode The sample rate as a Mode.
+     * @param mode - The mode as a Mode.
      */
     var mode: Mode = mode
         set(mode) {
@@ -242,7 +238,7 @@ class VadWebRTC(
      * The value of this parameter will define the necessary and sufficient duration of positive
      * results to recognize result as speech. Negative numbers are not allowed.
      * </p>
-     * @param speechDurationMs The speech duration ms as a Int.
+     * @param speechDurationMs - The speech duration ms as a Int.
      * @throws IllegalArgumentException if there was negative numbers.
      */
     var speechDurationMs: Int = speechDurationMs
@@ -261,7 +257,7 @@ class VadWebRTC(
      * The value of this parameter will define the necessary and sufficient duration of
      * negative results to recognize it as silence. Negative numbers are not allowed.
      * </p>
-     * @param silenceDurationMs The silence duration ms as a Int.
+     * @param silenceDurationMs - The silence duration ms as a Int.
      * @throws IllegalArgumentException if there was negative numbers.
      */
     var silenceDurationMs: Int = silenceDurationMs
@@ -278,8 +274,8 @@ class VadWebRTC(
      * <p>
      * Closes the WebRTC VAD and releases all associated resources.
      * This method should be called when the VAD is no longer needed to free up system resources.
-     * @throws IllegalArgumentException if VAD already destroyed.
      * </p>
+     * @throws IllegalArgumentException if VAD already destroyed.
      */
     override fun close() {
         checkState()
@@ -324,7 +320,7 @@ class VadWebRTC(
      * This constructor Initializes the native component of the WebRTC VAD
      * by calling the native initialization function.
      * </p>
-     * @throws IllegalArgumentException If there was an error initializing the VAD.
+     * @throws IllegalArgumentException if there was an error initializing the VAD.
      */
     init {
         this.nativeHandle = nativeInit()
