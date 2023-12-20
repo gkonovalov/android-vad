@@ -94,7 +94,7 @@ class VadSilero(
      * @return True if speech is detected, False otherwise.
      */
     fun isSpeech(audioData: ShortArray): Boolean {
-        return isSpeech(toFloatArray(audioData))
+        return isContinuousSpeech(predict(toFloatArray(audioData)))
     }
 
     /**
@@ -102,12 +102,13 @@ class VadSilero(
      * Determines if the provided audio data contains speech based on the inference result.
      * The audio data is passed to the model for prediction. The result is obtained and compared
      * with the threshold value to determine if it represents speech.
+     * Size of audio ByteArray should be 2x of Frame size.
      * </p>
      * @param audioData: ByteArray - The audio data to analyze.
      * @return True if speech is detected, False otherwise.
      */
     fun isSpeech(audioData: ByteArray): Boolean {
-        return isSpeech(toFloatArray(audioData))
+        return isContinuousSpeech(predict(toFloatArray(audioData)))
     }
 
     /**
@@ -120,8 +121,7 @@ class VadSilero(
      * @return True if speech is detected, False otherwise.
      */
     fun isSpeech(audioData: FloatArray): Boolean {
-        checkState()
-        return getResult(session.run(getInputTensors(audioData))) > threshold()
+        return isContinuousSpeech(predict(audioData))
     }
 
     /**
@@ -131,9 +131,22 @@ class VadSilero(
      * </p>
      * @param audio: ShortArray - The audio data to analyze.
      * @param listener: VadListener - Listener to be notified when speech or noise is detected.
+     * @deprecated This method is deprecated and may be removed in future releases.
+     * Please use the 'isSpeech' method for speech analysis instead.
      */
+    @Deprecated(
+        "Please use the 'isSpeech()' method for speech analysis instead.",
+        replaceWith = ReplaceWith(
+            "vad.isSpeech(audio)",
+            imports = ["com.konovalov.vad.silero.VadSilero"]
+        )
+    )
     fun setContinuousSpeechListener(audio: ShortArray, listener: VadListener) {
-        continuousSpeechListener(isSpeech(audio), listener)
+        if (isSpeech(audio)) {
+            listener.onSpeechDetected()
+        } else {
+            listener.onNoiseDetected()
+        }
     }
 
     /**
@@ -144,9 +157,22 @@ class VadSilero(
      * </p>
      * @param audio: ByteArray - The audio data to analyze.
      * @param listener: VadListener - Listener to be notified when speech or noise is detected.
+     * @deprecated This method is deprecated and may be removed in future releases.
+     * Please use the 'isSpeech' method for speech analysis instead.
      */
+    @Deprecated(
+        "Please use the 'isSpeech()' method for speech analysis instead.",
+        replaceWith = ReplaceWith(
+            "vad.isSpeech(audio)",
+            imports = ["com.konovalov.vad.silero.VadSilero"]
+        )
+    )
     fun setContinuousSpeechListener(audio: ByteArray, listener: VadListener) {
-        continuousSpeechListener(isSpeech(audio), listener)
+        if (isSpeech(audio)) {
+            listener.onSpeechDetected()
+        } else {
+            listener.onNoiseDetected()
+        }
     }
 
     /**
@@ -156,25 +182,65 @@ class VadSilero(
      * </p>
      * @param audio: FloatArray - The audio data to analyze.
      * @param listener: VadListener - Listener to be notified when speech or noise is detected.
+     * @deprecated This method is deprecated and may be removed in future releases.
+     * Please use the 'isSpeech' method for speech analysis instead.
      */
+    @Deprecated(
+        "Please use the 'isSpeech()' method for speech analysis instead.",
+        replaceWith = ReplaceWith(
+            "vad.isSpeech(audio)",
+            imports = ["com.konovalov.vad.silero.VadSilero"]
+        )
+    )
     fun setContinuousSpeechListener(audio: FloatArray, listener: VadListener) {
-        continuousSpeechListener(isSpeech(audio), listener)
+        if (isSpeech(audio)) {
+            listener.onSpeechDetected()
+        } else {
+            listener.onNoiseDetected()
+        }
     }
 
-    private fun continuousSpeechListener(isSpeech: Boolean, listener: VadListener) {
+    /**
+     * <p>
+     * This method designed to detect long utterances without returning false
+     * positive results when user makes pauses between sentences.
+     * </p>
+     * @param isSpeech: Boolean - Predicted frame result.
+     * @return True if speech is detected, False otherwise.
+     */
+    private fun isContinuousSpeech(isSpeech: Boolean): Boolean {
         if (isSpeech) {
-            silenceFramesCount = 0
-            if (++speechFramesCount > maxSpeechFramesCount) {
-                speechFramesCount = 0
-                listener.onSpeechDetected()
+            if (speechFramesCount <= maxSpeechFramesCount) speechFramesCount++
+
+            if (speechFramesCount > maxSpeechFramesCount) {
+                silenceFramesCount = 0
+                return true
             }
         } else {
-            speechFramesCount = 0
-            if (++silenceFramesCount > maxSilenceFramesCount) {
-                silenceFramesCount = 0
-                listener.onNoiseDetected()
+            if (silenceFramesCount <= maxSilenceFramesCount) silenceFramesCount++
+
+            if (silenceFramesCount > maxSilenceFramesCount) {
+                speechFramesCount = 0
+                return false
+            } else if (speechFramesCount > maxSpeechFramesCount) {
+                return true
             }
         }
+        return false
+    }
+
+    /**
+     * <p>
+     * Determines if the provided audio data contains speech based on the inference result.
+     * The audio data is passed to the model for prediction. The result is obtained and compared
+     * with the threshold value to determine if it represents speech.
+     * </p>
+     * @param audioData: FloatArray - The audio data to analyze.
+     * @return True if speech is detected, False otherwise.
+     */
+    private fun predict(audioData: FloatArray): Boolean {
+        checkState()
+        return getResult(session.run(getInputTensors(audioData))) > threshold()
     }
 
     /**
