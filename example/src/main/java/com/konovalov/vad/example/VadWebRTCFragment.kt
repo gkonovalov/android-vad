@@ -14,7 +14,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.konovalov.vad.example.recorder.VoiceRecorder
 import com.konovalov.vad.example.recorder.VoiceRecorder.AudioCallback
 import com.konovalov.vad.webrtc.Vad
-import com.konovalov.vad.webrtc.VadListener
 import com.konovalov.vad.webrtc.VadWebRTC
 import com.konovalov.vad.webrtc.config.FrameSize
 import com.konovalov.vad.webrtc.config.Mode
@@ -60,7 +59,7 @@ class VadWebRTCFragment : Fragment(),
         parent: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.fragment_vad_main, parent, false);
+        return inflater.inflate(R.layout.fragment_vad_main, parent, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -110,15 +109,15 @@ class VadWebRTCFragment : Fragment(),
 
 
     override fun onAudio(audioData: ShortArray) {
-        vad.setContinuousSpeechListener(audioData, object : VadListener {
-            override fun onSpeechDetected() {
-                requireActivity().runOnUiThread { speechTextView.setText(R.string.speech_detected) }
+        if (vad.isSpeech(audioData)) {
+            requireActivity().runOnUiThread{
+                speechTextView.setText(R.string.speech_detected)
             }
-
-            override fun onNoiseDetected() {
-                requireActivity().runOnUiThread { speechTextView.setText(R.string.noise_detected) }
+        } else {
+            requireActivity().runOnUiThread{
+                speechTextView.setText(R.string.noise_detected)
             }
-        })
+        }
     }
 
     private fun getSampleRates(): List<String> {

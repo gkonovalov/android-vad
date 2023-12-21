@@ -14,7 +14,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.konovalov.vad.example.recorder.VoiceRecorder
 import com.konovalov.vad.example.recorder.VoiceRecorder.AudioCallback
 import com.konovalov.vad.silero.Vad
-import com.konovalov.vad.silero.VadListener
 import com.konovalov.vad.silero.VadSilero
 import com.konovalov.vad.silero.config.FrameSize
 import com.konovalov.vad.silero.config.Mode
@@ -60,7 +59,7 @@ class VadSileroFragment : Fragment(),
         parent: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.fragment_vad_main, parent, false);
+        return inflater.inflate(R.layout.fragment_vad_main, parent, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -109,17 +108,16 @@ class VadSileroFragment : Fragment(),
         activateRecordingButtonWithPermissionCheck()
     }
 
-
     override fun onAudio(audioData: ShortArray) {
-        vad.setContinuousSpeechListener(audioData, object : VadListener {
-            override fun onSpeechDetected() {
-                requireActivity().runOnUiThread { speechTextView.setText(R.string.speech_detected) }
+        if (vad.isSpeech(audioData)) {
+            requireActivity().runOnUiThread {
+                speechTextView.setText(R.string.speech_detected)
             }
-
-            override fun onNoiseDetected() {
-                requireActivity().runOnUiThread { speechTextView.setText(R.string.noise_detected) }
+        } else {
+            requireActivity().runOnUiThread {
+                speechTextView.setText(R.string.noise_detected)
             }
-        })
+        }
     }
 
     private fun getSampleRates(): List<String> {
