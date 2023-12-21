@@ -13,9 +13,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.konovalov.vad.example.recorder.VoiceRecorder
 import com.konovalov.vad.example.recorder.VoiceRecorder.AudioCallback
-import com.konovalov.vad.yamnet.SoundCategory
 import com.konovalov.vad.yamnet.Vad
-import com.konovalov.vad.yamnet.VadListener
 import com.konovalov.vad.yamnet.VadYamnet
 import com.konovalov.vad.yamnet.config.FrameSize
 import com.konovalov.vad.yamnet.config.Mode
@@ -112,19 +110,14 @@ class VadYamnetFragment : Fragment(),
 
     override fun onAudio(audioData: ShortArray) {
         val speech = "Speech"
+        val soundCategory = vad.classifyAudio(speech, audioData)
 
-        vad.setContinuousClassifierListener(speech, audioData, object : VadListener {
-            override fun onResult(event: SoundCategory) {
-                if (!isAdded) return
-
-                requireActivity().runOnUiThread {
-                    when (event.label) {
-                        speech -> speechTextView.setText(R.string.speech_detected)
-                        else -> speechTextView.setText(R.string.noise_detected)
-                    }
-                }
+        requireActivity().runOnUiThread{
+            when (soundCategory.label) {
+                speech -> speechTextView.setText(R.string.speech_detected)
+                else -> speechTextView.setText(R.string.noise_detected)
             }
-        })
+        }
     }
 
     private fun getSampleRates(): List<String> {
