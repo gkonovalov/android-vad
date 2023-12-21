@@ -69,10 +69,10 @@ Recommended parameters for WebRTC VAD:
 * Speech Duration (optional) - **50ms** - The minimum duration in milliseconds for speech segments.
 
 #### Usage
-WebRTC VAD supports 2 different ways of detecting speech:
-Detector which detect speech/noise in short audio frames and then return result
-for every frame and Continuous Speech listener which detect long utterances without 
-returning false positive results when user makes pauses between sentences.
+WebRTC VAD can identify speech in short audio frames, returning results for each frame.
+By utilizing parameters such as silenceDurationMs and speechDurationMs, you can enhance the
+capability of VAD, enabling the detection of prolonged utterances while minimizing false positive
+results during pauses between sentences.
 
 ```kotlin
     val vad = Vad.builder()
@@ -85,18 +85,42 @@ returning false positive results when user makes pauses between sentences.
 
     val isSpeech = vad.isSpeech(audioData)
 
-    vad.setContinuousSpeechListener(audioData, object : VadListener {
-        override fun onSpeechDetected() {
-            //Speech detected!
-        }
+    vad.close()
+```
 
-        override fun onNoiseDetected() {
-            //Noise detected!
+An example of how to detect speech in an audio file.
+```kotlin
+    val vad = Vad.builder()
+        .setContext(requireContext())
+        .setSampleRate(SampleRate.SAMPLE_RATE_8K)
+        .setFrameSize(FrameSize.FRAME_SIZE_256)
+        .setMode(Mode.VERY_AGGRESSIVE)
+        .setSilenceDurationMs(600)
+        .setSpeechDurationMs(50)
+        .build()
+
+    requireContext().assets.open("test.wav").use { input ->
+        val chunkSize = vad.frameSize.value * 2
+        val audioHeader = ByteArray(44).apply { input.read(this) }
+        var speechData = byteArrayOf()
+
+        generateSequence { ByteArray(chunkSize).also { input.read(it) } }
+            .takeWhile { it.size == chunkSize }
+            .forEach {
+                if (vad.isSpeech(it)) {
+                    speechData += it
+                } else {
+                    if (speechData.isNotEmpty()) {
+                        saveSpeechToFile(audioHeader, speechData)
+                        speechData = byteArrayOf()
+                    }
+                }
+            }
         }
-    })
 
     vad.close()
 ```
+
 ## Silero VAD
 #### Parameters
 Silero VAD library only accepts **16-bit Mono PCM audio stream** and can work with next Sample Rates,
@@ -132,10 +156,10 @@ Recommended parameters for Silero VAD:
 * Speech Duration (optional) - **50ms** - The minimum duration in milliseconds for speech segments.
 
 #### Usage
-Silero VAD supports 2 different ways of detecting speech:
-Detector which detect speech/noise in short audio frames and then return result
-for every frame and Continuous Speech listener which detect long utterances without
-returning false positive results when user makes pauses between sentences.
+Silero VAD can identify speech in short audio frames, returning results for each frame. 
+By utilizing parameters such as silenceDurationMs and speechDurationMs, you can enhance the 
+capability of VAD, enabling the detection of prolonged utterances while minimizing false positive 
+results during pauses between sentences.
 
 ```kotlin
     val vad = Vad.builder()
@@ -149,15 +173,38 @@ returning false positive results when user makes pauses between sentences.
 
     val isSpeech = vad.isSpeech(audioData)
 
-    vad.setContinuousSpeechListener(audioData, object : VadListener {
-        override fun onSpeechDetected() {
-            //Speech detected!
-        }
+    vad.close()
+```
 
-        override fun onNoiseDetected() {
-            //Noise detected!
+An example of how to detect speech in an audio file.
+```kotlin
+    val vad = Vad.builder()
+        .setContext(requireContext())
+        .setSampleRate(SampleRate.SAMPLE_RATE_8K)
+        .setFrameSize(FrameSize.FRAME_SIZE_256)
+        .setMode(Mode.VERY_AGGRESSIVE)
+        .setSilenceDurationMs(600)
+        .setSpeechDurationMs(50)
+        .build()
+
+    requireContext().assets.open("test.wav").use { input ->
+        val chunkSize = vad.frameSize.value * 2
+        val audioHeader = ByteArray(44).apply { input.read(this) }
+        var speechData = byteArrayOf()
+
+        generateSequence { ByteArray(chunkSize).also { input.read(it) } }
+            .takeWhile { it.size == chunkSize }
+            .forEach {
+                if (vad.isSpeech(it)) {
+                    speechData += it
+                } else {
+                    if (speechData.isNotEmpty()) {
+                        saveSpeechToFile(audioHeader, speechData)
+                        speechData = byteArrayOf()
+                    }
+                }
+            }
         }
-    })
 
     vad.close()
 ```
@@ -207,10 +254,11 @@ Recommended parameters for Yamnet VAD:
 * Speech Duration (optional) - **30ms** - The minimum duration in milliseconds for speech segments.
 
 #### Usage
-Yamnet VAD supports 2 different ways of detecting speech:
-Simple Classifier which predict [521](https://github.com/tensorflow/models/blob/master/research/audioset/yamnet/yamnet_class_map.csv) audio event classes (such as speech, music, animal sounds and etc) in short audio frames 
-and then return result for every frame and Continuous Classifier listener which detect long utterances without
-returning false positive results when user makes pauses between sentences.
+Yamnet VAD can identify [521](https://github.com/tensorflow/models/blob/master/research/audioset/yamnet/yamnet_class_map.csv) 
+audio event classes (such as speech, music, animal sounds and etc) in small audio frames.
+By utilizing parameters such as silenceDurationMs and speechDurationMs, you can enhance the
+capability of VAD, enabling the detection of prolonged utterances while minimizing false positive
+results during pauses between sentences.
 
 ```kotlin
     val vad = Vad.builder()
@@ -222,26 +270,50 @@ returning false positive results when user makes pauses between sentences.
         .setSpeechDurationMs(30)
         .build()
 
-    val soundCategory = vad.classifyAudio(audioData)
-    when (soundCategory.label) {
-        "Speech" -> "Speech Detected!" + soundCategory.score
-        "Cat" -> "Cat Detected!" + soundCategory.score
-        "Dog" -> "Dog Detected!" + soundCategory.score
-        "Music" -> "Music Detected!" + soundCategory.score
-        else -> "Noise Detected!" + soundCategory.score
+    val soundCategory = vad.classifyAudio("Speech", audioData)
+    when (event.label) {
+        "Speech" -> "Speech Detected!" + event.score
+        else -> "Noise Detected!" + event.score
     }
-
-    vad.setContinuousClassifierListener("Speech", audioData, object : VadListener {
-        override fun onResult(event: SoundCategory) {
-            when (event.label) {
-                "Speech" -> "Speech Detected!" + event.score
-                else -> "Noise Detected!" + event.score
-            }
-        }
-    })
 
     vad.close()
 ```
+
+An example of how to detect speech in an audio file.
+```kotlin
+    val vad = Vad.builder()
+        .setContext(requireContext())
+        .setSampleRate(SampleRate.SAMPLE_RATE_8K)
+        .setFrameSize(FrameSize.FRAME_SIZE_256)
+        .setMode(Mode.VERY_AGGRESSIVE)
+        .setSilenceDurationMs(600)
+        .setSpeechDurationMs(50)
+        .build()
+
+    requireContext().assets.open("test.wav").use { input ->
+        val chunkSize = vad.frameSize.value * 2
+        val audioHeader = ByteArray(44).apply { input.read(this) }
+        var speechData = byteArrayOf()
+
+        generateSequence { ByteArray(chunkSize).also { input.read(it) } }
+            .takeWhile { it.size == chunkSize }
+            .forEach {
+                val soundCategory = vad.classifyAudio("Speech", it)
+                
+                if (event.label.equals("Speech")) {
+                    speechData += it
+                } else {
+                    if (speechData.isNotEmpty()) {
+                        saveSpeechToFile(audioHeader, speechData)
+                        speechData = byteArrayOf()
+                    }
+                }
+            }
+        }
+
+    vad.close()
+```
+
 #### Yamnet VAD Dependencies
 The library utilizes the Tensorflow Lite runtime to run Yamnet VAD DNN, which requires next dependencies.
 
