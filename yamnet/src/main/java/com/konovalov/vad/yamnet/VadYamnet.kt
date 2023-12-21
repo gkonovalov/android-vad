@@ -78,56 +78,119 @@ class VadYamnet(
 
     /**
      * <p>
-     * Determines if the provided audio data contains speech or other sound.
-     * The audio data is passed to the model for prediction. The result is obtained and compared
-     * with the threshold value to determine if it represents speech.
+     * Determines if the provided audio data contains specific sound.
+     * The audio data is passed to the model for prediction.
+     * The result is obtained and compared with the threshold value to determine
+     * if it represents specific sound.
      * </p>
      * @param audioData: ShortArray - The audio data to analyze.
-     * @return List<AudioEvent> - List of audio event names.
+     * @return SoundCategory with label and confidence score.
      */
     fun classifyAudio(audioData: ShortArray): SoundCategory {
-        checkState()
-        tensor.load(audioData)
-        return getResult(classifier.classify(tensor))
+        return predict(audioData)
     }
 
     /**
      * <p>
-     * Determines whether the given audio frame is speech or not.
-     * This method checks if the WEBRTC VAD is initialized and calls the native
-     * function to perform the speech detection on the provided audio data.
+     * Determines if the provided audio data contains specific sound.
+     * The audio data is passed to the model for prediction.
+     * The result is obtained and compared with the threshold value to determine
+     * if it represents specific sound.
+     * Size of audio ByteArray should be 2x of Frame size.
      * </p>
      * @param audioData: ByteArray - The audio data to analyze.
-     * @return true if the audio data is detected as speech, false otherwise.
+     * @return SoundCategory with label and confidence score.
      */
     fun classifyAudio(audioData: ByteArray): SoundCategory {
-        return classifyAudio(toShortArray(audioData))
+        return predict(toShortArray(audioData))
     }
 
     /**
      * <p>
-     * Determines whether the given audio frame is speech or not.
-     * This method checks if the WEBRTC VAD is initialized and calls the native
-     * function to perform the speech detection on the provided audio data.
+     * Determines if the provided audio data contains specific sound.
+     * The audio data is passed to the model for prediction.
+     * The result is obtained and compared with the threshold value to determine
+     * if it represents specific sound.
      * </p>
      * @param audioData: FloatArray - The audio data to analyze.
-     * @return true if the audio data is detected as speech, false otherwise.
+     * @return SoundCategory with label and confidence score.
      */
     fun classifyAudio(audioData: FloatArray): SoundCategory {
-        return classifyAudio(toShortArray(audioData))
+        return predict(toShortArray(audioData))
     }
 
     /**
      * <p>
-     * Continuous Speech listener was designed to detect long utterances without returning false
-     * positive results when user makes pauses between sentences.
+     * Determines if the provided audio data contains specific sound.
+     * The audio data is passed to the model for prediction.
+     * The result is obtained and compared with the threshold value to determine
+     * if it represents specific sound. This method designed to detect long utterances
+     * without returning false positive results when user makes pauses between sentences.
+     * </p>
+     * @param label: String - Expected sound name to be detected.
+     * @param audioData: ShortArray - The audio data to analyze.
+     * @return SoundCategory with label and confidence score.
+     */
+    fun classifyAudio(label: String, audioData: ShortArray): SoundCategory {
+        return isContinuousVoice(label, classifyAudio(audioData))
+    }
+
+    /**
+     * <p>
+     * Determines if the provided audio data contains specific sound.
+     * The audio data is passed to the model for prediction.
+     * The result is obtained and compared with the threshold value to determine
+     * if it represents specific sound. This method designed to detect long utterances
+     * without returning false positive results when user makes pauses between sentences.
+     * Size of audio ByteArray should be 2x of Frame size.
+     * </p>
+     * @param label: String - Expected sound name to be detected.
+     * @param audioData: ByteArray - The audio data to analyze.
+     * @return SoundCategory with label and confidence score.
+     */
+    fun classifyAudio(label: String, audioData: ByteArray): SoundCategory {
+        return isContinuousVoice(label, classifyAudio(audioData))
+    }
+
+    /**
+     * <p>
+     * Determines if the provided audio data contains specific sound.
+     * The audio data is passed to the model for prediction.
+     * The result is obtained and compared with the threshold value to determine
+     * if it represents specific sound. This method designed to detect long utterances
+     * without returning false positive results when user makes pauses between sentences.
+     * </p>
+     * @param label: String - Expected sound name to be detected.
+     * @param audioData: FloatArray - The audio data to analyze.
+     * @return SoundCategory with label and confidence score.
+     */
+    fun classifyAudio(label: String, audioData: FloatArray): SoundCategory {
+        return isContinuousVoice(label, classifyAudio(audioData))
+    }
+
+    /**
+     * <p>
+     * Determines if the provided audio data contains specific sound.
+     * The audio data is passed to the model for prediction.
+     * The result is obtained and compared with the threshold value to determine
+     * if it represents specific sound. This method designed to detect long utterances
+     * without returning false positive results when user makes pauses between sentences.
      * </p>
      * @param label: String - Expected voice name to be detected.
      * @param audio: ShortArray - The audio data to analyze.
      * @param listener: VadListener - Listener to be notified when speech or noise is detected.
+     * @deprecated This method is deprecated and may be removed in future releases.
+     * Please use the 'isSpeech' method for speech analysis instead.
      */
+    @Deprecated(
+        "Please use the 'classifyAudio()' method for speech analysis instead.",
+        replaceWith = ReplaceWith(
+            "vad.classifyAudio(label, audio)",
+            imports = ["com.konovalov.vad.yamnet.VadYamnet"]
+        )
+    )
     fun setContinuousClassifierListener(label: String, audio: ShortArray, listener: VadListener) {
-        continuousClassifierListener(label, classifyAudio(audio), listener)
+        listener.onResult(isContinuousVoice(label, classifyAudio(audio)))
     }
 
     /**
@@ -138,10 +201,19 @@ class VadYamnet(
      * </p>
      * @param label: String - Expected voice name to be detected.
      * @param audio: ByteArray - The audio data to analyze.
-     * @param listener: VadListener - listener to be notified when speech or noise is detected.
+     * @param listener: VadListener - Listener to be notified when speech or noise is detected.
+     * @deprecated This method is deprecated and may be removed in future releases.
+     * Please use the 'isSpeech' method for speech analysis instead.
      */
+    @Deprecated(
+        "Please use the 'classifyAudio()' method for speech analysis instead.",
+        replaceWith = ReplaceWith(
+            "vad.classifyAudio(label, audio)",
+            imports = ["com.konovalov.vad.yamnet.VadYamnet"]
+        )
+    )
     fun setContinuousClassifierListener(label: String, audio: ByteArray, listener: VadListener) {
-        continuousClassifierListener(label, classifyAudio(audio), listener)
+        listener.onResult(isContinuousVoice(label, classifyAudio(audio)))
     }
 
     /**
@@ -149,45 +221,70 @@ class VadYamnet(
      * Continuous Speech listener was designed to detect long utterances without returning false
      * positive results when user makes pauses between sentences.
      * </p>
-     * @param label: String - Expected voice name to be detected.
      * @param audio: FloatArray - The audio data to analyze.
-     * @param listener: VadListener - listener to be notified when speech or noise is detected.
+     * @param listener: VadListener - Listener to be notified when speech or noise is detected.
+     * @deprecated This method is deprecated and may be removed in future releases.
+     * Please use the 'isSpeech' method for speech analysis instead.
      */
+    @Deprecated(
+        "Please use the 'classifyAudio()' method for speech analysis instead.",
+        replaceWith = ReplaceWith(
+            "vad.classifyAudio(label, audio)",
+            imports = ["com.konovalov.vad.yamnet.VadYamnet"]
+        )
+    )
     fun setContinuousClassifierListener(label: String, audio: FloatArray, listener: VadListener) {
-        continuousClassifierListener(label, classifyAudio(audio), listener)
+        listener.onResult(isContinuousVoice(label, classifyAudio(audio)))
     }
 
     /**
      * <p>
-     * Continuous Speech listener was designed to detect long utterances without returning false
+     * This method designed to detect long utterances without returning false
      * positive results when user makes pauses between sentences.
      * </p>
      * @param label: String - Expected sound label to be detected.
-     * @param audioEvent: SoundCategory - Classified audio category.
-     * @param listener: VadListener - Listener to be notified when speech or noise is detected.
+     * @param audioEvent: SoundCategory - Predicted sound category.
+     * @return SoundCategory with label and confidence score.
      */
-    private fun continuousClassifierListener(
-        label: String,
-        audioEvent: SoundCategory,
-        listener: VadListener
-    ) {
+    private fun isContinuousVoice(label: String, audioEvent: SoundCategory): SoundCategory {
         require(label.isNotEmpty()) {
-            "Sound Label required for Continuous Classifier!"
+            "Sound Label required for Continuous classifier!"
         }
 
         if (audioEvent.label.equals(label, true)) {
-            silenceFramesCount = 0
-            if (++speechFramesCount > maxSpeechFramesCount) {
-                speechFramesCount = 0
-                listener.onResult(audioEvent)
+            if (speechFramesCount <= maxSpeechFramesCount) speechFramesCount++
+
+            if (speechFramesCount > maxSpeechFramesCount) {
+                silenceFramesCount = 0
+                return audioEvent
             }
         } else {
-            speechFramesCount = 0
-            if (++silenceFramesCount > maxSilenceFramesCount) {
-                silenceFramesCount = 0
-                listener.onResult(SoundCategory())
+            if (silenceFramesCount <= maxSilenceFramesCount) silenceFramesCount++
+
+            if (silenceFramesCount > maxSilenceFramesCount) {
+                speechFramesCount = 0
+                return SoundCategory()
+            } else if (speechFramesCount > maxSpeechFramesCount) {
+                return SoundCategory(label)
             }
         }
+
+        return SoundCategory()
+    }
+
+    /**
+     * <p>
+     * Determines if the provided audio data contains speech or other sound.
+     * The audio data is passed to the model for prediction. The result is obtained and compared
+     * with the threshold value to determine if it represents specific sound.
+     * </p>
+     * @param audioData: ShortArray - The audio data to analyze.
+     * @return SoundCategory with label and confidence score.
+     */
+    private fun predict(audioData: ShortArray): SoundCategory {
+        checkState()
+        tensor.load(audioData)
+        return getResult(classifier.classify(tensor))
     }
 
     /**
