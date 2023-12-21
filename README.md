@@ -91,7 +91,6 @@ results during pauses between sentences.
 An example of how to detect speech in an audio file.
 ```kotlin
     val vad = Vad.builder()
-        .setContext(requireContext())
         .setSampleRate(SampleRate.SAMPLE_RATE_8K)
         .setFrameSize(FrameSize.FRAME_SIZE_256)
         .setMode(Mode.VERY_AGGRESSIVE)
