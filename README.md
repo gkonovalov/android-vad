@@ -270,9 +270,10 @@ results during pauses between sentences.
         .build()
 
     val soundCategory = vad.classifyAudio("Speech", audioData)
-    when (event.label) {
-        "Speech" -> "Speech Detected!" + event.score
-        else -> "Noise Detected!" + event.score
+
+    when (soundCategory.label) {
+        "Speech" -> "Speech Detected!" + soundCategory.score
+        else -> "Noise Detected!" + soundCategory.score
     }
 
     vad.close()
@@ -299,7 +300,7 @@ An example of how to detect speech in an audio file.
             .forEach {
                 val soundCategory = vad.classifyAudio("Speech", it)
                 
-                if (event.label.equals("Speech")) {
+                if (soundCategory.label.equals("Speech")) {
                     speechData += it
                 } else {
                     if (speechData.isNotEmpty()) {
