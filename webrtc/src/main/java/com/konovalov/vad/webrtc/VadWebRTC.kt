@@ -89,42 +89,39 @@ class VadWebRTC(
 
     /**
      * <p>
-     * Determines whether the given audio frame is speech or not.
-     * This method checks if the WEBRTC VAD is initialized and calls the native
-     * function to perform the speech detection on the provided audio data.
+     * Determines if the provided audio data contains speech.
+     * The audio data is passed to the model for prediction.
      * </p>
      * @param audioData: ShortArray - The audio data to analyze.
-     * @return {@code true} if the audio data is detected as speech, {@code false} otherwise.
+     * @return True if speech is detected, False otherwise.
      */
     fun isSpeech(audioData: ShortArray): Boolean {
-        checkState()
-        return nativeIsSpeech(nativeHandle, sampleRate.value, frameSize.value, audioData)
+        return isContinuousSpeech(predict(audioData))
     }
 
     /**
      * <p>
-     * Determines whether the given audio frame is speech or not.
-     * This method checks if the WEBRTC VAD is initialized and calls the native
-     * function to perform the speech detection on the provided audio data.
+     * Determines if the provided audio data contains speech.
+     * The audio data is passed to the model for prediction.
+     * Size of audio ByteArray should be 2x of Frame size.
      * </p>
      * @param audioData: ByteArray - The audio data to analyze.
-     * @return {@code true} if the audio data is detected as speech, {@code false} otherwise.
+     * @return True if speech is detected, False otherwise.
      */
     fun isSpeech(audioData: ByteArray): Boolean {
-        return isSpeech(toShortArray(audioData))
+        return isContinuousSpeech(predict(toShortArray(audioData)))
     }
 
     /**
      * <p>
-     * Determines whether the given audio frame is speech or not.
-     * This method checks if the WEBRTC VAD is initialized and calls the native
-     * function to perform the speech detection on the provided audio data.
+     * Determines if the provided audio data contains speech.
+     * The audio data is passed to the model for prediction.
      * </p>
      * @param audioData: FloatArray - The audio data to analyze.
-     * @return {@code true} if the audio data is detected as speech, {@code false} otherwise.
+     * @return True if speech is detected, False otherwise.
      */
     fun isSpeech(audioData: FloatArray): Boolean {
-        return isSpeech(toShortArray(audioData))
+        return isContinuousSpeech(predict(toShortArray(audioData)))
     }
 
     /**
@@ -133,10 +130,22 @@ class VadWebRTC(
      * positive results when user makes pauses between sentences.
      * </p>
      * @param audio: ShortArray - The audio data to analyze.
-     * @param listener - The listener to be notified when speech or noise is detected.
+     * @param listener: VadListener - Listener to be notified when speech or noise is detected.
+     * @deprecated This method is deprecated and may be removed in future releases.
+     * Please use the 'isSpeech' method for speech analysis instead.
      */
+    @Deprecated("Please use the 'isSpeech()' method for speech analysis instead.",
+        replaceWith = ReplaceWith(
+            "vad.isSpeech(audio)",
+            imports = ["com.konovalov.vad.webrtc"]
+        )
+    )
     fun setContinuousSpeechListener(audio: ShortArray, listener: VadListener) {
-        continuousSpeechListener(isSpeech(audio), listener)
+        if (isSpeech(audio)) {
+            listener.onSpeechDetected()
+        } else {
+            listener.onNoiseDetected()
+        }
     }
 
     /**
@@ -147,9 +156,21 @@ class VadWebRTC(
      * </p>
      * @param audio: ByteArray - The audio data to analyze.
      * @param listener: VadListener - Listener to be notified when speech or noise is detected.
+     * @deprecated This method is deprecated and may be removed in future releases.
+     * Please use the 'isSpeech' method for speech analysis instead.
      */
+    @Deprecated("Please use the 'isSpeech()' method for speech analysis instead.",
+        replaceWith = ReplaceWith(
+            "vad.isSpeech(audio)",
+            imports = ["com.konovalov.vad.webrtc"]
+        )
+    )
     fun setContinuousSpeechListener(audio: ByteArray, listener: VadListener) {
-        continuousSpeechListener(isSpeech(audio), listener)
+        if (isSpeech(audio)) {
+            listener.onSpeechDetected()
+        } else {
+            listener.onNoiseDetected()
+        }
     }
 
     /**
@@ -159,33 +180,64 @@ class VadWebRTC(
      * </p>
      * @param audio: FloatArray - The audio data to analyze.
      * @param listener: VadListener - Listener to be notified when speech or noise is detected.
+     * @deprecated This method is deprecated and may be removed in future releases.
+     * Please use the 'isSpeech' method for speech analysis instead.
      */
+    @Deprecated("Please use the 'isSpeech()' method for speech analysis instead.",
+        replaceWith = ReplaceWith(
+            "vad.isSpeech(audio)",
+            imports = ["com.konovalov.vad.webrtc"]
+        )
+    )
     fun setContinuousSpeechListener(audio: FloatArray, listener: VadListener) {
-        continuousSpeechListener(isSpeech(audio), listener)
+        if (isSpeech(audio)) {
+            listener.onSpeechDetected()
+        } else {
+            listener.onNoiseDetected()
+        }
     }
 
     /**
      * <p>
-     * Continuous Speech listener was designed to detect long utterances without returning false
+     * This method designed to detect long utterances without returning false
      * positive results when user makes pauses between sentences.
      * </p>
-     * @param isSpeech: Boolean - Flag that is set to true when speech is detected and false otherwise.
-     * @param listener: VadListener - Listener to be notified when speech or noise is detected.
+     * @param isSpeech: Boolean - Predicted frame result.
+     * @return True if speech is detected, False otherwise.
      */
-    private fun continuousSpeechListener(isSpeech: Boolean, listener: VadListener) {
+    private fun isContinuousSpeech(isSpeech: Boolean): Boolean {
         if (isSpeech) {
-            silenceFramesCount = 0
-            if (++speechFramesCount > maxSpeechFramesCount) {
-                speechFramesCount = 0
-                listener.onSpeechDetected()
+            if (speechFramesCount <= maxSpeechFramesCount) speechFramesCount++
+
+            if (speechFramesCount > maxSpeechFramesCount) {
+                silenceFramesCount = 0
+                return true
             }
         } else {
-            speechFramesCount = 0
-            if (++silenceFramesCount > maxSilenceFramesCount) {
-                silenceFramesCount = 0
-                listener.onNoiseDetected()
+            if (silenceFramesCount <= maxSilenceFramesCount) silenceFramesCount++
+
+            if (silenceFramesCount > maxSilenceFramesCount) {
+                speechFramesCount = 0
+                return false
+            } else if (speechFramesCount > maxSpeechFramesCount) {
+                return true
             }
         }
+        return false
+    }
+
+    /**
+     * <p>
+     * Determines whether the given audio frame is speech or not.
+     * This method checks if the WEBRTC VAD is initialized and calls the native
+     * function to perform the speech detection on the provided audio data.
+     * </p>
+     * @param audioData: ShortArray - The audio data to analyze.
+     * @return {@code true} if the audio data is detected as speech, {@code false} otherwise.
+     */
+    private fun predict(audioData: ShortArray): Boolean {
+        checkState()
+        return nativeIsSpeech(nativeHandle, sampleRate.value, frameSize.value, audioData)
     }
 
     /**
