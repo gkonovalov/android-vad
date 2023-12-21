@@ -388,4 +388,4 @@ YAMNet is a pretrained deep neural network that can predicts 521 audio event cla
 corpus, employing the Mobilenet_v1 depthwise-separable convolution architecture.
 
 ------------
-Georgiy Konovalov 2023 (c) [MIT License](https://opensource.org/licenses/MIT)
+Georgiy Konovalov 2024 (c) [MIT License](https://opensource.org/licenses/MIT)
