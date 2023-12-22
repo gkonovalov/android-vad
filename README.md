@@ -98,13 +98,13 @@ An example of how to detect speech in an audio file.
         .setSpeechDurationMs(50)
         .build()
 
-    requireContext().assets.open("test.wav").use { input ->
+    BufferedInputStream(requireContext().assets.open("test.wav")).use { input ->
         val chunkSize = vad.frameSize.value * 2
-        val audioHeader = input.readNBytes(44)
         var speechData = byteArrayOf()
+        val audioHeader = ByteArray(44).apply { input.read(this) }
 
         while (input.available() > -1) {
-            val frameChunk = input.readNBytes(chunkSize)
+            val frameChunk = ByteArray(chunkSize).apply { input.read(this) }
 
             if (vad.isSpeech(frameChunk)) {
                 speechData += frameChunk
@@ -162,7 +162,7 @@ results during pauses between sentences.
 
 ```kotlin
     val vad = Vad.builder()
-        .setContext(applicationContext)
+        .setContext(requireContext())
         .setSampleRate(SampleRate.SAMPLE_RATE_8K)
         .setFrameSize(FrameSize.FRAME_SIZE_256)
         .setMode(Mode.NORMAL)
@@ -186,13 +186,13 @@ An example of how to detect speech in an audio file.
         .setSpeechDurationMs(50)
         .build()
 
-    requireContext().assets.open("test.wav").use { input ->
+    BufferedInputStream(requireContext().assets.open("test.wav")).use { input ->
         val chunkSize = vad.frameSize.value * 2
-        val audioHeader = input.readNBytes(44)
         var speechData = byteArrayOf()
+        val audioHeader = ByteArray(44).apply { input.read(this) }
 
         while (input.available() > -1) {
-            val frameChunk = input.readNBytes(chunkSize)
+            val frameChunk = ByteArray(chunkSize).apply { input.read(this) }
 
             if (vad.isSpeech(frameChunk)) {
                 speechData += frameChunk
@@ -261,7 +261,7 @@ results during pauses between sentences.
 
 ```kotlin
     val vad = Vad.builder()
-        .setContext(applicationContext)
+        .setContext(requireContext())
         .setSampleRate(SampleRate.SAMPLE_RATE_16K)
         .setFrameSize(FrameSize.FRAME_SIZE_243)
         .setMode(Mode.NORMAL)
@@ -290,15 +290,15 @@ An example of how to detect speech in an audio file.
         .setSpeechDurationMs(50)
         .build()
 
-    requireContext().assets.open("test.wav").use { input ->
+    BufferedInputStream(requireContext().assets.open("test.wav")).use { input ->
         val chunkSize = vad.frameSize.value * 2
-        val audioHeader = input.readNBytes(44)
         var speechData = byteArrayOf()
+        val audioHeader = ByteArray(44).apply { input.read(this) }
 
         while (input.available() > -1) {
-            val frameChunk = input.readNBytes(chunkSize)
+            val frameChunk = ByteArray(chunkSize).apply { input.read(this) }
             val soundCategory = vad.classifyAudio("Speech", frameChunk)
-
+            
             if (soundCategory.label.equals("Speech")) {
                 speechData += frameChunk
             } else {
