@@ -100,22 +100,22 @@ An example of how to detect speech in an audio file.
 
     requireContext().assets.open("test.wav").use { input ->
         val chunkSize = vad.frameSize.value * 2
-        val audioHeader = ByteArray(44).apply { input.read(this) }
+        val audioHeader = input.readNBytes(44)
         var speechData = byteArrayOf()
 
-        generateSequence { ByteArray(chunkSize).also { input.read(it) } }
-            .takeWhile { it.size == chunkSize }
-            .forEach {
-                if (vad.isSpeech(it)) {
-                    speechData += it
-                } else {
-                    if (speechData.isNotEmpty()) {
-                        saveSpeechToFile(audioHeader, speechData)
-                        speechData = byteArrayOf()
-                    }
+        while (input.available() > -1) {
+            val frameChunk = input.readNBytes(chunkSize)
+
+            if (vad.isSpeech(frameChunk)) {
+                speechData += frameChunk
+            } else {
+                if (speechData.isNotEmpty()) {
+                    saveSpeechToFile(audioHeader, speechData)
+                    speechData = byteArrayOf()
                 }
             }
         }
+    }
 
     vad.close()
 ```
@@ -188,22 +188,22 @@ An example of how to detect speech in an audio file.
 
     requireContext().assets.open("test.wav").use { input ->
         val chunkSize = vad.frameSize.value * 2
-        val audioHeader = ByteArray(44).apply { input.read(this) }
+        val audioHeader = input.readNBytes(44)
         var speechData = byteArrayOf()
 
-        generateSequence { ByteArray(chunkSize).also { input.read(it) } }
-            .takeWhile { it.size == chunkSize }
-            .forEach {
-                if (vad.isSpeech(it)) {
-                    speechData += it
-                } else {
-                    if (speechData.isNotEmpty()) {
-                        saveSpeechToFile(audioHeader, speechData)
-                        speechData = byteArrayOf()
-                    }
+        while (input.available() > -1) {
+            val frameChunk = input.readNBytes(chunkSize)
+
+            if (vad.isSpeech(frameChunk)) {
+                speechData += frameChunk
+            } else {
+                if (speechData.isNotEmpty()) {
+                    saveSpeechToFile(audioHeader, speechData)
+                    speechData = byteArrayOf()
                 }
             }
         }
+    }
 
     vad.close()
 ```
@@ -292,24 +292,23 @@ An example of how to detect speech in an audio file.
 
     requireContext().assets.open("test.wav").use { input ->
         val chunkSize = vad.frameSize.value * 2
-        val audioHeader = ByteArray(44).apply { input.read(this) }
+        val audioHeader = input.readNBytes(44)
         var speechData = byteArrayOf()
 
-        generateSequence { ByteArray(chunkSize).also { input.read(it) } }
-            .takeWhile { it.size == chunkSize }
-            .forEach {
-                val soundCategory = vad.classifyAudio("Speech", it)
-                
-                if (soundCategory.label.equals("Speech")) {
-                    speechData += it
-                } else {
-                    if (speechData.isNotEmpty()) {
-                        saveSpeechToFile(audioHeader, speechData)
-                        speechData = byteArrayOf()
-                    }
+        while (input.available() > -1) {
+            val frameChunk = input.readNBytes(chunkSize)
+            val soundCategory = vad.classifyAudio("Speech", frameChunk)
+
+            if (soundCategory.label.equals("Speech")) {
+                speechData += frameChunk
+            } else {
+                if (speechData.isNotEmpty()) {
+                    saveSpeechToFile(audioHeader, speechData)
+                    speechData = byteArrayOf()
                 }
             }
         }
+    }
 
     vad.close()
 ```
