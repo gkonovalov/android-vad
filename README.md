@@ -110,7 +110,7 @@ An example of how to detect speech in an audio file.
                 speechData += frameChunk
             } else {
                 if (speechData.isNotEmpty()) {
-                    val file = File(requireContext().filesDir, "speech_${System.currentTimeMillis()}.wav")
+                    val file = File(requireContext().filesDir, "${System.currentTimeMillis()}.wav")
 
                     FileOutputStream(file).use { output ->
                         output.write(audioHeader)
