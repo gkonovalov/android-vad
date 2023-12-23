@@ -380,8 +380,8 @@ class VadSilero(
      */
     var speechDurationMs: Int = speechDurationMs
         set(speechDurationMs) {
-            require(speechDurationMs >= 0) {
-                "The parameter 'speechDurationMs' cannot be smaller than zero!"
+            require(speechDurationMs in 0..300000) {
+                "The parameter 'speechDurationMs' should be >= 0ms and <= 300000ms!"
             }
 
             field = speechDurationMs
@@ -399,8 +399,8 @@ class VadSilero(
      */
     var silenceDurationMs: Int = silenceDurationMs
         set(silenceDurationMs) {
-            require(silenceDurationMs >= 0) {
-                "The parameter 'silenceDurationMs' cannot be smaller than zero!"
+            require(silenceDurationMs in 0..300000) {
+                "The parameter 'silenceDurationMs' should be >= 0ms and <= 300000ms!"
             }
 
             field = silenceDurationMs
