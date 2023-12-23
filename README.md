@@ -110,7 +110,13 @@ An example of how to detect speech in an audio file.
                 speechData += frameChunk
             } else {
                 if (speechData.isNotEmpty()) {
-                    saveSpeechToFile(audioHeader, speechData)
+                    val file = File(requireContext().filesDir, "speech_${System.currentTimeMillis()}.wav")
+
+                    FileOutputStream(file).use { output ->
+                        output.write(audioHeader)
+                        output.write(speechData)
+                    }
+                    
                     speechData = byteArrayOf()
                 }
             }
@@ -175,39 +181,6 @@ results during pauses between sentences.
     vad.close()
 ```
 
-An example of how to detect speech in an audio file.
-```kotlin
-    val vad = Vad.builder()
-        .setContext(requireContext())
-        .setSampleRate(SampleRate.SAMPLE_RATE_16K)
-        .setFrameSize(FrameSize.FRAME_SIZE_512)
-        .setMode(Mode.VERY_AGGRESSIVE)
-        .setSilenceDurationMs(600)
-        .setSpeechDurationMs(50)
-        .build()
-
-    requireContext().assets.open("hello.wav").buffered().use { input ->
-        val chunkSize = vad.frameSize.value * 2
-        var speechData = byteArrayOf()
-        val audioHeader = ByteArray(44).apply { input.read(this) }
-
-        while (input.available() > 0) {
-            val frameChunk = ByteArray(chunkSize).apply { input.read(this) }
-
-            if (vad.isSpeech(frameChunk)) {
-                speechData += frameChunk
-            } else {
-                if (speechData.isNotEmpty()) {
-                    saveSpeechToFile(audioHeader, speechData)
-                    speechData = byteArrayOf()
-                }
-            }
-        }
-    }
-
-    vad.close()
-```
-
 #### Silero VAD Dependencies
 The library utilizes the ONNX runtime to run Silero VAD DNN, which requires the addition of
 necessary dependencies.
@@ -255,9 +228,10 @@ Recommended parameters for Yamnet VAD:
 #### Usage
 Yamnet VAD can identify [521](https://github.com/tensorflow/models/blob/master/research/audioset/yamnet/yamnet_class_map.csv) 
 audio event classes (such as speech, music, animal sounds and etc) in small audio frames.
-By utilizing parameters such as **silenceDurationMs** and **speechDurationMs**, you can enhance the
-capability of VAD, enabling the detection of prolonged utterances while minimizing false positive
-results during pauses between sentences.
+By utilizing parameters such as **silenceDurationMs** and **speechDurationMs** and specifying
+sound category ex. **classifyAudio("Cat", audioData)**, you can enhance the capability of VAD, 
+enabling the detection of prolonged utterances while minimizing false positive results during 
+pauses between sentences. 
 
 ```kotlin
     val vad = Vad.builder()
@@ -269,45 +243,11 @@ results during pauses between sentences.
         .setSpeechDurationMs(30)
         .build()
 
-    val soundCategory = vad.classifyAudio("Speech", audioData)
+    val soundCategory = vad.classifyAudio("Cat", audioData)
 
     when (soundCategory.label) {
-        "Speech" -> "Speech Detected!" + soundCategory.score
-        else -> "Noise Detected!" + soundCategory.score
-    }
-
-    vad.close()
-```
-
-An example of how to detect speech in an audio file.
-```kotlin
-    val vad = Vad.builder()
-        .setContext(requireContext())
-        .setSampleRate(SampleRate.SAMPLE_RATE_16K)
-        .setFrameSize(FrameSize.FRAME_SIZE_243)
-        .setMode(Mode.NORMAL)
-        .setSilenceDurationMs(600)
-        .setSpeechDurationMs(50)
-        .build()
-
-    requireContext().assets.open("hello.wav").buffered().use { input ->
-        val chunkSize = vad.frameSize.value * 2
-        var speechData = byteArrayOf()
-        val audioHeader = ByteArray(44).apply { input.read(this) }
-
-        while (input.available() > 0) {
-            val frameChunk = ByteArray(chunkSize).apply { input.read(this) }
-            val soundCategory = vad.classifyAudio("Speech", frameChunk)
-            
-            if (soundCategory.label.equals("Speech")) {
-                speechData += frameChunk
-            } else {
-                if (speechData.isNotEmpty()) {
-                    saveSpeechToFile(audioHeader, speechData)
-                    speechData = byteArrayOf()
-                }
-            }
-        }
+        "Cat" -> "Speech Detected: " + soundCategory.score
+        else -> "Noise Detected: " + soundCategory.score
     }
 
     vad.close()
