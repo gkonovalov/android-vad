@@ -229,7 +229,7 @@ Recommended parameters for Yamnet VAD:
 Yamnet VAD can identify [521](https://github.com/tensorflow/models/blob/master/research/audioset/yamnet/yamnet_class_map.csv) 
 audio event classes (such as speech, music, animal sounds and etc) in small audio frames.
 By utilizing parameters such as **silenceDurationMs** and **speechDurationMs** and specifying
-sound category ex. **classifyAudio("Cat", audioData)**, you can enhance the capability of VAD, 
+sound category (ex. **classifyAudio("Cat", audioData)**), you can enhance the capability of VAD, 
 enabling the detection of prolonged utterances while minimizing false positive results during 
 pauses between sentences. 
 
