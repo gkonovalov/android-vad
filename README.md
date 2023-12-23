@@ -63,7 +63,7 @@ Frame Sizes and Classifiers.
 
 Recommended parameters for WebRTC VAD:
 * Sample Rate (required) - **16KHz** - The sample rate of the audio input.
-* Frame Size (required) - **512** - The frame size of the audio input.
+* Frame Size (required) - **320** - The frame size of the audio input.
 * Mode (required) - **VERY_AGGRESSIVE** - The confidence mode of the VAD model.
 * Silence Duration (optional) - **300ms** - The minimum duration in milliseconds for silence segments.
 * Speech Duration (optional) - **50ms** - The minimum duration in milliseconds for speech segments.
@@ -77,7 +77,7 @@ results during pauses between sentences.
 ```kotlin
     val vad = Vad.builder()
         .setSampleRate(SampleRate.SAMPLE_RATE_16K)
-        .setFrameSize(FrameSize.FRAME_SIZE_512)
+        .setFrameSize(FrameSize.FRAME_SIZE_320)
         .setMode(Mode.VERY_AGGRESSIVE)
         .setSilenceDurationMs(300)
         .setSpeechDurationMs(50)
@@ -91,19 +91,19 @@ results during pauses between sentences.
 An example of how to detect speech in an audio file.
 ```kotlin
     val vad = Vad.builder()
-        .setSampleRate(SampleRate.SAMPLE_RATE_8K)
-        .setFrameSize(FrameSize.FRAME_SIZE_256)
+        .setSampleRate(SampleRate.SAMPLE_RATE_16K)
+        .setFrameSize(FrameSize.FRAME_SIZE_320)
         .setMode(Mode.VERY_AGGRESSIVE)
         .setSilenceDurationMs(600)
         .setSpeechDurationMs(50)
         .build()
 
-    BufferedInputStream(requireContext().assets.open("test.wav")).use { input ->
+    requireContext().assets.open("hello.wav").buffered().use { input ->
         val chunkSize = vad.frameSize.value * 2
         var speechData = byteArrayOf()
         val audioHeader = ByteArray(44).apply { input.read(this) }
 
-        while (input.available() > -1) {
+        while (input.available() > 0) {
             val frameChunk = ByteArray(chunkSize).apply { input.read(this) }
 
             if (vad.isSpeech(frameChunk)) {
@@ -148,8 +148,8 @@ Frame Sizes and Classifiers.
 
 Recommended parameters for Silero VAD:
 * Context (required) - The Context is required to facilitate reading the model file from the Android file system.
-* Sample Rate (required) - **8KHz** - The sample rate of the audio input.
-* Frame Size (required) - **256** - The frame size of the audio input.
+* Sample Rate (required) - **16KHz** - The sample rate of the audio input.
+* Frame Size (required) - **512** - The frame size of the audio input.
 * Mode (required) - **NORMAL** - The confidence mode of the VAD model.
 * Silence Duration (optional) - **300ms** - The minimum duration in milliseconds for silence segments.
 * Speech Duration (optional) - **50ms** - The minimum duration in milliseconds for speech segments.
@@ -163,8 +163,8 @@ results during pauses between sentences.
 ```kotlin
     val vad = Vad.builder()
         .setContext(requireContext())
-        .setSampleRate(SampleRate.SAMPLE_RATE_8K)
-        .setFrameSize(FrameSize.FRAME_SIZE_256)
+        .setSampleRate(SampleRate.SAMPLE_RATE_16K)
+        .setFrameSize(FrameSize.FRAME_SIZE_512)
         .setMode(Mode.NORMAL)
         .setSilenceDurationMs(300)
         .setSpeechDurationMs(50)
@@ -179,19 +179,19 @@ An example of how to detect speech in an audio file.
 ```kotlin
     val vad = Vad.builder()
         .setContext(requireContext())
-        .setSampleRate(SampleRate.SAMPLE_RATE_8K)
-        .setFrameSize(FrameSize.FRAME_SIZE_256)
+        .setSampleRate(SampleRate.SAMPLE_RATE_16K)
+        .setFrameSize(FrameSize.FRAME_SIZE_512)
         .setMode(Mode.VERY_AGGRESSIVE)
         .setSilenceDurationMs(600)
         .setSpeechDurationMs(50)
         .build()
 
-    BufferedInputStream(requireContext().assets.open("test.wav")).use { input ->
+    requireContext().assets.open("hello.wav").buffered().use { input ->
         val chunkSize = vad.frameSize.value * 2
         var speechData = byteArrayOf()
         val audioHeader = ByteArray(44).apply { input.read(this) }
 
-        while (input.available() > -1) {
+        while (input.available() > 0) {
             val frameChunk = ByteArray(chunkSize).apply { input.read(this) }
 
             if (vad.isSpeech(frameChunk)) {
@@ -283,19 +283,19 @@ An example of how to detect speech in an audio file.
 ```kotlin
     val vad = Vad.builder()
         .setContext(requireContext())
-        .setSampleRate(SampleRate.SAMPLE_RATE_8K)
-        .setFrameSize(FrameSize.FRAME_SIZE_256)
-        .setMode(Mode.VERY_AGGRESSIVE)
+        .setSampleRate(SampleRate.SAMPLE_RATE_16K)
+        .setFrameSize(FrameSize.FRAME_SIZE_243)
+        .setMode(Mode.NORMAL)
         .setSilenceDurationMs(600)
         .setSpeechDurationMs(50)
         .build()
 
-    BufferedInputStream(requireContext().assets.open("test.wav")).use { input ->
+    requireContext().assets.open("hello.wav").buffered().use { input ->
         val chunkSize = vad.frameSize.value * 2
         var speechData = byteArrayOf()
         val audioHeader = ByteArray(44).apply { input.read(this) }
 
-        while (input.available() > -1) {
+        while (input.available() > 0) {
             val frameChunk = ByteArray(chunkSize).apply { input.read(this) }
             val soundCategory = vad.classifyAudio("Speech", frameChunk)
             
