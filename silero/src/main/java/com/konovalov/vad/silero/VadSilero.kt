@@ -2,17 +2,18 @@ package com.konovalov.vad.silero
 
 import ai.onnxruntime.OnnxTensor
 import ai.onnxruntime.OrtEnvironment
+import ai.onnxruntime.OrtException
 import ai.onnxruntime.OrtSession
 import ai.onnxruntime.OrtSession.SessionOptions
 import android.content.Context
-import com.konovalov.vad.utils.AudioUtils.getFramesCount
-import com.konovalov.vad.utils.AudioUtils.toFloatArray
 import com.konovalov.vad.silero.config.FrameSize
 import com.konovalov.vad.silero.config.Mode
 import com.konovalov.vad.silero.config.SampleRate
+import com.konovalov.vad.utils.AudioUtils.getFramesCount
+import com.konovalov.vad.utils.AudioUtils.toFloatArray
 import java.nio.FloatBuffer
 import java.nio.LongBuffer
-import kotlin.reflect.cast
+import kotlin.reflect.safeCast
 
 /**
  * Created by Georgiy Konovalov on 1/06/2023.
@@ -253,15 +254,43 @@ class VadSilero(
      * @param output - The result of the inference session.
      * @return The confidence value.
      */
-    private fun getResult(output: OrtSession.Result?): Float {
-        val confidence = Array<FloatArray>::class.cast(output?.get(OutputTensors.OUTPUT)?.value)
-        val hn = Array<Array<FloatArray>>::class.cast(output?.get(OutputTensors.HN)?.value)
-        val cn = Array<Array<FloatArray>>::class.cast(output?.get(OutputTensors.CN)?.value)
+    private fun getResult(output: OrtSession.Result): Float {
+        val confidence: Array<FloatArray>? = unpack(output, OutputTensors.OUTPUT)
 
-        h = hn.flatten().flatMap { it.asIterable() }.toFloatArray()
-        c = cn.flatten().flatMap { it.asIterable() }.toFloatArray()
+        flattenArray(unpack(output, OutputTensors.CN))?.let { c = it }
+        flattenArray(unpack(output, OutputTensors.HN))?.let { h = it }
 
-        return confidence[0][0]
+        return confidence?.getOrNull(0)?.getOrNull(0) ?: 0f
+    }
+
+    /**
+     * Unpacks the value of the specified tensor from an OrtSession.Result object
+     * and attempts to cast it to an array of the specified generic type {@code T}.
+     *
+     * @param output The OrtSession.Result object from which to retrieve the value.
+     * @param index  The index specifying the position from which to retrieve the value.
+     * @param <T>    The generic type to which the value should be cast.
+     * @return An array of type {@code T} if the casting is successful,
+     *         or {@code null} if an exception occurs
+     *         or if the value cannot be cast to the specified type.
+     */
+    private inline fun <reified T> unpack(output: OrtSession.Result, index: Int): Array<T>? {
+        return try {
+            Array<T>::class.safeCast(output.get(index).value)
+        } catch (e: OrtException) {
+            null
+        }
+    }
+
+    /**
+     * Flattens a multi-dimensional array of FloatArrays into a one-dimensional FloatArray.
+     *
+     * @param array The multi-dimensional array to be flattened.
+     * @return A flattened one-dimensional FloatArray if the input array is not null,
+     *         or {@code null} if the input array is null.
+     */
+    private fun flattenArray(array: Array<Array<FloatArray>>?): FloatArray? {
+        return array?.flatten()?.flatMap { it.asIterable() }?.toFloatArray()
     }
 
     /**
