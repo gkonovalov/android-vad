@@ -35,7 +35,7 @@ For more detailed insights and a comprehensive comparison between DNN and GMM, r
 ## WebRTC VAD
 #### Parameters
 WebRTC VAD library only accepts **16-bit Mono PCM audio stream** and can work with next Sample Rates, 
-Frame Sizes and Classifiers.
+Frame Sizes and Modes.
 
 <table>
 <tr>
@@ -51,12 +51,12 @@ Frame Sizes and Classifiers.
 </td>
 <td>
 
-| Valid Classifiers |
-|:------------------|
-| NORMAL            |
-| LOW_BITRATE       |
-| AGGRESSIVE        |
-| VERY_AGGRESSIVE   |
+| Valid Mode      |
+|:----------------|
+| NORMAL          |
+| LOW_BITRATE     |
+| AGGRESSIVE      |
+| VERY_AGGRESSIVE |
 </td>
 </tr>
 </table>
@@ -129,7 +129,7 @@ An example of how to detect speech in an audio file.
 ## Silero VAD
 #### Parameters
 Silero VAD library only accepts **16-bit Mono PCM audio stream** and can work with next Sample Rates,
-Frame Sizes and Classifiers.
+Frame Sizes and Modes.
 
 <table>
 <tr>
@@ -142,12 +142,12 @@ Frame Sizes and Classifiers.
 </td>
 <td>
 
-| Valid Classifiers |
-|:------------------|
-| OFF               |
-| NORMAL            |
-| AGGRESSIVE        |
-| VERY_AGGRESSIVE   |
+| Valid Mode      |
+|:----------------|
+| OFF             |
+| NORMAL          |
+| AGGRESSIVE      |
+| VERY_AGGRESSIVE |
 </td>
 </tr>
 </table>
@@ -194,7 +194,7 @@ dependencies {
 ## Yamnet VAD
 #### Parameters
 Yamnet VAD library only accepts **16-bit Mono PCM audio stream** and can work with next Sample Rates,
-Frame Sizes and Classifiers.
+Frame Sizes and Modes.
 
 <table>
 <tr>
@@ -207,12 +207,12 @@ Frame Sizes and Classifiers.
 </td>
 <td>
 
-| Valid Classifiers |
-|:------------------|
-| OFF               |
-| NORMAL            |
-| AGGRESSIVE        |
-| VERY_AGGRESSIVE   |
+| Valid Mode      |
+|:----------------|
+| OFF             |
+| NORMAL          |
+| AGGRESSIVE      |
+| VERY_AGGRESSIVE |
 </td>
 </tr>
 </table>
