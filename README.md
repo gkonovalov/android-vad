@@ -150,8 +150,6 @@ Frame Sizes and Modes.
 |:-----------------:|:----------------:|
 |      8000Hz       |  256, 512, 768   |
 |      16000Hz      | 512, 1024, 1536  |
-|      &nbsp;       |      &nbsp;      |
-|      &nbsp;       |      &nbsp;      |
 </td>
 <td>
 
@@ -220,7 +218,6 @@ Frame Sizes and Modes.
 |:-----------------:|:------------------:|
 |      16000Hz      | 243, 487, 731, 975 |
 |                   | 243, 487, 731, 975 |
-|                   |                    |
 
 </td>
 <td>
@@ -291,11 +288,12 @@ Or
 
 ## Requirements
 #### Android API
-**WebRTC VAD** - Android API level **16** and later.
-**Silero VAD** - Android API level **21** and later.
-**Yamnet VAD** - Android API level **23** and later.
+WebRTC VAD - Android API level **16** and later.
+Silero VAD** - Android API level **21** and later.
+Yamnet VAD** - Android API level **23** and later.
+
 #### JDK
-**JDK 8** or later.
+JDK **8** or later.
 
 ## Download
 [![](https://jitpack.io/v/gkonovalov/android-vad.svg)](https://jitpack.io/#gkonovalov/android-vad)
