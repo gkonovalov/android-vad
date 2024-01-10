@@ -136,6 +136,11 @@ An example of how to detect speech in an audio file.
         }
     }
 ```
+#### Requirements
+###### Android API
+**WebRTC VAD** - Android API level **16** and later.
+###### JDK
+**JDK 8** or later.
 
 ## Silero VAD
 #### Parameters
@@ -191,16 +196,24 @@ results during pauses between sentences.
 
     vad.close()
 ```
-
-#### Silero VAD Dependencies
-The library utilizes the ONNX runtime to run Silero VAD DNN, which requires the addition of
-necessary dependencies.
-
-```groovy
-dependencies {
-   implementation 'com.microsoft.onnxruntime:onnxruntime-android:1.16.3'
-}
+Or
+```kotlin
+    VadSilero(
+        requireContext(),
+        sampleRate = SAMPLE_RATE_16K,
+        frameSize = FRAME_SIZE_320,
+        mode = VERY_AGGRESSIVE,
+        silenceDurationMs = 300,
+        speechDurationMs = 50
+    ).use { vad ->
+        val isSpeech = vad.isSpeech(audioData)
+    }
 ```
+#### Requirements
+###### Android API
+**Silero VAD** - Android API level **21** and later.
+###### JDK
+**JDK 8** or later.
 
 ## Yamnet VAD
 #### Parameters
@@ -209,11 +222,13 @@ Frame Sizes and Modes.
 
 <table>
 <tr>
-<td style="vertical-align: baseline;">
+<td>
 
-| Valid Sample Rate |  Valid Frame Size   |
-|:-----------------:|:-------------------:|
-|      16000Hz      | 243, 487, 731, 975  |
+| Valid Sample Rate |  Valid Frame Size  |
+|:-----------------:|:------------------:|
+|      16000Hz      | 243, 487, 731, 975 |
+|                   | 243, 487, 731, 975 |
+|                   |                    |
 
 </td>
 <td>
@@ -263,28 +278,32 @@ pauses between sentences.
 
     vad.close()
 ```
+Or
+```kotlin
+    VadYamnet(
+        requireContext(),
+        sampleRate = SAMPLE_RATE_16K,
+        frameSize = FRAME_SIZE_243,
+        mode = NORMAL,
+        silenceDurationMs = 30,
+        speechDurationMs = 30
+    ).use { vad ->
+        val soundCategory = vad.classifyAudio("Cat", audioData)
 
-#### Yamnet VAD Dependencies
-The library utilizes the Tensorflow Lite runtime to run Yamnet VAD DNN, which requires next dependencies.
-
-```groovy
-dependencies {
-   implementation 'org.tensorflow:tensorflow-lite-task-audio:0.4.4'
-}
+        when (soundCategory.label) {
+            "Cat" -> "Cat Detected: " + soundCategory.score
+            else -> "Noise Detected: " + soundCategory.score
+        }
+    }
 ```
-
-## Requirements
-#### Android API
-WebRTC VAD - Android API level 16 and later.  
-Silero VAD - Android API level 21 and later.  
-Yamnet VAD - Android API level 23 and later.  
-
-#### JDK
-JDK 8 or later.
+#### Requirements
+###### Android API
+**Yamnet VAD** - Android API level **23** and later.
+###### JDK
+**JDK 8** or later.
 
 ## Download
 [![](https://jitpack.io/v/gkonovalov/android-vad.svg)](https://jitpack.io/#gkonovalov/android-vad)
-
 
 Gradle is the only supported build configuration, so just add the dependency to your project `build.gradle` file:
 1. Add it in your root build.gradle at the end of repositories:
