@@ -1,11 +1,10 @@
 package com.konovalov.vad.silero.config
 
 /**
- * Created by Georgiy Konovalov on 1/06/2023.
- * <p>
+ * Created by Georgiy Konovalov on 6/1/2023.
+ *
  * Enum class representing different Modes used in the VAD algorithm.
- * </p>
- * @property value The numeric value associated with the Mode.
+ * @property value numeric value associated with the Mode.
  */
 enum class Mode(val value: Int) {
     OFF(0),

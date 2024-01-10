@@ -1,10 +1,9 @@
 package com.konovalov.vad.silero
 
 /**
- * Created by Georgiy Konovalov on 1/06/2023.
- * <p>
+ * Created by Georgiy Konovalov on 6/1/2023.
+ *
  * Interface representing a listener for Voice Activity Detection (VAD) events.
- * </p>
  */
 interface VadListener {
     fun onSpeechDetected()

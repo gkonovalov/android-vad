@@ -1,11 +1,11 @@
 package com.konovalov.vad.yamnet.config
 
 /**
- * Created by Georgiy Konovalov on 26/06/2023.
- * <p>
- * Enum class representing different Modes used in the Yamnet VAD algorithm.
- * </p>
- * @property value The numeric value associated with the Mode.
+ * Created by Georgiy Konovalov on 6/1/2023.
+ *
+ * Enum class representing different mode used in the Yamnet VAD algorithm.
+ *
+ * @property value numeric value associated with the Mode.
  */
 enum class Mode(val value: Int) {
     OFF(0),

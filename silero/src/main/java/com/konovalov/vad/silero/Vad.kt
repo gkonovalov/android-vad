@@ -6,32 +6,41 @@ import com.konovalov.vad.silero.config.Mode
 import com.konovalov.vad.silero.config.SampleRate
 
 /**
- * Created by Georgiy Konovalov on 26/06/2023.
- * <p>
+ * Created by Georgiy Konovalov on 6/26/2023.
+ *
  * The Silero VAD algorithm, based on DNN, analyzes the audio signal to determine whether it
  * contains speech or non-speech segments. It offers higher accuracy in differentiating speech from
  * background noise compared to the WebRTC VAD algorithm.
  *
  * The Silero VAD supports the following parameters:
  *
- * Sample Rates: 8000Hz, 16000Hz
+ * Sample Rates:
+ *
+ *      8000Hz,
+ *      16000Hz
  *
  * Frame Sizes (per sample rate):
- *             For 8000Hz: 256, 512, 768
- *             For 16000Hz: 512, 1024, 1536
- * Mode: OFF, NORMAL, AGGRESSIVE, VERY_AGGRESSIVE
+ *
+ *    For 8000Hz: 80, 160, 240
+ *    For 16000Hz: 160, 320, 480
+ *
+ * Mode:
+ *
+ *    NORMAL,
+ *    LOW_BITRATE,
+ *    AGGRESSIVE,
+ *    VERY_AGGRESSIVE
  *
  * Please note that the VAD class supports these specific combinations of sample
  * rates and frame sizes, and the classifiers determine the aggressiveness of the voice
  * activity detection algorithm.
- * </p>
- * @param context (required) The context helps with reading the model file from the file system.
- * @param sampleRate (required) The sample rate of the audio input.
- * @param frameSize (required) The frame size of the audio input.
- * @param mode (required) The recognition mode of the VAD model.
- * @param speechDurationMs (optional) The minimum duration in milliseconds for speech segments.
- * @param silenceDurationMs (optional) The minimum duration in milliseconds for silence segments.
- * </p>
+ *
+ * @param context           is required for reading the model file from file system.
+ * @param sampleRate        is required for processing audio input.
+ * @param frameSize         is required for processing audio input.
+ * @param mode              is required for the VAD model.
+ * @param speechDurationMs  is minimum duration in milliseconds for speech segments (optional).
+ * @param silenceDurationMs is minimum duration in milliseconds for silence segments (optional).
  */
 class Vad private constructor() {
     private lateinit var context: Context
@@ -42,89 +51,94 @@ class Vad private constructor() {
     private var silenceDurationMs = 0
 
     /**
-     * <p>
      * Set Context for Vad Model.
-     * </p>
-     * @param context (required) - The context is required and helps with reading the
-     *                             model file from the file system.
+     *
+     * @param context is required for accessing the model file.
      */
     fun setContext(context: Context): Vad = apply {
         this.context = context.applicationContext ?: context
     }
 
     /**
-     * <p>
-     * Set sample rate of the audio input for Vad Model.
+     * Set, retrieve and validate sample rate for Vad Model.
      *
-     * Sample Rates: 8000Hz, 16000Hz
-     * </p>
-     * @param sampleRate (required) - The sample rate of the audio input.
+     * Valid Sample Rates:
+     *
+     *      8000Hz,
+     *      16000Hz
+     *
+     * @param sampleRate is required for processing audio input.
      */
     fun setSampleRate(sampleRate: SampleRate): Vad = apply {
         this.sampleRate = sampleRate
     }
 
     /**
-     * <p>
-     * Set frame size of the audio input for Vad Model.
+     * Set, retrieve and validate frame size for Vad Model.
      *
      * Valid Frame Sizes (per sample rate):
+     *
      *             For 8000Hz: 256, 512, 768
      *             For 16000Hz: 512, 1024, 1536
-     * </p>
-     * @param frameSize (required) - The frame size of the audio input.
+     *
+     * @param frameSize is required for processing audio input.
      */
     fun setFrameSize(frameSize: FrameSize): Vad = apply {
         this.frameSize = frameSize
     }
 
     /**
-     * <p>
-     * Set recognition mode for Vad Model.
+     * Set and retrieve detection mode for Vad model.
      *
-     * Valid Mode: OFF, NORMAL, AGGRESSIVE, VERY_AGGRESSIVE
-     * </p>
-     * @param mode (required) - The recognition mode of the VAD model.
+     * Mode:
+     *
+     *    NORMAL,
+     *    LOW_BITRATE,
+     *    AGGRESSIVE,
+     *    VERY_AGGRESSIVE
+     *
+     * @param mode is required for the VAD model.
      */
     fun setMode(mode: Mode): Vad = apply {
         this.mode = mode
     }
 
     /**
-     * <p>
      * Set the minimum duration in milliseconds for speech segments.
      * The value of this parameter will define the necessary and sufficient duration of positive
-     * results to recognize result as speech. Negative numbers are not allowed.
+     * results to recognize result as speech. This parameter is optional.
      *
-     * Parameters used in {@link VadSilero.continuousSpeechListener}.
-     * </p>
-     * @param speechDurationMs (optional) The minimum duration in milliseconds for speech segments.
+     * Permitted range (0ms >= speechDurationMs <= 300000ms).
+     *
+     * Parameters used for {@link VadSilero.isSpeech}.
+     *
+     * @param speechDurationMs minimum duration in milliseconds for speech segments.
      */
     fun setSpeechDurationMs(speechDurationMs: Int): Vad = apply {
         this.speechDurationMs = speechDurationMs
     }
 
     /**
-     * <p>
      * Set the minimum duration in milliseconds for silence segments.
      * The value of this parameter will define the necessary and sufficient duration of
-     * negative results to recognize it as silence. Negative numbers are not allowed.
+     * negative results to recognize it as silence. This parameter is optional.
      *
-     * Parameters used in {@link VadSilero.continuousSpeechListener}.
-     * </p>
-     * @param silenceDurationMs (optional) The minimum duration in milliseconds for silence segments.
+     * Permitted range (0ms >= silenceDurationMs <= 300000ms).
+     *
+     * Parameters used in {@link VadSilero.isSpeech}.
+     *
+     * @param silenceDurationMs minimum duration in milliseconds for silence segments.
      */
     fun setSilenceDurationMs(silenceDurationMs: Int): Vad = apply {
         this.silenceDurationMs = silenceDurationMs
     }
 
     /**
-     * <p>
      * Builds and returns a VadModel instance based on the specified parameters.
-     * </p>
-     * @return An {@link VadSilero} with constructed VadModel.
-     * @throws IllegalArgumentException If invalid parameters have been set for the model.
-     * @throws OrtException If the model failed to parse, wasn't compatible or caused an error.
+     *
+     * @return constructed VadSilero model.
+     * @throws IllegalArgumentException if invalid parameters have been set for the model.
+     * @throws OrtException if the model failed to parse, wasn't compatible or caused an error.
      */
     fun build(): VadSilero {
         return VadSilero(

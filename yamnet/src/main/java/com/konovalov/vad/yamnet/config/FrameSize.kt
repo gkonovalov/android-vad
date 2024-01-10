@@ -1,11 +1,11 @@
 package com.konovalov.vad.yamnet.config
 
 /**
- * Created by Georgiy Konovalov on 26/06/2023.
- * <p>
- * Enum class representing different Frame Size used in the Yamnet VAD algorithm.
- * </p>
- * @property value The numeric value associated with the FrameSize.
+ * Created by Georgiy Konovalov on 6/1/2023.
+ *
+ * Enum class representing different frame sizes used in the Yamnet VAD algorithm.
+ *
+ * @property value numeric value associated with the FrameSize.
  */
 enum class FrameSize(val value: Int) {
     FRAME_SIZE_243(243),
