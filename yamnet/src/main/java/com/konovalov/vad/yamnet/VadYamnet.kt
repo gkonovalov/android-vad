@@ -10,6 +10,7 @@ import org.tensorflow.lite.support.audio.TensorAudio
 import org.tensorflow.lite.support.audio.TensorAudio.TensorAudioFormat
 import org.tensorflow.lite.task.audio.classifier.AudioClassifier
 import org.tensorflow.lite.task.audio.classifier.Classifications
+import java.io.Closeable
 
 /**
  * Created by Georgiy Konovalov on 26/06/2023.
@@ -46,7 +47,7 @@ class VadYamnet(
     mode: Mode,
     speechDurationMs: Int = 0,
     silenceDurationMs: Int = 0
-) {
+) : Closeable {
 
     /**
      * <p>
@@ -408,7 +409,7 @@ class VadYamnet(
      * </p>
      * @throws IllegalArgumentException if session already closed.
      */
-    fun close() {
+    override fun close() {
         checkState()
         isInitiated = false
         classifier.close()

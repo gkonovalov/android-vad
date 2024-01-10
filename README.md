@@ -312,21 +312,21 @@ allprojects {
 #### WebRTC VAD
 ```groovy
 dependencies {
-    implementation 'com.github.gkonovalov.android-vad:webrtc:2.0.5'
+    implementation 'com.github.gkonovalov.android-vad:webrtc:2.0.6'
 }
 ```
 
 #### Silero VAD
 ```groovy
 dependencies {
-    implementation 'com.github.gkonovalov.android-vad:silero:2.0.5'
+    implementation 'com.github.gkonovalov.android-vad:silero:2.0.6'
 }
 ```
 
 #### Yamnet VAD
 ```groovy
 dependencies {
-    implementation 'com.github.gkonovalov.android-vad:yamnet:2.0.5'
+    implementation 'com.github.gkonovalov.android-vad:yamnet:2.0.6'
 }
 ```
 You also can download precompiled AAR library and APK files from 

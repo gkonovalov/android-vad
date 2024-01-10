@@ -11,6 +11,7 @@ import com.konovalov.vad.silero.config.Mode
 import com.konovalov.vad.silero.config.SampleRate
 import com.konovalov.vad.utils.AudioUtils.getFramesCount
 import com.konovalov.vad.utils.AudioUtils.toFloatArray
+import java.io.Closeable
 import java.nio.FloatBuffer
 import java.nio.LongBuffer
 import kotlin.reflect.safeCast
@@ -49,7 +50,7 @@ class VadSilero(
     mode: Mode,
     speechDurationMs: Int = 0,
     silenceDurationMs: Int = 0
-) {
+) : Closeable {
 
     /**
      * <p>
@@ -442,7 +443,7 @@ class VadSilero(
      * This method should be called when the VAD is no longer needed to free up system resources.
      * </p>
      */
-    fun close() {
+    override fun close() {
         checkState()
         isInitiated = false
         session.close()
