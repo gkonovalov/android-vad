@@ -288,11 +288,11 @@ Or
 
 ## Requirements
 #### Android API
-WebRTC VAD - Android API **16** and later.  
-Silero VAD** - Android API **21** and later.  
-Yamnet VAD** - Android API **23** and later.  
+WebRTC VAD - Android **API 16** and later.  
+Silero VAD - Android **API 21** and later.  
+Yamnet VAD - Android **API 23** and later.  
 #### JDK
-JDK - **8** or later.
+JDK **8** or later.
 
 ## Download
 [![](https://jitpack.io/v/gkonovalov/android-vad.svg)](https://jitpack.io/#gkonovalov/android-vad)
