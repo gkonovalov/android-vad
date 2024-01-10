@@ -136,11 +136,6 @@ An example of how to detect speech in an audio file.
         }
     }
 ```
-#### Requirements
-###### Android API
-**WebRTC VAD** - Android API level **16** and later.
-###### JDK
-**JDK 8** or later.
 
 ## Silero VAD
 #### Parameters
@@ -149,12 +144,14 @@ Frame Sizes and Modes.
 
 <table>
 <tr>
-<td style="vertical-align: baseline;">
+<td>
 
-| Valid Sample Rate |      Valid Frame Size      |
-|:-----------------:|:--------------------------:|
-|      8000Hz       |       256, 512, 768        |
-|      16000Hz      |      512, 1024, 1536       |
+| Valid Sample Rate | Valid Frame Size |
+|:-----------------:|:----------------:|
+|      8000Hz       |  256, 512, 768   |
+|      16000Hz      | 512, 1024, 1536  |
+|      &nbsp;       |      &nbsp;      |
+|      &nbsp;       |      &nbsp;      |
 </td>
 <td>
 
@@ -209,11 +206,6 @@ Or
         val isSpeech = vad.isSpeech(audioData)
     }
 ```
-#### Requirements
-###### Android API
-**Silero VAD** - Android API level **21** and later.
-###### JDK
-**JDK 8** or later.
 
 ## Yamnet VAD
 #### Parameters
@@ -296,10 +288,13 @@ Or
         }
     }
 ```
-#### Requirements
-###### Android API
+
+## Requirements
+#### Android API
+**WebRTC VAD** - Android API level **16** and later.
+**Silero VAD** - Android API level **21** and later.
 **Yamnet VAD** - Android API level **23** and later.
-###### JDK
+#### JDK
 **JDK 8** or later.
 
 ## Download
