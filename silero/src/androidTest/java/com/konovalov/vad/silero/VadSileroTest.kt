@@ -17,9 +17,8 @@ import org.junit.runner.RunWith
 
 /**
  * Created by Georgiy Konovalov on 12/22/2023.
- * <p>
+ *
  * Instrumented test for VadSilero class.
- * </p>
  */
 @RunWith(AndroidJUnit4::class)
 class VadSileroTest {

@@ -9,9 +9,8 @@ import org.junit.Test
 
 /**
  * Created by Georgiy Konovalov on 12/04/2023.
- * <p>
+ *
  * Unit tests for AudioUtils class.
- * </p>
  */
 class AudioUtilsTest {
 
