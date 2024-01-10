@@ -87,7 +87,7 @@ results during pauses between sentences.
 
     vad.close()
 ```
-OR
+Or
 ```kotlin
     VadWebRTC(
         sampleRate = SAMPLE_RATE_16K,
