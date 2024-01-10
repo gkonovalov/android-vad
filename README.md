@@ -87,43 +87,54 @@ results during pauses between sentences.
 
     vad.close()
 ```
+OR
+```kotlin
+    VadWebRTC(
+        sampleRate = SAMPLE_RATE_16K,
+        frameSize = FRAME_SIZE_320,
+        mode = VERY_AGGRESSIVE,
+        silenceDurationMs = 300,
+        speechDurationMs = 50
+    ).use { vad ->
+        val isSpeech = vad.isSpeech(audioData)
+    }
+```
 
 An example of how to detect speech in an audio file.
 ```kotlin
-    val vad = Vad.builder()
-        .setSampleRate(SampleRate.SAMPLE_RATE_16K)
-        .setFrameSize(FrameSize.FRAME_SIZE_320)
-        .setMode(Mode.VERY_AGGRESSIVE)
-        .setSilenceDurationMs(600)
-        .setSpeechDurationMs(50)
-        .build()
-
-    requireContext().assets.open("hello.wav").buffered().use { input ->
+    VadWebRTC(
+        sampleRate = SAMPLE_RATE_16K,
+        frameSize = FRAME_SIZE_320,
+        mode = VERY_AGGRESSIVE,
+        silenceDurationMs = 600,
+        speechDurationMs = 50
+    ).use { vad ->
         val chunkSize = vad.frameSize.value * 2
-        var speechData = byteArrayOf()
-        val audioHeader = ByteArray(44).apply { input.read(this) }
 
-        while (input.available() > 0) {
-            val frameChunk = ByteArray(chunkSize).apply { input.read(this) }
+        requireContext().assets.open("hello.wav").buffered().use { input ->
+            val audioHeader = ByteArray(44).apply { input.read(this) }
+            var speechData = byteArrayOf()
 
-            if (vad.isSpeech(frameChunk)) {
-                speechData += frameChunk
-            } else {
-                if (speechData.isNotEmpty()) {
-                    val file = File(requireContext().filesDir, "${nanoTime()}.wav")
+            while (input.available() > 0) {
+                val frameChunk = ByteArray(chunkSize).apply { input.read(this) }
 
-                    FileOutputStream(file).use { output ->
-                        output.write(audioHeader)
-                        output.write(speechData)
+                if (vad.isSpeech(frameChunk)) {
+                    speechData += frameChunk
+                } else {
+                    if (speechData.isNotEmpty()) {
+                        val speechFile = File("/folder/", "${nanoTime()}.wav")
+
+                        FileOutputStream(speechFile).use { output ->
+                            output.write(audioHeader)
+                            output.write(speechData)
+                        }
+                        
+                        speechData = byteArrayOf()
                     }
-                    
-                    speechData = byteArrayOf()
                 }
             }
         }
     }
-
-    vad.close()
 ```
 
 ## Silero VAD
@@ -133,7 +144,7 @@ Frame Sizes and Modes.
 
 <table>
 <tr>
-<td>
+<td style="vertical-align: baseline;">
 
 | Valid Sample Rate |      Valid Frame Size      |
 |:-----------------:|:--------------------------:|
@@ -198,7 +209,7 @@ Frame Sizes and Modes.
 
 <table>
 <tr>
-<td>
+<td style="vertical-align: baseline;">
 
 | Valid Sample Rate |  Valid Frame Size   |
 |:-----------------:|:-------------------:|
