@@ -74,25 +74,26 @@ By utilizing parameters such as **silenceDurationMs** and **speechDurationMs**, 
 capability of VAD, enabling the detection of prolonged utterances while minimizing false positive
 results during pauses between sentences.
 
-```kotlin
-    val vad = Vad.builder()
+Example Java:
+```java  
+    VadWebRTC vad = Vad.builder()
         .setSampleRate(SampleRate.SAMPLE_RATE_16K)
         .setFrameSize(FrameSize.FRAME_SIZE_320)
         .setMode(Mode.VERY_AGGRESSIVE)
         .setSilenceDurationMs(300)
         .setSpeechDurationMs(50)
-        .build()
+        .build();
 
-    val isSpeech = vad.isSpeech(audioData)
+    boolean isSpeech = vad.isSpeech(audioData);
 
-    vad.close()
+    vad.close();
 ```
-Or
+Example Kotlin:
 ```kotlin
     VadWebRTC(
-        sampleRate = SAMPLE_RATE_16K,
-        frameSize = FRAME_SIZE_320,
-        mode = VERY_AGGRESSIVE,
+        sampleRate = SampleRate.SAMPLE_RATE_16K,
+        frameSize = FrameSize.FRAME_SIZE_320,
+        mode = Mode.VERY_AGGRESSIVE,
         silenceDurationMs = 300,
         speechDurationMs = 50
     ).use { vad ->
@@ -103,9 +104,9 @@ Or
 An example of how to detect speech in an audio file.
 ```kotlin
     VadWebRTC(
-        sampleRate = SAMPLE_RATE_16K,
-        frameSize = FRAME_SIZE_320,
-        mode = VERY_AGGRESSIVE,
+        sampleRate = SampleRate.SAMPLE_RATE_16K,
+        frameSize = FrameSize.FRAME_SIZE_320,
+        mode = Mode.VERY_AGGRESSIVE,
         silenceDurationMs = 600,
         speechDurationMs = 50
     ).use { vad ->
@@ -177,27 +178,28 @@ By utilizing parameters such as **silenceDurationMs** and **speechDurationMs**, 
 capability of VAD, enabling the detection of prolonged utterances while minimizing false positive 
 results during pauses between sentences.
 
-```kotlin
-    val vad = Vad.builder()
+Example Java:
+```java  
+    VadSilero vad = Vad.builder()
         .setContext(requireContext())
         .setSampleRate(SampleRate.SAMPLE_RATE_16K)
         .setFrameSize(FrameSize.FRAME_SIZE_512)
         .setMode(Mode.NORMAL)
         .setSilenceDurationMs(300)
         .setSpeechDurationMs(50)
-        .build()
+        .build();
 
-    val isSpeech = vad.isSpeech(audioData)
+        boolean isSpeech = vad.isSpeech(audioData);
 
-    vad.close()
+        vad.close();
 ```
-Or
+Example Kotlin:
 ```kotlin
     VadSilero(
         requireContext(),
-        sampleRate = SAMPLE_RATE_16K,
-        frameSize = FRAME_SIZE_320,
-        mode = VERY_AGGRESSIVE,
+        sampleRate = SampleRate.SAMPLE_RATE_16K,
+        frameSize = FrameSize.FRAME_SIZE_512,
+        mode = Mode.NORMAL,
         silenceDurationMs = 300,
         speechDurationMs = 50
     ).use { vad ->
@@ -248,40 +250,42 @@ sound category (ex. classifyAudio(**"Speech"**, audioData)), you can enhance the
 enabling the detection of prolonged utterances while minimizing false positive results during 
 pauses between sentences. 
 
-```kotlin
-    val vad = Vad.builder()
+Example Java:
+```java  
+    VadYamnet vad = Vad.builder()
         .setContext(requireContext())
         .setSampleRate(SampleRate.SAMPLE_RATE_16K)
         .setFrameSize(FrameSize.FRAME_SIZE_243)
         .setMode(Mode.NORMAL)
         .setSilenceDurationMs(30)
         .setSpeechDurationMs(30)
-        .build()
+        .build();
 
-    val soundCategory = vad.classifyAudio("Speech", audioData)
+    SoundCategory sc = vad.classifyAudio("Speech", audioData);
 
-    when (soundCategory.label) {
-        "Speech" -> "Speech Detected: " + soundCategory.score
-        else -> "Noise Detected: " + soundCategory.score
+    if ("Speech".equals(sc.getLabel())) {
+        System.out.println("Speech Detected: " + sc.getScore());
+    } else {
+        System.out.println("Noise Detected: " + sc.getScore());
     }
-
-    vad.close()
+    
+    vad.close();
 ```
-Or
+Example Kotlin:
 ```kotlin
     VadYamnet(
         requireContext(),
-        sampleRate = SAMPLE_RATE_16K,
-        frameSize = FRAME_SIZE_243,
-        mode = NORMAL,
+        sampleRate = SampleRate.SAMPLE_RATE_16K,
+        frameSize = FrameSize.FRAME_SIZE_243,
+        mode = Mode.NORMAL,
         silenceDurationMs = 30,
         speechDurationMs = 30
     ).use { vad ->
-        val soundCategory = vad.classifyAudio("Cat", audioData)
+        val sc = vad.classifyAudio("Cat", audioData)
 
-        when (soundCategory.label) {
-            "Cat" -> "Cat Detected: " + soundCategory.score
-            else -> "Noise Detected: " + soundCategory.score
+        when (sc.label) {
+            "Cat" -> println("Cat Detected: " + sc.score)
+            else -> println("Noise Detected: " + sc.score)
         }
     }
 ```
