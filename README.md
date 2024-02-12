@@ -189,9 +189,9 @@ Example Java:
         .setSpeechDurationMs(50)
         .build();
 
-        boolean isSpeech = vad.isSpeech(audioData);
+    boolean isSpeech = vad.isSpeech(audioData);
 
-        vad.close();
+    vad.close();
 ```
 Example Kotlin:
 ```kotlin
