@@ -74,7 +74,7 @@ By utilizing parameters such as **silenceDurationMs** and **speechDurationMs**, 
 capability of VAD, enabling the detection of prolonged utterances while minimizing false positive
 results during pauses between sentences.
 
-Example Java:
+Java example:
 ```java  
     VadWebRTC vad = Vad.builder()
         .setSampleRate(SampleRate.SAMPLE_RATE_16K)
@@ -88,7 +88,7 @@ Example Java:
 
     vad.close();
 ```
-Example Kotlin:
+Kotlin example:
 ```kotlin
     VadWebRTC(
         sampleRate = SampleRate.SAMPLE_RATE_16K,
@@ -100,8 +100,7 @@ Example Kotlin:
         val isSpeech = vad.isSpeech(audioData)
     }
 ```
-
-An example of how to detect speech in an audio file.
+An example of how to detect speech in an audio file:
 ```kotlin
     VadWebRTC(
         sampleRate = SampleRate.SAMPLE_RATE_16K,
@@ -178,7 +177,7 @@ By utilizing parameters such as **silenceDurationMs** and **speechDurationMs**, 
 capability of VAD, enabling the detection of prolonged utterances while minimizing false positive 
 results during pauses between sentences.
 
-Example Java:
+Java example:
 ```java  
     VadSilero vad = Vad.builder()
         .setContext(requireContext())
@@ -193,7 +192,7 @@ Example Java:
 
     vad.close();
 ```
-Example Kotlin:
+Kotlin example:
 ```kotlin
     VadSilero(
         requireContext(),
@@ -250,7 +249,7 @@ sound category (ex. classifyAudio(**"Speech"**, audioData)), you can enhance the
 enabling the detection of prolonged utterances while minimizing false positive results during 
 pauses between sentences. 
 
-Example Java:
+Java example:
 ```java  
     VadYamnet vad = Vad.builder()
         .setContext(requireContext())
@@ -271,7 +270,7 @@ Example Java:
     
     vad.close();
 ```
-Example Kotlin:
+Kotlin example:
 ```kotlin
     VadYamnet(
         requireContext(),
