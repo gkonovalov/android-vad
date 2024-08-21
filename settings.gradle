@@ -1,2 +1,2 @@
 include ':example', ':utils', ':webrtc', ':silero', ':yamnet'
-rootProject.name='VAD'
+rootProject.name='android-vad'
