@@ -7,11 +7,9 @@ android {
     namespace "com.konovalov.vad.yamnet"
 
     defaultConfig {
-        compileSdk 34
+        compileSdk 35
         minSdkVersion 23
-        targetSdkVersion 34
-        versionCode 15
-        versionName "2.0.7"
+        targetSdkVersion 35
 
         setProperty("archivesBaseName", "android-vad-yamnet-v" + versionName)
 
@@ -54,7 +52,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation(platform('org.jetbrains.kotlin:kotlin-bom:1.8.21'))
+    implementation(platform('org.jetbrains.kotlin:kotlin-bom:2.0.21'))
     implementation 'org.tensorflow:tensorflow-lite-task-audio:0.4.4'
 
     testImplementation 'junit:junit:4.13.2'

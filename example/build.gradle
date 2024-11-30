@@ -8,9 +8,9 @@ android {
     namespace "com.konovalov.vad.example"
 
     defaultConfig {
-        compileSdk 34
+        compileSdk 35
         minSdkVersion 23
-        targetSdkVersion 34
+        targetSdkVersion 35
         versionCode 15
         versionName "2.0.7"
 
