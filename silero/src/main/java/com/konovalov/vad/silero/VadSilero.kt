@@ -9,8 +9,8 @@ import android.content.Context
 import com.konovalov.vad.silero.config.FrameSize
 import com.konovalov.vad.silero.config.Mode
 import com.konovalov.vad.silero.config.SampleRate
-import com.konovalov.vad.utils.AudioUtils.getFramesCount
-import com.konovalov.vad.utils.AudioUtils.toFloatArray
+import com.konovalov.vad.silero.utils.AudioUtils.getFramesCount
+import com.konovalov.vad.silero.utils.AudioUtils.toFloatArray
 import java.io.Closeable
 import java.nio.FloatBuffer
 import java.nio.LongBuffer

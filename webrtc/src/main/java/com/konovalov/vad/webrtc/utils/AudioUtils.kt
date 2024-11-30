@@ -1,4 +1,4 @@
-package com.konovalov.vad.utils
+package com.konovalov.vad.webrtc.utils
 
 /**
  * Created by Georgiy Konovalov on 7/18/2023.
@@ -11,26 +11,14 @@ package com.konovalov.vad.utils
 object AudioUtils {
 
     /**
-     * Convert audio data from ShortArray to FloatArray.
+     * Convert audio data from ByteArray to ShortArray.
      *
      * @param audio is audio data for conversion.
-     * @return converted audio data as FloatArray.
+     * @return converted audio data as ShortArray.
      */
-    fun toFloatArray(audio: ShortArray): FloatArray {
-        return FloatArray(audio.size) { i ->
-            audio[i] / 32767.0f
-        }
-    }
-
-    /**
-     * Convert audio data from ByteArray to FloatArray.
-     *
-     * @param audio is audio data for conversion.
-     * @return converted audio data as FloatArray.
-     */
-    fun toFloatArray(audio: ByteArray): FloatArray {
-        return FloatArray(audio.size / 2) { i ->
-            ((audio[2 * i].toInt() and 0xFF) or (audio[2 * i + 1].toInt() shl 8)) / 32767.0f
+    fun toShortArray(audio: ByteArray): ShortArray {
+        return ShortArray(audio.size / 2) { i ->
+            ((audio[2 * i].toInt() and 0xFF) or (audio[2 * i + 1].toInt() shl 8)).toShort()
         }
     }
 
@@ -43,18 +31,6 @@ object AudioUtils {
     fun toShortArray(audio: FloatArray): ShortArray {
         return ShortArray(audio.size) { i ->
             (audio[i] * 32767.0f).toInt().toShort()
-        }
-    }
-
-    /**
-     * Convert audio data from ByteArray to ShortArray.
-     *
-     * @param audio is audio data for conversion.
-     * @return converted audio data as ShortArray.
-     */
-    fun toShortArray(audio: ByteArray): ShortArray {
-        return ShortArray(audio.size / 2) { i ->
-            ((audio[2 * i].toInt() and 0xFF) or (audio[2 * i + 1].toInt() shl 8)).toShort()
         }
     }
 

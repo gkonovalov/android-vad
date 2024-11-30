@@ -1,8 +1,8 @@
 package com.konovalov.vad.yamnet
 
 import android.content.Context
-import com.konovalov.vad.utils.AudioUtils.getFramesCount
-import com.konovalov.vad.utils.AudioUtils.toShortArray
+import com.konovalov.vad.yamnet.utils.AudioUtils.getFramesCount
+import com.konovalov.vad.yamnet.utils.AudioUtils.toShortArray
 import com.konovalov.vad.yamnet.config.FrameSize
 import com.konovalov.vad.yamnet.config.Mode
 import com.konovalov.vad.yamnet.config.SampleRate

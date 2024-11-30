@@ -11,8 +11,8 @@ android {
         compileSdk 34
         minSdkVersion 23
         targetSdkVersion 34
-        versionCode 14
-        versionName "2.0.6"
+        versionCode 15
+        versionName "2.0.7"
 
         setProperty("archivesBaseName", "Android-VAD-v" + versionName)
 
@@ -42,10 +42,11 @@ dependencies {
     implementation project(path: ':silero')
     implementation project(path: ':yamnet')
 
+    implementation 'com.google.android.material:material:1.12.0'
     implementation 'androidx.appcompat:appcompat:1.7.0'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.7.7'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.7.7'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.8.4'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.8.4'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.0'
     
     implementation 'com.github.permissions-dispatcher:permissionsdispatcher:4.9.2'
     kapt 'com.github.permissions-dispatcher:permissionsdispatcher-processor:4.9.2'
@@ -54,5 +55,4 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.6.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
     androidTestImplementation 'androidx.test.ext:junit-ktx:1.2.1'
-    implementation 'com.google.android.material:material:1.12.0'
 }

@@ -1,7 +1,7 @@
 package com.konovalov.vad.webrtc
 
-import com.konovalov.vad.utils.AudioUtils.getFramesCount
-import com.konovalov.vad.utils.AudioUtils.toShortArray
+import com.konovalov.vad.webrtc.utils.AudioUtils.getFramesCount
+import com.konovalov.vad.webrtc.utils.AudioUtils.toShortArray
 import com.konovalov.vad.webrtc.config.FrameSize
 import com.konovalov.vad.webrtc.config.Mode
 import com.konovalov.vad.webrtc.config.SampleRate
