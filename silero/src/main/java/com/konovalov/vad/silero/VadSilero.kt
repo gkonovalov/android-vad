@@ -11,6 +11,7 @@ import com.konovalov.vad.silero.config.Mode
 import com.konovalov.vad.silero.config.SampleRate
 import com.konovalov.vad.silero.utils.AudioUtils.getFramesCount
 import com.konovalov.vad.silero.utils.AudioUtils.toFloatArray
+import com.konovalov.vad.silero.utils.TensorMap
 import java.io.Closeable
 import java.nio.FloatBuffer
 import java.nio.LongBuffer
@@ -79,12 +80,9 @@ class VadSilero(
     )
         private set
 
-    /**
-     * Status of VAD initialization.
-     */
-    private var isInitiated: Boolean = false
-
+    private val env: OrtEnvironment
     private val session: OrtSession
+    private var isInitiated: Boolean = false
 
     private var h = FloatArray(128)
     private var c = FloatArray(128)
@@ -161,7 +159,7 @@ class VadSilero(
 
     /**
      * Determines if the provided audio data contains speech based on the inference result.
-     * The audio data is passed to the model for prediction. The result is obtained and compared
+     * The audio data is passed to the model for prediction. The result is extracted and compared
      * with the threshold value to determine if it represents speech.
      *
      * @param audioData audio data to analyze.
@@ -169,7 +167,12 @@ class VadSilero(
      */
     private fun predict(audioData: FloatArray): Boolean {
         checkState()
-        return getResult(session.run(getInputTensors(audioData))) > threshold()
+
+        return createInputTensors(audioData).use { tensors ->
+            session.run(tensors).use { result ->
+                extractResult(result) > threshold()
+            }
+        }
     }
 
     /**
@@ -178,14 +181,14 @@ class VadSilero(
      * and cell state (C) values. The H and C values are flattened and converted to float arrays
      * for further processing.
      *
-     * @param output result of the inference session.
+     * @param result output result of the inference session.
      * @return confidence value.
      */
-    private fun getResult(output: OrtSession.Result): Float {
-        val confidence: Array<FloatArray>? = unpack(output, OutputTensors.OUTPUT)
+    private fun extractResult(result: OrtSession.Result): Float {
+        val confidence: Array<FloatArray>? = unpack(result, OutputTensors.OUTPUT)
 
-        flattenArray(unpack(output, OutputTensors.CN))?.let { c = it }
-        flattenArray(unpack(output, OutputTensors.HN))?.let { h = it }
+        flattenArray(unpack(result, OutputTensors.CN))?.let { c = it }
+        flattenArray(unpack(result, OutputTensors.HN))?.let { h = it }
 
         return confidence?.getOrNull(0)?.getOrNull(0) ?: 0f
     }
@@ -228,33 +231,31 @@ class VadSilero(
      *
      * @param audioData audio data to analyze.
      * @throws OrtException if there was an error in creating the tensors or getting the OrtEnvironment.
-     * @return map of input tensors as a Map<String, OnnxTensor>.
+     * @return map of input tensors as a TensorMap<String, OnnxTensor>.
      */
-    private fun getInputTensors(audioData: FloatArray): Map<String, OnnxTensor> {
-        val env = OrtEnvironment.getEnvironment()
-
-        return mapOf(
+    private fun createInputTensors(audioData: FloatArray): TensorMap<String, OnnxTensor> {
+        return TensorMap<String, OnnxTensor>().apply {
             InputTensors.INPUT to OnnxTensor.createTensor(
                 env,
                 FloatBuffer.wrap(audioData),
                 longArrayOf(1, frameSize.value.toLong())
-            ),
+            )
             InputTensors.SR to OnnxTensor.createTensor(
                 env,
                 LongBuffer.wrap(longArrayOf(sampleRate.value.toLong())),
                 longArrayOf(1)
-            ),
+            )
             InputTensors.H to OnnxTensor.createTensor(
                 env,
                 FloatBuffer.wrap(h),
                 longArrayOf(2, 1, 64)
-            ),
+            )
             InputTensors.C to OnnxTensor.createTensor(
                 env,
                 FloatBuffer.wrap(c),
                 longArrayOf(2, 1, 64)
             )
-        )
+        }
     }
 
     /**
@@ -264,7 +265,7 @@ class VadSilero(
      * @return model data as a ByteArray.
      */
     private fun getModel(context: Context): ByteArray {
-        return context.assets.open("silero_vad.onnx").readBytes()
+        return context.assets.open("silero_vad.onnx").use { it.readBytes() }
     }
 
     /**
@@ -387,7 +388,9 @@ class VadSilero(
     override fun close() {
         checkState()
         isInitiated = false
+
         session.close()
+        env.close()
     }
 
     /**
@@ -396,7 +399,7 @@ class VadSilero(
      * @throws IllegalArgumentException if session already closed.
      */
     private fun checkState() {
-        require(isInitiated) { "You can't use Vad after closing session!"  }
+        require(isInitiated) { "You can't use Vad after closing session!" }
     }
 
     /**
@@ -433,12 +436,13 @@ class VadSilero(
         this.silenceDurationMs = silenceDurationMs
         this.speechDurationMs = speechDurationMs
 
-        val env = OrtEnvironment.getEnvironment()
-        val sessionOptions = SessionOptions()
-        sessionOptions.setIntraOpNumThreads(1)
-        sessionOptions.setInterOpNumThreads(1)
-        sessionOptions.setOptimizationLevel(SessionOptions.OptLevel.ALL_OPT)
+        val sessionOptions = SessionOptions().apply {
+            setIntraOpNumThreads(1)
+            setInterOpNumThreads(1)
+            setOptimizationLevel(SessionOptions.OptLevel.ALL_OPT)
+        }
 
+        this.env = OrtEnvironment.getEnvironment()
         this.session = env.createSession(getModel(context), sessionOptions)
         this.isInitiated = true
     }
