@@ -315,21 +315,21 @@ allprojects {
 #### WebRTC VAD
 ```groovy
 dependencies {
-    implementation 'com.github.gkonovalov.android-vad:webrtc:2.0.8'
+    implementation 'com.github.gkonovalov.android-vad:webrtc:2.0.9'
 }
 ```
 
 #### Silero VAD
 ```groovy
 dependencies {
-    implementation 'com.github.gkonovalov.android-vad:silero:2.0.8'
+    implementation 'com.github.gkonovalov.android-vad:silero:2.0.9'
 }
 ```
 
 #### Yamnet VAD
 ```groovy
 dependencies {
-    implementation 'com.github.gkonovalov.android-vad:yamnet:2.0.8'
+    implementation 'com.github.gkonovalov.android-vad:yamnet:2.0.9'
 }
 ```
 You also can download precompiled AAR library and APK files from 
@@ -352,4 +352,4 @@ YAMNet is a pretrained deep neural network that can predicts 521 audio event cla
 corpus, employing the Mobilenet_v1 depthwise-separable convolution architecture.
 
 ------------
-Georgiy Konovalov 2024 (c) [MIT License](https://opensource.org/licenses/MIT)
+Georgiy Konovalov 2025 (c) [MIT License](https://opensource.org/licenses/MIT)
