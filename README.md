@@ -332,8 +332,7 @@ dependencies {
     implementation 'com.github.gkonovalov.android-vad:yamnet:2.0.9'
 }
 ```
-You also can download precompiled AAR library and APK files from 
-GitHub's [releases page](https://github.com/gkonovalov/android-vad/releases).
+You also can download precompiled AAR library and APK files from GitHub's [releases page](https://github.com/gkonovalov/android-vad/releases).
 
 ## References
 <a id="1">[1]</a>
