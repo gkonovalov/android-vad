@@ -20,4 +20,3 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 -keep class com.konovalov.vad.** {*;}
--dontobfuscate com.konovalov.vad.**

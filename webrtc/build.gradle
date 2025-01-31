@@ -10,8 +10,8 @@ android {
         compileSdk 35
         minSdkVersion 16
         targetSdkVersion 35
-        versionCode 17
-        versionName "2.0.8"
+        versionCode 18
+        versionName "2.0.9"
 
         setProperty("archivesBaseName", "android-vad-webrtc-v" + versionName)
 
@@ -33,7 +33,7 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }

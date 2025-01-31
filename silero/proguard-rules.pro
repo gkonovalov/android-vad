@@ -21,4 +21,4 @@
 #-renamesourcefileattribute SourceFile
 -keep class ai.onnxruntime.** {*;}
 -keep class com.konovalov.vad.** {*;}
--dontobfuscate com.konovalov.vad.**
+-dontwarn com.google.**
