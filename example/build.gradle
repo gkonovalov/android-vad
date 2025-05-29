@@ -11,8 +11,8 @@ android {
         compileSdk 35
         minSdkVersion 24
         targetSdkVersion 35
-        versionCode 18
-        versionName "2.0.9"
+        versionCode 19
+        versionName "2.0.10"
 
         setProperty("archivesBaseName", "Android-VAD-v" + versionName)
 
