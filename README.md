@@ -291,8 +291,8 @@ Kotlin example:
 
 ## Requirements
 #### Android API
-WebRTC VAD - Android **API 16** and later.  
-Silero VAD - Android **API 21** and later.  
+WebRTC VAD - Android **API 21** and later.  
+Silero VAD - Android **API 24** and later.  
 Yamnet VAD - Android **API 23** and later.  
 #### JDK
 JDK **8** or later.
@@ -315,21 +315,21 @@ allprojects {
 #### WebRTC VAD
 ```groovy
 dependencies {
-    implementation 'com.github.gkonovalov.android-vad:webrtc:2.0.9'
+    implementation 'com.github.gkonovalov.android-vad:webrtc:2.0.10'
 }
 ```
 
 #### Silero VAD
 ```groovy
 dependencies {
-    implementation 'com.github.gkonovalov.android-vad:silero:2.0.9'
+    implementation 'com.github.gkonovalov.android-vad:silero:2.0.10'
 }
 ```
 
 #### Yamnet VAD
 ```groovy
 dependencies {
-    implementation 'com.github.gkonovalov.android-vad:yamnet:2.0.9'
+    implementation 'com.github.gkonovalov.android-vad:yamnet:2.0.10'
 }
 ```
 You also can download precompiled AAR library and APK files from GitHub's [releases page](https://github.com/gkonovalov/android-vad/releases).
