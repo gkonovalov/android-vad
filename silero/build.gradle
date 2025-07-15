@@ -7,11 +7,11 @@ android {
     namespace "com.konovalov.vad.silero"
 
     defaultConfig {
-        compileSdk 35
-        minSdkVersion 21
-        targetSdkVersion 35
-        versionCode 18
-        versionName "2.0.9"
+        compileSdk 36
+        minSdkVersion 24
+        targetSdkVersion 36
+        versionCode 19
+        versionName "2.1.0"
 
         setProperty("archivesBaseName", "android-vad-silero-v" + versionName)
 
@@ -54,8 +54,8 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation(platform('org.jetbrains.kotlin:kotlin-bom:2.0.21'))
-    implementation 'com.microsoft.onnxruntime:onnxruntime-android:1.20.0'
+    implementation(platform('org.jetbrains.kotlin:kotlin-bom:2.2.0'))
+    implementation 'com.microsoft.onnxruntime:onnxruntime-android:1.22.0'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test:runner:1.6.2'

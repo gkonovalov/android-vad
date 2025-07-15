@@ -8,11 +8,11 @@ android {
     namespace "com.konovalov.vad.example"
 
     defaultConfig {
-        compileSdk 35
-        minSdkVersion 23
-        targetSdkVersion 35
-        versionCode 18
-        versionName "2.0.9"
+        compileSdk 36
+        minSdkVersion 24
+        targetSdkVersion 36
+        versionCode 19
+        versionName "2.1.0"
 
         setProperty("archivesBaseName", "Android-VAD-v" + versionName)
 
@@ -43,10 +43,10 @@ dependencies {
     implementation project(path: ':yamnet')
 
     implementation 'com.google.android.material:material:1.12.0'
-    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.8.5'
     implementation 'androidx.navigation:navigation-ui-ktx:2.8.5'
-    implementation 'androidx.constraintlayout:constraintlayout:2.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
     
     implementation 'com.github.permissions-dispatcher:permissionsdispatcher:4.9.2'
     kapt 'com.github.permissions-dispatcher:permissionsdispatcher-processor:4.9.2'

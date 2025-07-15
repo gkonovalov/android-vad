@@ -7,15 +7,15 @@ android {
     namespace "com.konovalov.vad.webrtc"
 
     defaultConfig {
-        compileSdk 35
-        minSdkVersion 16
-        targetSdkVersion 35
-        versionCode 18
-        versionName "2.0.9"
+        compileSdk 36
+        minSdkVersion 21
+        targetSdkVersion 36
+        versionCode 19
+        versionName "2.1.0"
 
         setProperty("archivesBaseName", "android-vad-webrtc-v" + versionName)
 
-        ndkVersion "21.4.7075529"
+        ndkVersion "28.2.13676358"
 
         ndk {
             abiFilters "armeabi-v7a", "x86", "x86_64", "arm64-v8a"
@@ -58,10 +58,10 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation(platform('org.jetbrains.kotlin:kotlin-bom:2.0.21'))
+    implementation(platform('org.jetbrains.kotlin:kotlin-bom:2.2.0'))
 
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test:runner:1.4.0'
-    androidTestImplementation 'androidx.test.ext:junit-ktx:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    androidTestImplementation 'androidx.test:runner:1.6.2'
+    androidTestImplementation 'androidx.test.ext:junit-ktx:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
 }
