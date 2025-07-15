@@ -8,14 +8,14 @@ android {
 
     defaultConfig {
         compileSdk 35
-        minSdkVersion 16
+        minSdkVersion 24
         targetSdkVersion 35
-        versionCode 18
-        versionName "2.0.9"
+        versionCode 19
+        versionName "2.0.10"
 
         setProperty("archivesBaseName", "android-vad-webrtc-v" + versionName)
 
-        ndkVersion "21.4.7075529"
+        ndkVersion "28.0.13004108"
 
         ndk {
             abiFilters "armeabi-v7a", "x86", "x86_64", "arm64-v8a"
