@@ -11,7 +11,7 @@ android {
         minSdkVersion 23
         targetSdkVersion 36
         versionCode 19
-        versionName "2.1.0"
+        versionName "2.0.10"
 
         setProperty("archivesBaseName", "android-vad-yamnet-v" + versionName)
 
